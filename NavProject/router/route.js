@@ -7,7 +7,7 @@ import {
   createStackNavigator,
   createBottomTabNavigator,
   createSwitchNavigator,
-  DrawerNavigator
+  createDrawerNavigator
 } from "react-navigation";
 import { FontAwesome } from "react-native-vector-icons";
 
@@ -26,7 +26,8 @@ export const SignedOut = createStackNavigator({
 });
 
 // drawer stack
-const DrawerStack = DrawerNavigator({
+// const DrawerStack = DrawerNavigator({
+const DrawerStack = createDrawerNavigator({
   screen1: { screen: Home },
   // screen2: { screen: Screen2 },
   // screen3: { screen3een: Screen3 },
