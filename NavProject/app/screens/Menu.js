@@ -17,9 +17,9 @@ export default class Menu extends React.Component {
     };
 
     render() {
-      const { navigation } = this.props;
+      const {navigation} = this.props;
       return (
-        <View style={styles.container}>
+        <View style={styles.container} >
           <Text
             onPress={() => navigation.navigate('screen1')}
             style={styles.uglyDrawerItem}
@@ -39,7 +39,7 @@ export default class Menu extends React.Component {
                     Screen 3
           </Text>
           <Text onPress={this.logout} style={styles.uglyDrawerItem}>
-                    Log Out
+          Log Out
           </Text>
         </View>
       );
