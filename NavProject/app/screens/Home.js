@@ -83,7 +83,7 @@ longitudeDelta: LONGITUDE_DELTA
 },
 markers: []
 };
-    }
+  }
 
     onMapPress(e) {
         this.setState({
