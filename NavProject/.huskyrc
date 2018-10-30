@@ -1,6 +1,6 @@
 {
   "hooks" : {
-    "pre-commit": "npm run lint-stage",
+    "pre-commit": "npm run pretty && git add .",
 
   }
 }

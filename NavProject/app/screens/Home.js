@@ -74,16 +74,16 @@ export default class Home extends Component<Props> {
         //   networkInterface,
         //   dataIdFromObject: r => r.id,
         // });
-this.state = {
-region: {
-latitude: LATITUDE,
-longitude: LONGITUDE,
-latitudeDelta: LATITUDE_DELTA,
-longitudeDelta: LONGITUDE_DELTA
-},
-markers: []
-};
-  }
+        this.state = {
+            region: {
+                latitude: LATITUDE,
+                longitude: LONGITUDE,
+                latitudeDelta: LATITUDE_DELTA,
+                longitudeDelta: LONGITUDE_DELTA
+            },
+            markers: []
+        };
+    }
 
     onMapPress(e) {
         this.setState({
