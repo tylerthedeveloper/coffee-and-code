@@ -8,7 +8,7 @@
     "ios": "expo start --ios",
     "eject": "expo eject",
     "test": "jest",
-    "lint": "eslint screens"
+    "lint": "eslint app"
   },
   "dependencies": {
     "babel-eslint": "^10.0.1",
