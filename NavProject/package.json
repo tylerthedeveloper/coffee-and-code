@@ -8,7 +8,9 @@
     "ios": "expo start --ios",
     "eject": "expo eject",
     "test": "jest",
-    "lint": "eslint app"
+    "lint": "eslint app --fix",
+    "pretty": "prettier --write --tab-width 4 \"app/**/*.js\"",
+    "lint-stage": "lint-staged"
   },
   "dependencies": {
     "babel-eslint": "^10.0.1",
@@ -26,6 +28,14 @@
     "eslint-plugin-jsx-a11y": "^6.1.2",
     "eslint-plugin-react": "^7.11.1",
     "husky": "^1.1.2",
-    "jest": "^23.6.0"
+    "jest": "^23.6.0",
+    "lint-staged": "^8.0.3",
+    "prettier": "^1.14.3"
+  },
+  "lint-staged": {
+    "app/*.js": [
+      "npm run pretty",
+      "git add"
+    ]
   }
 }
