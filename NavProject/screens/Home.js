@@ -21,6 +21,10 @@ function randomColor() {
   return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
 }
 
+function currentLocationColor() {
+  return `#${Math.floor(1 * 16777215).toString(16)}`;
+}
+
 const images = [
   {
     key: 1,
@@ -101,7 +105,13 @@ export default class Home extends Component<Props> {
           latitudeDelta: LATITUDE_DELTA,
           longitudeDelta: LONGITUDE_DELTA,
         },
-        markers: [],
+        markers: [
+          {
+            coordinate: location.coords,
+            key: id++,
+            color: currentLocationColor(),
+          }
+        ],
       });
   }
 
@@ -127,7 +137,14 @@ export default class Home extends Component<Props> {
             </MapView>
             <View style={styles.buttonContainer}>
               <TouchableOpacity
-                onPress={() => this.setState({ markers: [] })}
+                onPress={() => this.setState({ markers: [
+                                          {
+                                            coordinate: this.state.markers[0].coordinate,
+                                            key: id++,
+                                            color: currentLocationColor(),
+                                          }
+                                        ],
+                                 })}
                 style={styles.bubble}
               >
                 <Text>Tap to create a marker of random color</Text>
