@@ -8,7 +8,8 @@
     "ios": "expo start --ios",
     "eject": "expo eject",
     "test": "jest",
-    "lint": "eslint app --fix",
+    "lint": "eslint app",
+    "lint-fix": "eslint app --fix",
     "pretty": "prettier --write --tab-width 4 \"app/**/*.js\"",
     "lint-stage": "lint-staged"
   },
