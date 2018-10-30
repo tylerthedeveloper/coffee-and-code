@@ -9,6 +9,7 @@ import { Constants, Location, Permissions } from 'expo';
 
 const { width, height } = Dimensions.get('window');
 
+
 const ASPECT_RATIO = width / height;
 const LATITUDE = 39.1834026;
 const LONGITUDE = -106.523;
@@ -95,7 +96,7 @@ export default class Home extends Component<Props> {
   }
 
 
-  _getLocationAsync = async () => {  
+  _getLocationAsync = async () => {
       let location = await Location.getCurrentPositionAsync({});
 
       this.setState({
