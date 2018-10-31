@@ -1,5 +1,3 @@
-import { parse } from "react-docgen";
-import Component from "!raw!./Component";
 import React, { Component } from "react";
 import {
     ScrollView,
@@ -15,11 +13,9 @@ import {
 import { Card, Button } from "react-native-elements";
 import { Constants, Location, Permissions } from "expo";
 
-const componentDocs = parse(Component);
-
 const data = [];
 
-export default class Chat extends Component<Props> {
+export default class Profile extends Component<Props> {
     constructor(props) {
         this.state = {};
     }
