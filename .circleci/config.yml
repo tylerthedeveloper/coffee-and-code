@@ -43,12 +43,13 @@ jobs:
       - setup_remote_docker
       #     docker_layer_caching: true
 
-      - run: docker login --username $DOCKER_USER_NAME --password $DOCKER_PASSWORD loadingdock.azurecr.io/express-server
+      # - run: docker login --username $DOCKER_USER_NAME --password $DOCKER_PASSWORD loadingdock.azurecr.io/express-server
+      - run: echo $DOCKER_PASSWORD | docker login --username $DOCKER_USER_NAME --password-stdin loadingdock.azurecr.io/express-server
 
       # ======================= PRODUCTION-BUILD =========================================
 
       # Upon success build the docker file
-      - run: docker build -f server/Dockerfile docker build -t loadingdock.azurecr.io/express-server:latest .
+      - run: docker build -f server/Dockerfile -t loadingdock.azurecr.io/express-server:latest .
 
       # Pushing Azure container to the registry
       - run: docker push loadingdock.azurecr.io/express-server:latest
