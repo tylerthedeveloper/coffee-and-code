@@ -7,8 +7,8 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: loadingdock.azurecr.io/express-server
-
+      # - image: loadingdock.azurecr.io/express-server
+      - image: circleci/node:8.11.2-browsers
       
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -36,17 +36,29 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
         
       # run tests!
-      - run: yarn test
+      # - run: yarn test
+      - run: yarn ng test --watch=false --progress=false --browsers=ChromeHeadless
 
-      - setup_remote_docker:
-          docker_layer_caching: true
+      # ======================= Docker Registry Login ====================================
+      - setup_remote_docker
+      #     docker_layer_caching: true
 
-      - run:
-          name: Build and push Docker image
-          command: |
-            docker build -t loadingdock.azurecr.io/express-server:latest .
-            echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
-            docker push loadingdock.azurecr.io/express-server:latest
+      - run: docker login --username $DOCKER_USER_NAME --password $DOCKER_PASSWORD loadingdock.azurecr.io/express-server
+
+      # ======================= PRODUCTION-BUILD =========================================
+
+      # Upon success build the docker file
+      - run: docker build -f server/Dockerfile docker build -t loadingdock.azurecr.io/express-server:latest .
+
+      # Pushing Azure container to the registry
+      - run: docker push loadingdock.azurecr.io/express-server:latest
+      
+      # - run:
+      #     name: Build and push Docker image
+      #     command: |
+      #       docker build -t loadingdock.azurecr.io/express-server:latest .
+      #       echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
+      #       docker push loadingdock.azurecr.io/express-server:latest
             
 
 
