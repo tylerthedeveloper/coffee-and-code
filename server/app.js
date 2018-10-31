@@ -17,7 +17,7 @@ const pool = new Pool({
   ssl: true,
   max: 20,
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
+  // connectionTimeoutMillis: 2000,
 });
 
 
@@ -39,12 +39,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/test', () => {
-    pool.query('SELECT NOW()', (err, result) => {
+    console.log('in test')
+    return pool.query('SELECT NOW()', (err, result) => {
       if (err) {
         return console.error('Error executing query', err.stack)
       }
       console.log('in query')
       console.log(result.rows)
+      res.send({ rows: result.rows });
     })
 })
 // app.use('/users', usersRouter);
