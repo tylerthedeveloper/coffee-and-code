@@ -43,8 +43,8 @@ jobs:
       - setup_remote_docker
       #     docker_layer_caching: true
 
-      # - run: docker login --username $DOCKER_USER_NAME --password $DOCKER_PASSWORD loadingdock.azurecr.io/express-server
-      - run: echo $DOCKER_PASSWORD | docker login --username $DOCKER_USER_NAME --password-stdin loadingdock.azurecr.io/express-server
+      - run: docker login --username $DOCKER_USER_NAME --password $DOCKER_PASSWORD loadingdock.azurecr.io/express-server
+      # - run: echo $DOCKER_PASSWORD | docker login --username $DOCKER_USER_NAME --password-stdin loadingdock.azurecr.io/express-server
 
       # ======================= PRODUCTION-BUILD =========================================
 
