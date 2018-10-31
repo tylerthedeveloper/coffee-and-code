@@ -7,7 +7,7 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: coffee-and-code/express-server
+      - image: loadingdock.azurecr.io/express-server
 
       
       # Specify service dependencies here if necessary
