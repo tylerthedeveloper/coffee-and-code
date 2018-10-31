@@ -15,6 +15,7 @@ jobs:
       # documented at https://circleci.com/docs/2.0/circleci-images/
       # - image: circleci/mongo:3.4.4
 
+    # TODO: MAKE SURE ONLY FROM MASTER
     working_directory: ~/repo
 
     steps:
@@ -43,7 +44,7 @@ jobs:
       - run:
           name: Build and push Docker image
           command: |
-            docker build -t coffee-and-code/express-server:latest .
+            docker build -t loadingdock.azurecr.io/express-server:latest .
             echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
             docker push loadingdock.azurecr.io/express-server:latest
             
