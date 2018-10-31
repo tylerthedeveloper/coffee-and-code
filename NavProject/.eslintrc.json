@@ -1,0 +1,15 @@
+{
+    "rules": {
+      "no-unused-vars": "error",
+      "no-use-before-define": "off"
+    },
+    "parser": "babel-eslint",
+    "plugins": [
+      "react"
+    ],
+    "extends": [
+      "eslint:recommended",
+      "plugin:react/recommended",
+      "airbnb"
+    ]
+}
