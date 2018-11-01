@@ -16,6 +16,9 @@ jobs:
 
     # TODO: MAKE SURE ONLY FROM MASTER
     working_directory: ~/repo
+    branches:
+      only: 
+        - master
 
     steps:
       - checkout
