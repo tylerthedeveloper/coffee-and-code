@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "pretty": "prettier --write --tab-width 4 \"routes/*.js\""
   },
   "dependencies": {
     "cookie-parser": "~1.4.3",
@@ -14,7 +15,8 @@
     "jade": "~1.11.0",
     "morgan": "~1.9.0",
     "nodemon": "^1.18.5",
-    "pg": "^7.6.0"
+    "pg": "^7.6.0",
+    "prettier": "^1.14.3"
   },
   "devDependencies": {
     "husky": "^1.1.2",
