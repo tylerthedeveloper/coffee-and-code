@@ -15,5 +15,9 @@
     "morgan": "~1.9.0",
     "nodemon": "^1.18.5",
     "pg": "^7.6.0"
+  },
+  "devDependencies": {
+    "husky": "^1.1.2",
+    "pretty": "^2.0.0"
   }
 }
