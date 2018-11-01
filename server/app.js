@@ -2,28 +2,21 @@ const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const logger = require('morgan');
-const { Pool } = require('pg')
-const dotenv = require('dotenv');
-dotenv.load();
-
-// TODO: PUT IN CONFIG + ENV VARIABLE
-const pool = new Pool({
-  host: process.env.PGHOST,
-  user: process.env.PGUSER,
-  database: process.env.PGDATABASE,
-  password: process.env.PGPASSWORD,
-  port: process.env.PGPORT,
-  ssl: true,
-  max: 20,
-  idleTimeoutMillis: 30000,
-  // connectionTimeoutMillis: 2000,
-});
 
 
+// const { Pool } = require('pg')
+// const dotenv = require('dotenv');
+// const postgresConfig = require('./psql-config').postgresConfig;
+// dotenv.load();
+
+// // TODO: PUT IN CONFIG + ENV VARIABLE
+// const pool = new Pool(postgresConfig);
+const pool = require('./psql-config').psqlPool;
 
 const indexRouter = require('./routes/index');
-// const usersRouter = require('./routes/users');
+const usersRouter = require('./routes/users');
 
 const app = express();
 
@@ -35,10 +28,14 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/test', () => {
+app.use('/test', function(req, res, next) {
     console.log('in test')
     return pool.query('SELECT NOW()', (err, result) => {
       if (err) {
@@ -49,7 +46,7 @@ app.use('/test', () => {
       res.send({ rows: result.rows });
     })
 })
-// app.use('/users', usersRouter);
+app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

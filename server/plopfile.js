@@ -10,7 +10,7 @@ module.exports = function (plop) {
         }],
         actions: [{
             type: 'add',
-            path: 'routes/{{dashCase name}}.js',
+            path: 'routes/{{dashCase name}}s.js',
             templateFile: 'plop-templates/route.js',
         }]
     });
