@@ -39,7 +39,7 @@ module.exports = function (plop) {
       }],
     actions: [{
       type: 'add',
-      path: 'app/models/{{dashCase name}}.js',
+      path: 'app/models/{{dashCase name}}.ts',
       templateFile: 'plop-templates/model.js',
     }],
   });
