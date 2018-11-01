@@ -38,7 +38,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/test', () => {
+app.use('/test', function(req, res, next) {
     console.log('in test')
     return pool.query('SELECT NOW()', (err, result) => {
       if (err) {
