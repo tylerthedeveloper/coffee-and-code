@@ -11,9 +11,9 @@ export default class App extends React.Component {
     };
   }
 
-  componentDidMount() {
-    
-  }
+componentDidMount() {
+
+}
 
   render() {
     const { signedIn } = this.state;
