@@ -59,4 +59,34 @@ module.exports = function (plop) {
     }],
   });
 
+    plop.setGenerator('map-model', {
+        description: 'this is a app model',
+        prompts: [
+            {
+                type: 'input',
+                name: 'name',
+                message: 'What is the name of your model: ',
+            }],
+        actions: [{
+            type: 'add',
+            path: 'app/models/{{dashCase name}}.js',
+            templateFile: 'plop-templates/map-model.js',
+        }],
+    });
+
+    plop.setGenerator('filter-model', {
+        description: 'this is a app model',
+        prompts: [
+            {
+                type: 'input',
+                name: 'name',
+                message: 'What is the name of your model: ',
+            }],
+        actions: [{
+            type: 'add',
+            path: 'app/models/{{dashCase name}}.js',
+            templateFile: 'plop-templates/filter-model.js',
+        }],
+    });
+
 };

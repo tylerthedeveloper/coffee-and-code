@@ -1,4 +1,6 @@
-export class map{
+export class map_model{
+    name: 'string';
+    location: 'string';
     skills: 'string';
     image: document.getElementByID('string');
     filter_button: document.createElement("button");
