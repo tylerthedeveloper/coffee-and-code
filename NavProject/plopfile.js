@@ -29,7 +29,7 @@ module.exports = function (plop) {
     }],
   });
 
-  plop.setGenerator('model', {
+  plop.setGenerator('profile-model', {
     description: 'this is a app model',
     prompts: [
       {
@@ -40,7 +40,23 @@ module.exports = function (plop) {
     actions: [{
       type: 'add',
       path: 'app/models/{{dashCase name}}.js',
-      templateFile: 'plop-templates/model.js',
+      templateFile: 'plop-templates/profile-model.js',
     }],
   });
+
+  plop.setGenerator('chat-model', {
+    description: 'this is a app model',
+    prompts: [
+      {
+        type: 'input',
+        name: 'name',
+        message: 'What is the name of your model: ',
+      }],
+    actions: [{
+      type: 'add',
+      path: 'app/models/{{dashCase name}}.js',
+      templateFile: 'plop-templates/chat-model.js',
+    }],
+  });
+
 };
