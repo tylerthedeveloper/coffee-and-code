@@ -4,7 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const logger = require('morgan');
-
+const bearerToken = require('express-bearer-token');
 
 // const { Pool } = require('pg')
 // const dotenv = require('dotenv');
@@ -19,6 +19,17 @@ const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 
 const app = express();
+// app.use(bearerToken());
+
+app.use(function(req, res, next) {
+  console.log(req.query);
+  // console.log(req.body);
+  // console.log(req.params);
+  if (!req.headers.access_token && !req.query.access_token) {
+    return res.status(403).json({ error: 'No credentials sent!' });
+  }
+  next();
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
