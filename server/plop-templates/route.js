@@ -29,7 +29,7 @@ router.get('/:{{camelCase name}}ID', function(req, res, next) {
         return console.error('Error executing query', err.stack)
       }
       res.send({ rows: result.rows });
-    })
+    });
 });
 
 /**
@@ -37,6 +37,7 @@ router.get('/:{{camelCase name}}ID', function(req, res, next) {
  */
 router.post('/', function(req, res, next) {
   const objectDict = req.body.data;
+  // TODO: TEST NOT TYPE ARRAY BUT STRING
   const str = Object.keys(objectDict).map(key => {
       return objectDict[key];
   });
