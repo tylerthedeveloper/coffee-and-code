@@ -13,3 +13,4 @@ insert into Users values (2, 'abi', 'abi shek', 'afbeggi', 39.1653, 86.5364, nul
 
 UPDATE users SET current_location = ST_POINT(current_latitude, current_longitude);
 select * from users where user_id <> 1 and ST_DWithin(current_location, ST_POINT(39.1653, 86.5264), 10000);
+
