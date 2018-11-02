@@ -33,15 +33,34 @@ router.get('/:{{camelCase name}}ID', function(req, res, next) {
 });
 
 /**
+ * get one {{dashCase name}} by ID
+ */
+router.post('/query', function(req, res, next) {
+  const objectDict = req.body.data;
+  let query = '';
+  Object.keys(objectDict).map(key => {
+    const { currentOp, value, nextOp } = objectDict[key];
+    const _nextOp = (nextOp !== null) ? nextOp + " " : "";
+    query += key + ' ' + currentOp + `'${value}'` + _nextOp;
+  });
+  const sql = 'Select * FROM {{snakeCase name}}s WHERE ' + query;
+  return pool.query(sql, (err, result) => {
+    if (err) {
+      return console.error('Error executing query', err.stack)
+    }
+    res.send({ rows: result.rows });
+  });
+});
+
+/**
  * add new {{dashCase name}}
  */
 router.post('/', function(req, res, next) {
   const objectDict = req.body.data;
-  // TODO: TEST NOT TYPE ARRAY BUT STRING
   const str = Object.keys(objectDict).map(key => {
       return objectDict[key];
   });
-  const sql = format('insert into users VALUES (%L)', str);
+  const sql = format('insert into {{ snakeCase name }}s VALUES (%L)', str);
   return pool.query(sql, (err, result) => {
     if (err) {
       return console.error('Error executing query', err.stack)
@@ -53,35 +72,35 @@ router.post('/', function(req, res, next) {
 /**
 * delete {{dashCase name}} by ID
 */
-router.delete('/', function(req, res, next) {
-  // query ...
-  // get ID from req.params || req.body
-  // delete DB
-  // send succesS??
-res.send('respond with a resource');
-
+router.delete('/:{{camelCase name}}ID', function(req, res, next) {
+  const {{camelCase name}}ID = req.params['{{camelCase name}}ID'];
+  const sql = format('DELETE FROM {{snakeCase name}}s WHERE {{snakeCase name}}_id = %L', {{camelCase name}}ID);
+  return pool.query(sql, (err, result) => {
+    if (err) {
+      return console.error('Error executing query', err.stack)
+    }
+    res.send({ rows: result.rows });
+  });
 });
 
 /**
 * update one {{dashCase name}} by ID
 */
-// TODO: This will be hard: write generic update function
-router.put('/', function(req, res, next) {
-  // query ...
-  // get id then update
-  // get new data from req.params || req.body
-  // update DB
-  // send succesS??
-  res.send('respond with a resource');
-
+router.put('/:{{camelCase name}}ID', function(req, res, next) {
+  const {{camelCase name}}ID = req.params['{{camelCase name}}ID'];
+  const objectDict = req.body.data;
+  const query = 'SET ' + Object.keys(objectDict).map(key => {
+    const value = objectDict[key];
+    return key + ' = ' +  `'${value}'`;
+  });
+  const sql = 'UPDATE {{snakeCase name}}s ' + query + ' WHERE {{camelCase name}}_ID = ' + {{camelCase name}}ID;
+  return pool.query(sql, (err, result) => {
+    if (err) {
+      return console.error('Error executing query', err.stack)
+    }
+    res.send({ rows: result.rows });
+  });
 });
 
-// TODO: QUERY BODY?
-// const sql = format('insert into users WHERE user_id = %L', userID);
-  // str = str.substring(0, str.length - 5);
-
-// Object.keys(objectDict).map(key => {
-//   str += key +' = ' + objectDict[key] + ' and '
-// });
 
 module.exports = router;
