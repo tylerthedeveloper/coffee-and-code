@@ -3,33 +3,28 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+// TODO: Setup morgan logger
 const logger = require('morgan');
-const bearerToken = require('express-bearer-token');
-
-// const { Pool } = require('pg')
-// const dotenv = require('dotenv');
-// const postgresConfig = require('./psql-config').postgresConfig;
-// dotenv.load();
-
-// // TODO: PUT IN CONFIG + ENV VARIABLE
-// const pool = new Pool(postgresConfig);
 const pool = require('./psql-config').psqlPool;
+const redisClient = require("./redis-client").redisClient;
+
+// TODO: Dele
+redisClient.set('my test key', 'my test value');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+const friendRequestsRouter = require('./routes/friend-requests');
 
 const app = express();
-// app.use(bearerToken());
 
+/*
 app.use(function(req, res, next) {
-  console.log(req.query);
-  // console.log(req.body);
-  // console.log(req.params);
   if (!req.headers.access_token && !req.query.access_token) {
     return res.status(403).json({ error: 'No credentials sent!' });
   }
   next();
 });
+*/
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -58,8 +53,9 @@ app.use('/test', function(req, res, next) {
     })
 })
 app.use('/users', usersRouter);
+app.use('/friend-requests', friendRequestsRouter);
 
-// catch 404 and forward to error handler
+// TODO: catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });

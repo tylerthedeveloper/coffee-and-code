@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../psql-config").psqlPool;
 const format = require("pg-format");
+const redisClient = require("../redis-client").redisClient;
 
 // TODO: ERRORS???
 // TODO: update returns with success / error
@@ -11,6 +12,16 @@ const format = require("pg-format");
  */
 router.get("/", function(req, res, next) {
     const sql = format("SELECT * FROM users");
+    console.log("Querying sql: " + sql);
+    console.log("Users endpoint");
+    // redisClient.get('my test key', function (error, result) {
+    //     if (error) {
+    //         console.log(error);
+    //         throw error;
+    //     }
+    //     console.log('GET result -> ' + result);
+    // });
+
     return pool.query(sql, (err, result) => {
         if (err) {
             return console.error("Error executing query", err.stack);
