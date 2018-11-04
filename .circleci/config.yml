@@ -53,13 +53,10 @@ jobs:
 
       # Upon success build the docker file
       # - run: docker build -f server/Dockerfile -t loadingdock.azurecr.io/express-server:latest ./server/
-      - run: cd server
       
-      - run: ls
+      - run: cd server && docker-compose build
 
-      - run: docker-compose build
-
-      - run: docker-compose up
+      - run: cd server && docker-compose up
 
       # Pushing Azure container to the registry
       - run: docker push loadingdock.azurecr.io/express-server:latest
