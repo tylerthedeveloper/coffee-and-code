@@ -27,22 +27,22 @@ async function signInAsync(token) {
     }
 }
 
-async function signOutAsync() {
-    try {
-        await AsyncStorage.removeItem(GithubStorageKey);
-        await firebase.auth().signOut();
-    } catch ({ message }) {
-        alert("Error: " + message);
-    }
-}
+// async function signOutAsync() {
+//     try {
+//         await AsyncStorage.removeItem(GithubStorageKey);
+//         await firebase.auth().signOut();
+//     } catch ({ message }) {
+//         alert("Error: " + message);
+//     }
+// }
 
-async function attemptToRestoreAuthAsync() {
-    let token = await AsyncStorage.getItem(GithubStorageKey);
-    if (token) {
-        console.log("Sign in with token", token);
-        return signInAsync(token);
-    }
-}
+// async function attemptToRestoreAuthAsync() {
+//     let token = await AsyncStorage.getItem(GithubStorageKey);
+//     if (token) {
+//         console.log("Sign in with token", token);
+//         return signInAsync(token);
+//     }
+// }
 
 const onSignIn = () =>
     new Promise((res, rej) => {

@@ -5,7 +5,6 @@ import { AuthSession } from "expo";
 
 // The github auth callback should be something like: https://auth.expo.io/@bacon/github
 const REDIRECT_URL = AuthSession.getRedirectUrl();
-console.log(REDIRECT_URL);
 
 // Add your API stuff here...
 const github = {
@@ -26,18 +25,15 @@ const githubFields = [
 ];
 
 function authUrlWithId(id, fields) {
-    console.log("in auth URL generation method");
     const url =
         `https://github.com/login/oauth/authorize` +
         `?client_id=${id}` +
         `&redirect_uri=${encodeURIComponent(REDIRECT_URL)}` +
         `&scope=${encodeURIComponent(fields.join(" "))}`;
-    console.log(url);
     return url;
 }
 
 async function createTokenWithCode(code) {
-    console.log("in createTokenwithcode method");
     const url =
         `https://github.com/login/oauth/access_token` +
         `?client_id=${github.id}` +
@@ -56,12 +52,10 @@ async function createTokenWithCode(code) {
 }
 
 async function getGitHubTokenAsync() {
-    console.log("Entered in Github token async");
     try {
         const { type, params } = await AuthSession.startAsync({
             authUrl: authUrlWithId(github.id, githubFields)
         });
-        console.log("getGitHubToken: A: ", { type, params });
         if (type !== "success") {
             // type === 'cancel' = if you cancel out of the modal
             // type === 'error' = if you click "no" on the redirect page
@@ -87,11 +81,6 @@ async function getGitHubTokenAsync() {
             params.code
         );
         // { token_type, scope, access_token }
-        console.log("getGitHubToken: B: ", {
-            token_type,
-            scope,
-            access_token
-        });
         return access_token;
     } catch ({ message }) {
         throw new Error(`Github Auth: ${message}`);
