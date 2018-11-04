@@ -56,8 +56,6 @@ jobs:
       
       - run: cd server && docker-compose build
 
-      - run: cd server && docker-compose up
-
       # Pushing Azure container to the registry
       - run: docker push loadingdock.azurecr.io/express-server:latest
 
