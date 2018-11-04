@@ -1,9 +1,11 @@
 const redis = require('redis');
+const dotenv = require('dotenv');
+dotenv.load();
+
 const client = redis.createClient({
-    // host: "172.19.0.2",
     host: 'redis_server',
     port: 6379,
-    // url: 'redis://redis:6379'
+    password: process.env.REDIS_PWD
 });
 
 client.on('connect', function() {

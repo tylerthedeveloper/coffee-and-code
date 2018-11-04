@@ -4,3 +4,5 @@ npm-debug.*
 .psql.txt
 .env
 ../.vscode/
+./Redis.Dockerfile
+*.Dockerfile
