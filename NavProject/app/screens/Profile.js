@@ -17,6 +17,7 @@ const data = [];
 
 export default class Profile extends Component<Props> {
     constructor(props) {
+        super();
         this.state = {};
     }
 

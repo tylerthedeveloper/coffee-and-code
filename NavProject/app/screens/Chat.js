@@ -21,6 +21,7 @@ const data = [];
 
 export default class Chat extends Component<Props> {
     constructor(props) {
+        super();
         this.state = {};
     }
 

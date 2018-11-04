@@ -9,6 +9,7 @@ import {
     createSwitchNavigator,
     createDrawerNavigator
 } from "react-navigation";
+
 import { FontAwesome } from "react-native-vector-icons";
 
 import LogIn from "../screens/LogIn";
