@@ -41,6 +41,15 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+app.use('/test2', function(req, res, next) {
+  console.log('test2');
+  redisClient.get('my test key', function(error, reply) {
+    console.log(error);
+    console.log(reply);
+  });
+});
+
+
 app.use('/test', function(req, res, next) {
     console.log('in test')
     return pool.query('SELECT NOW()', (err, result) => {

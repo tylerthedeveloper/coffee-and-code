@@ -3,7 +3,7 @@ const router = express.Router();
 
 /* GET home page. */
 router.get("/", function(req, res, next) {
-    res.send({ title: "Docker v5" });
+    res.send({ title: "Docker v7" });
 });
 
 module.exports = router;

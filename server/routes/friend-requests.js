@@ -10,6 +10,7 @@ const redisClient = require("../redis-client").redisClient;
 router.get("/:git_username/received", function(req, res, next) {
     const git_username = req.params["git_username"];
     const lookup = `${git_username}-received`;
+    console.log("sent");
     return redisClient.lrange(lookup, 0, -1, function(error, result) {
         if (error) {
             console.log(error);

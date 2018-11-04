@@ -1,11 +1,21 @@
 version: "3"
 services:
-  server:
+  express_server:
     image: loadingdock.azurecr.io/express-server:latest 
     build: .
     ports:
       - "3000:3000"
-  db:
+    networks: 
+      - app_server_bridge
+  redis_server:
     image: redis
+    build:
+      dockerfile: Redis.Dockerfile
+      context: .
     ports:
-      - "6739:6739"
+      - "6379:6379"
+    networks: 
+      - app_server_bridge
+networks:
+  app_server_bridge:
+    driver: bridge
