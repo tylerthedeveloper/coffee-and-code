@@ -59,7 +59,7 @@ jobs:
       # Pushing Azure container to the registry
       - run: docker push loadingdock.azurecr.io/express-server:latest
 
-      - run: docker push loadingdock.azurecr.io/redis:latest
+      # - run: docker push loadingdock.azurecr.io/redis:latest
       
       # - run:
       #     name: Build and push Docker image
