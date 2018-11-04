@@ -7,16 +7,28 @@ export default class App extends React.Component {
     super(props);
 
     this.state = {
-      signedIn: false,
+      signedIn: false
     };
   }
 
   componentDidMount() {
-    
+    setupFirebaseAsync();
     // isSignedIn()
     //   .then(res => this.setState({ signedIn: res}))
     //   .catch(err => alert("An error occurred"));
   }
+
+  setupFirebaseAsync = async () => {
+    initializeFirebase();
+
+    firebase.auth().onAuthStateChanged(async auth => {
+      const isSignedIn = !!auth;
+      this.setState({ isSignedIn });
+      if (!isSignedIn) {
+        attemptToRestoreAuthAsync();
+      }
+    });
+  };
 
   render() {
     const { signedIn } = this.state;
