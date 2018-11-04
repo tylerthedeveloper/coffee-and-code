@@ -9,6 +9,10 @@ services:
       - app_server_bridge
   redis_server:
     image: redis
+    env_file:
+      - .env
+    environment:
+      - REDIS_PWD=${REDIS_PWD}
     build:
       dockerfile: Redis.Dockerfile
       context: .
@@ -16,10 +20,6 @@ services:
       - "6379:6379"
     networks: 
       - app_server_bridge
-    env_file:
-      - .env
-    environment:
-      - REDIS_PWD=${REDIS_PWD}
 networks:
   app_server_bridge:
     driver: bridge
