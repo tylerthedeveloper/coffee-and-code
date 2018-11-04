@@ -9,10 +9,10 @@ services:
       - app_server_bridge
   redis_server:
     image: redis
-    env_file:
-      - .env
-    environment:
-      - REDIS_PWD=${REDIS_PWD}
+    # env_file:
+    #   - .env
+    # environment:
+    #   - REDIS_PWD=${REDIS_PWD}
     build:
       dockerfile: Redis.Dockerfile
       context: .
