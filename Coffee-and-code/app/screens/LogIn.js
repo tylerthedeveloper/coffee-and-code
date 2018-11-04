@@ -2,7 +2,7 @@ import React from "react";
 import { View } from "react-native";
 import { Card, Button } from "react-native-elements";
 import * as firebase from "firebase";
-import getGithubTokenAsync from "./getGitHubToken";
+import getGithubTokenAsync from "../gitAuth/getGitHubToken";
 import { AsyncStorage } from "react-native";
 
 const GithubStorageKey = "@Expo:GithubToken";
