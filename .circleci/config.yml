@@ -52,10 +52,15 @@ jobs:
       # ======================= PRODUCTION-BUILD =========================================
 
       # Upon success build the docker file
-      - run: docker build -f server/Dockerfile -t loadingdock.azurecr.io/express-server:latest ./server/
+      # - run: docker build -f server/Dockerfile -t loadingdock.azurecr.io/express-server:latest ./server/
+      - run: docker-compose build
+
+      - run: docker-compose up
 
       # Pushing Azure container to the registry
       - run: docker push loadingdock.azurecr.io/express-server:latest
+
+      - run: docker push redis
       
       # - run:
       #     name: Build and push Docker image
@@ -64,3 +69,4 @@ jobs:
       #       echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
       #       docker push loadingdock.azurecr.io/express-server:latest
             
+

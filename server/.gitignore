@@ -3,3 +3,6 @@ node_modules/**/*
 npm-debug.*
 .psql.txt
 .env
+../.vscode/
+./Redis.Dockerfile
+*.Dockerfile
