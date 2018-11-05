@@ -8,13 +8,17 @@ RUN         apt-get update && \
             # Install nano
             apt-get install nano
 
+
 # Expose Redis port 6379
 EXPOSE      6379
 
-# COPY redis.conf /usr/local/etc/redis/redis.conf
-# COPY redis.conf etc/redis/redis.conf
+# ENV REDIS_PWD $REDIS_PWD
+
+# CMD ["echo $REDIS_PWD > /env.txt"]
+# RUN echo $REDIS_PWD > env.txt
+
 
 # Run Redis Server
-# Bind all ports
-# Require secret password
-CMD [ "/usr/bin/redis-server", "--bind 0.0.0.0", "--requirepass \"$REDIS_PWD\"" ]
+#  TODO: add pasword
+# CMD [ "/usr/bin/redis-server" , "--requirepass \"$REDIS_PWD\"" ]
+CMD [ "/usr/bin/redis-server" , "--protected-mode no" ]
