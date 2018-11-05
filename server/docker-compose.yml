@@ -5,21 +5,21 @@ services:
     build: .
     ports:
       - "3000:3000"
-    # networks: 
-    #   - app_server_bridge
-  # redis_server:
-  #   image: loadingdock.azurecr.io/redis:latest
-  #   # env_file:
-  #   #   - .env
-  #   # environment:
-  #   #   - REDIS_PWD=${REDIS_PWD}
-  #   build:
-  #     dockerfile: Redis.Dockerfile
-  #     context: .
-  #   ports:
-  #     - "6379:6379"
-  #   networks: 
-  #     - app_server_bridge
-# networks:
-#   app_server_bridge:
-#     driver: bridge
+    networks: 
+      - app_server_bridge
+  redis_server:
+    image: loadingdock.azurecr.io/redis:latest
+    # env_file:
+    #   - .env
+    # environment:
+    #   - REDIS_PWD=${REDIS_PWD}
+    # build:
+    #   dockerfile: Redis.Dockerfile
+    #   context: .
+    ports:
+      - "6379:6379"
+    networks: 
+      - app_server_bridge
+networks:
+  app_server_bridge:
+    driver: bridge
