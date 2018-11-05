@@ -11,7 +11,9 @@ import {
     TouchableOpacity
 } from "react-native";
 // import { Card, Button } from "react-native-elements";
-import {} from "react-native";
+import { Card, Button } from "react-native-elements";
+
+import { } from "react-native";
 
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps"; // remove PROVIDER_GOOGLE import if not using Google Maps
 import { Marker, ProviderPropType } from "react-native-maps";
@@ -99,13 +101,40 @@ export default class Home extends Component<Props> {
         console.log(e.nativeEvent.coordinate);
     }
 
+    resetInit() {
+        curlatitude = this.state.markers[0].coordinate.latitude
+        curlongitude = this.state.markers[0].coordinate.longitude
+        curcoordinate = this.state.markers[0].coordinate
+        id = 0,
+            this.setState({
+                region: {
+                    latitude: curlatitude,
+                    longitude: curlongitude,
+                    latitudeDelta: LATITUDE_DELTA,
+                    longitudeDelta: LONGITUDE_DELTA,
+                },
+                markers: [
+                    {
+                        coordinate: curcoordinate,
+                        key: id++,
+                        color: currentLocationColor(),
+                        name: "Tony Stark",
+                        git_username: "starktony",
+                        bio: "Ironman - Mechanic"
+                       }
+                ],
+            });
+    }
+
     componentWillMount() {
         this._getLocationAsync();
+        this._preLoadUsers();
     }
 
     _getLocationAsync = async () => {
         const location = await Location.getCurrentPositionAsync({});
 
+        id = 0,
         this.setState({
             region: {
                 latitude: location.coords.latitude,
@@ -117,54 +146,96 @@ export default class Home extends Component<Props> {
                 {
                     coordinate: location.coords,
                     key: id++,
-                    color: currentLocationColor()
+                    color: currentLocationColor(),
+                    name: "Tony Stark",
+                    git_username: "starktony",
+                    bio: "Ironman - Mechanic"
                 }
             ]
         });
+    };
+
+    _preLoadUsers = async () => {
+        try {
+          let response = await fetch(
+            'https://coffee-and-code.azurewebsites.net/users',
+          );
+          let responseJson = await response.json();
+        //   console.log(responseJson.rows);
+          let userInfoJson = responseJson.rows;
+          id = 1
+        //   console.log(userInfoJson)
+          {userInfoJson.map(user => (
+            this.setState({
+                markers: [
+                    ...this.state.markers,
+                    {
+                        coordinate: {
+                            "latitude": user.current_latitude,
+                            "longitude": user.current_longitude,
+                        },
+                        key: id++,
+                        color: randomColor(),
+                        name: user.name,
+                        git_username: user.git_username,
+                        bio: user.bio
+                    }
+                ]
+            })
+          ))}
+
+        } catch (error) {
+          console.error(error);
+        }        
     };
 
     render() {
         const { region } = this.props;
         console.log(
             `latitude ${this.state.region.latitude} longitude ${
-                this.state.region.longitude
+            this.state.region.longitude
             }`
         );
         return (
             <View style={styles.container}>
-                <MapView
-                    provider={this.props.provider}
-                    style={styles.map}
-                    initialRegion={this.state.region}
-                    onPress={e => this.onMapPress(e)}
-                >
-                    {this.state.markers.map(marker => (
-                        <Marker
-                            key={marker.key}
-                            coordinate={marker.coordinate}
-                            description="Information"
-                            pinColor={marker.color}
-                        />
-                    ))}
-                </MapView>
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity
-                        onPress={() =>
-                            this.setState({
-                                markers: [
-                                    {
-                                        coordinate: this.state.markers[0]
-                                            .coordinate,
-                                        key: id++,
-                                        color: currentLocationColor()
-                                    }
-                                ]
-                            })
-                        }
-                        style={styles.bubble}
+                <View style={styles.maps}>
+                    <MapView
+                        provider={this.props.provider}
+                        style={styles.map}
+                        initialRegion={this.state.region}
+                        // onPress={e => this.onMapPress(e)}
                     >
-                        <Text>Tap to create a marker of random color</Text>
-                    </TouchableOpacity>
+                        {this.state.markers.map(marker => (
+                            console.log(marker.coordinate),
+                            <Marker
+                                key={marker.key}
+                                coordinate={marker.coordinate}
+                                description="Information"
+                                pinColor={marker.color}
+                            />
+                        ))}
+                    </MapView>
+
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity
+                            onPress={() => this.resetInit()}
+                            style={styles.bubble}
+                        >
+                            <Text>Tap to create a marker of random color</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+                <View style={styles.cards}>
+                    <ScrollView>
+                        { this.state.markers.map( marker => (
+                            <Card key={marker.key}>
+                                <Text style={{ marginBottom: 10 }}> NAME: {marker.name} </Text>
+                                <Text style={{ marginBottom: 10 }}> USERNAME: {marker.git_username} </Text>
+                                <Text style={{ marginBottom: 10 }}> BIO: {marker.bio} </Text>
+                            </Card>
+                        ))}
+                    </ScrollView>
                 </View>
             </View>
         );
@@ -178,8 +249,11 @@ Home.propTypes = {
 const styles = StyleSheet.create({
     container: {
         ...StyleSheet.absoluteFillObject,
-        justifyContent: "flex-end",
-        alignItems: "center"
+        // justifyContent: "flex-end",
+        // alignItems: "center"
+        flex: 1,
+        flexDirection: 'column',
+        alignItems: 'stretch',
     },
     map: {
         ...StyleSheet.absoluteFillObject
@@ -204,5 +278,12 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         marginVertical: 20,
         backgroundColor: "transparent"
-    }
+    },
+    maps: {
+        // height: 400,
+        flex: 0.67,
+    },
+    cards: {
+        flex: 0.33,
+    },
 });

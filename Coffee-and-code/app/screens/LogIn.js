@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { View, Image, Text } from "react-native";
 import { Card, Button } from "react-native-elements";
 import * as firebase from "firebase";
 import getGithubTokenAsync from "../gitAuth/getGitHubToken";
@@ -56,14 +56,17 @@ function signIn(navigation) {
 }
 
 export default ({ navigation }) => (
-    <View style={{ paddingVertical: 20 }}>
-        <Card>
+    <View style={{ paddingVertical: 20, backgroundColor: '#FFFFFF', height: 700 }}>
+        <Image source={require('../images/logo.png')} style = {{ width: 250, height: 250, alignItems: 'center', backgroundColor: 'transparent', marginLeft: 80 }}>
+        </Image>
+        
             <Button
-                buttonStyle={{ marginTop: 20 }}
+                buttonStyle={{ marginTop: 200 }}
                 backgroundColor="#03A9F4"
                 title="Login with GitHub"
+                
                 onPress={() => signIn(navigation)}
             />
-        </Card>
+        
     </View>
 );
