@@ -23,7 +23,7 @@ const { width, height } = Dimensions.get("window");
 // TODO: Constants
 const ASPECT_RATIO = width / height;
 const LATITUDE = 39.1834026;
-const LONGITUDE = -106.523;
+const LONGITUDE = -86.523;
 const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 let id = 0;
