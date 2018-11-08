@@ -89,7 +89,10 @@ export default class Home extends Component<Props> {
           color: randomColor()
         }
       ]
-    });
+    }).catch((error)=>{
+      console.log("Api call error");
+      alert(error.message);
+   });
     console.log(e.nativeEvent.coordinate);
   }
 
@@ -110,13 +113,16 @@ export default class Home extends Component<Props> {
           {
             coordinate: curcoordinate,
             key: id++,
-            color: currentLocationColor(),
+            color: this.currentLocationColor(),
             name: "Tony Stark",
             git_username: "starktony",
             bio: "Ironman - Mechanic"
           }
         ]
-      });
+      }).catch((error)=>{
+     console.log("Api call error");
+     alert(error.message);
+  });
   }
 
   // TODO: verify exuction order
@@ -145,7 +151,11 @@ export default class Home extends Component<Props> {
             bio: "Ironman - Mechanic"
           }
         ]
-      });
+      }).catch((error)=>{
+        console.log("Api call error");
+        alert(error.message);
+     });
+      
   };
 
   _preLoadUsers = async () => {
@@ -169,7 +179,7 @@ export default class Home extends Component<Props> {
                   longitude: user.current_longitude
                 },
                 key: id++,
-                color: randomColor(),
+                color: this.randomColor(),
                 name: user.name,
                 git_username: user.git_username,
                 bio: user.bio
