@@ -12,10 +12,12 @@ export default class Menu extends React.Component {
         //   actions: [NavigationActions.navigate({ routeName: 'loginStack' })]
         // })
         // this.props.navigation.dispatch(actionToDispatch)
+        // TODO: Call stack navigator and reset stack to signedOut
     };
 
     render() {
         const { navigation } = this.props;
+        // TODO: STYLE AND Name each screen
         return (
             <View style={styles.container}>
                 <Text

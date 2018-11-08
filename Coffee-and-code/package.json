@@ -42,6 +42,7 @@
     "plop": "^2.1.0",
     "prettier": "^1.14.3",
     "react-doc-generator": "^1.2.5",
+    "react-native-dotenv": "^0.2.0",
     "react-native-gradle-config": "^2.1.0",
     "replace": "^1.0.0"
   },

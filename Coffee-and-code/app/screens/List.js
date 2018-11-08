@@ -13,25 +13,39 @@ import {
 import { Card, Button } from "react-native-elements";
 import { Constants, Location, Permissions } from "expo";
 
-const data = [];
+const data = [
 
-export default class Profile extends Component<Props> {
+];
+
+export default class List extends Component<Props> {
+
     constructor(props) {
-        super();
-        this.state = {};
+        this.state = {
+
+        };
     }
 
-    componentDidMount() {}
+    componentWillMount() {
+
+    }
+
 
     render() {
-        const {} = this.props;
+        const {  } = this.props;
         console.log(this.props);
-        return <View style={styles.container} />;
+        return (
+            <View style={styles.container}>
+
+            </View>
+        );
     }
 }
 
 const styles = StyleSheet.create({
-    container: {},
-    button: {},
-    buttonContainer: {}
+    container: {
+    },
+    button: {
+    },
+    buttonContainer: {
+    }
 });

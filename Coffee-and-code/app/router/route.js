@@ -21,15 +21,13 @@ export const SignedOut = createStackNavigator({
         screen: LogIn,
         navigationOptions: {
             title: "Log In"
-            // headerStyle
         }
     }
 });
 
-// drawer stack
-// const DrawerStack = DrawerNavigator({
 const DrawerStack = createDrawerNavigator(
     {
+        // TODO: Get all pages included here
         screen1: { screen: Home }
         // screen2: { screen: Screen2 },
         // screen3: { screen3een: Screen3 },
@@ -72,30 +70,6 @@ export const DrawerNavigation = createStackNavigator(
 export const SignedIn = createStackNavigator(
     {
         DrawerStack: { screen: DrawerNavigation }
-        // Home: {
-        //   screen: Home,
-        //   navigationOptions: {
-        //     tabBarLabel: "Home",
-        //     tabBarIcon: ({ tintColor }) => (
-        //       <FontAwesome name="home" size={30} color={tintColor} />
-        //     )
-        //   }
-        // },
-    },
-    {
-        // tabBarOptions: {
-        //   style: {
-        //     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
-        //   }
-        // },
-        //   headerMode: 'float',
-        //   navigationOptions: ({navigation}) => ({
-        //     headerStyle: {backgroundColor: '#4C3E54'},
-        //     title: 'Welcome!',
-        //     headerTintColor: 'white',
-        //     gesturesEnabled: false,
-        //     headerLeft: drawerButton(navigation)
-        //   })
     }
 );
 
