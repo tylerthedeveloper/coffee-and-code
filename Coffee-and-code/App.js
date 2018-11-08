@@ -5,7 +5,7 @@ import initializeFirebase from './app/screens/LogIn';
 // import attemptToRestoreAuthAsync from './app/screens/LogIn';
 // import firebaseConfig from './firebaseConfig'
 
-
+// TODO: environment
   const firebaseConfig = {
     apiKey: "AIzaSyCoeV0BahxO-nKIFPVw8rEDjsxtH9xI2GM",
     authDomain: "coffee-and-code-41247.firebaseapp.com",

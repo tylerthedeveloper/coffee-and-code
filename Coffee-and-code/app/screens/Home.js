@@ -132,6 +132,12 @@ export default class Home extends Component<Props> {
   }
 
   _getLocationAsync = async () => {
+    const { status } = await Permissions.askAsync(Permissions.LOCATION);
+    if (status === 'granted') {
+      return Location.getCurrentPositionAsync({enableHighAccuracy: true});
+    } else {
+      throw new Error('Location permission not granted');
+    }
     const location = await Location.getCurrentPositionAsync({});
     (id = 0),
       this.setState({
