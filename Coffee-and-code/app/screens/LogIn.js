@@ -5,6 +5,9 @@ import * as firebase from "firebase";
 import getGithubTokenAsync from "../gitAuth/getGitHubToken";
 import { AsyncStorage } from "react-native";
 
+// TODO: 
+// import Constants from '../constants';
+// get GithubStorageKey from cosntants
 const GithubStorageKey = "@Expo:GithubToken";
 
 async function signInAsync(token) {
