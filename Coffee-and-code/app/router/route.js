@@ -7,7 +7,9 @@ import {
     createStackNavigator,
     createBottomTabNavigator,
     createSwitchNavigator,
-    createDrawerNavigator
+    createDrawerNavigator,
+    createTabNavigator,
+    createMaterialTopTabNavigator
 } from "react-navigation";
 
 import { FontAwesome } from "react-native-vector-icons";
@@ -28,14 +30,68 @@ export const SignedOut = createStackNavigator({
     }
 });
 
-const DrawerStack = createDrawerNavigator(
-    {
-        // TODO: Get all pages included here
-        Home: { screen: Home },
-        List: { screen: List },
-        Chat: { screen: Chat },
-        Profile: { screen: Profile }
+const ProfileTabNavigator = createMaterialTopTabNavigator({
+    Profile: {
+        screen: Profile,
+        navigationOptions: {
+            title: "Profile"
+        }
     },
+    Pending_Friend_Requests: {
+        screen: Profile,
+        navigationOptions: {
+            title: "Pending Friend Requests"
+        }
+    },
+    Friends: {
+        screen: Profile,
+        navigationOptions: {
+            title: "Friends"
+        }
+    }
+});
+
+const ScreenStackNavigator = createStackNavigator(
+    {
+        Home: {
+            screen: Home,
+            navigationOptions: {
+                title: "Home"
+            }
+        },
+        List: {
+            screen: List,
+            navigationOptions: {
+                title: "List"
+            }
+        },
+        Chat: {
+            screen: Chat,
+            navigationOptions: {
+                title: "Chat"
+            }
+        },
+        Profile: {
+            screen: ProfileTabNavigator,
+            navigationOptions: {
+                title: "Me"
+            }
+        }
+    },
+    {
+        headerMode: "float",
+        navigationOptions: ({ navigation }) => ({
+            headerStyle: { backgroundColor: "#4C3E54" },
+            title: navigation.routeName || "Coffee-and-Code",
+            headerTintColor: "white",
+            gesturesEnabled: false,
+            headerLeft: drawerButton(navigation)
+        })
+    }
+);
+
+const DrawerStack = createDrawerNavigator(
+    { ScreenStackNavigator },
     {
         gesturesEnabled: false,
         contentComponent: Menu
@@ -61,14 +117,7 @@ export const DrawerNavigation = createStackNavigator(
         DrawerStack: { screen: DrawerStack }
     },
     {
-        headerMode: "float",
-        navigationOptions: ({ navigation }) => ({
-            headerStyle: { backgroundColor: "#4C3E54" },
-            title: "Welcome!!!",
-            headerTintColor: "white",
-            gesturesEnabled: false,
-            headerLeft: drawerButton(navigation)
-        })
+        headerMode: "none"
     }
 );
 

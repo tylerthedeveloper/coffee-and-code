@@ -93,7 +93,7 @@ export default class Home extends Component<Props> {
             console.log("Api call error");
             alert(error.message);
         });
-        console.log(e.nativeEvent.coordinate);
+        // console.log(e.nativeEvent.coordinate);
     }
 
     resetInit() {
@@ -199,11 +199,11 @@ export default class Home extends Component<Props> {
 
     render() {
         const { region } = this.props;
-        console.log(
-            `latitude ${this.state.region.latitude} longitude ${
-                this.state.region.longitude
-            }`
-        );
+        // console.log(
+        //     `latitude ${this.state.region.latitude} longitude ${
+        //         this.state.region.longitude
+        //     }`
+        // );
         return (
             <View style={styles.container}>
                 <View style={styles.maps}>
@@ -213,19 +213,15 @@ export default class Home extends Component<Props> {
                         initialRegion={this.state.region}
                         // onPress={e => this.onMapPress(e)}
                     >
-                        {this.state.markers.map(
-                            marker => (
-                                console.log(marker.coordinate),
-                                (
-                                    <Marker
-                                        key={marker.key}
-                                        coordinate={marker.coordinate}
-                                        description="Information"
-                                        pinColor={marker.color}
-                                    />
-                                )
-                            )
-                        )}
+                        {this.state.markers.map(marker => (
+                            // console.log(marker.coordinate),
+                            <Marker
+                                key={marker.key}
+                                coordinate={marker.coordinate}
+                                description="Information"
+                                pinColor={marker.color}
+                            />
+                        ))}
                     </MapView>
 
                     <View style={styles.buttonContainer}>
