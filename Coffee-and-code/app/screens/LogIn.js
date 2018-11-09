@@ -4,35 +4,33 @@ import { Card, Button } from "react-native-elements";
 import * as firebase from "firebase";
 import getGithubTokenAsync from "../gitAuth/getGitHubToken";
 import { AsyncStorage } from "react-native";
+import { NavigationActions, StackActions } from "react-navigation";
 
-// TODO: 
+// TODO: MINOR
 // import Constants from '../constants';
 // get GithubStorageKey from cosntants
 const GithubStorageKey = "@Expo:GithubToken";
 
-async function signInAsync(token) {
+async function signInAsync() {
   console.log("Entered in signInAsync");
   try {
-    if (!token) {
-      const token = await getGithubTokenAsync();
-      if (token) {
-        await AsyncStorage.setItem(GithubStorageKey, token);
-        return signInAsync(token);
-      } else {
-        return;
-      }
+    // TODO: double await execution logic : MINOR
+    const token = await AsyncStorage.getItem(GithubStorageKey) || await getGithubTokenAsync();
+    if (token) {
+      await AsyncStorage.setItem(GithubStorageKey, token); // TODO: TTL? : MINOR
+      const credential = firebase.auth.GithubAuthProvider.credential(token);
+      return firebase.auth().signInAndRetrieveDataWithCredential(credential);
+    } else {
+      return;
     }
-    const credential = firebase.auth.GithubAuthProvider.credential(token);
-    return firebase.auth().signInAndRetrieveDataWithCredential(credential);
-    /* 
-    // TODO: logic ?
-      const token = await AsyncStorage.getItem(GithubStorageKey) || await getGithubTokenAsync();
-      if (token) {
-        const credential = firebase.auth.GithubAuthProvider.credential(token);
-        return firebase.auth().signInAndRetrieveDataWithCredential(credential);
-      } else {
-        return;
-      }
+  /* 
+  if (!token) {
+    const token = await getGithubTokenAsync();
+    if (token) {
+      await AsyncStorage.setItem(GithubStorageKey, token);
+      return signInAsync(token);
+    } else {
+      return;
     }
     */
   } catch ({ message }) {
@@ -66,8 +64,19 @@ async function signInAsync(token) {
 function signIn(navigation) {
   signInAsync()
   // TODO: createRootNavigator( true )
-    .then(() => navigation.navigate("SignedIn"));
-    // .catch()
+     .then(() => navigation.navigate("SignedIn"));
+    // .then(() => {
+    //   const actionToDispatch = StackActions.reset({
+    //         index: 0,
+    //         key: "SignedIn",  // black magic
+    //         actions: [
+    //           NavigationActions.navigate({ routeName: 'SignedIn' })]
+    //           // navigation.navigate("SignedIn")
+    //         // ]
+    //       })
+    //       navigation.dispatch(actionToDispatch)
+    //   })
+    //     // .catch()
 }
 
 // TODO: MAKE COMPONENT
