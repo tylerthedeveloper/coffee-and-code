@@ -21,23 +21,24 @@ export default class Menu extends React.Component {
         return (
             <View style={styles.container}>
                 <Text
-                    onPress={() => navigation.navigate("screen1")}
+                    onPress={() => navigation.navigate("Home")}
                     style={styles.uglyDrawerItem}
                 >
-                    Screen 1
+                    Map
                 </Text>
                 <Text
-                    onPress={() => navigation.navigate("screen2")}
+                    onPress={() => navigation.navigate("List")}
                     style={styles.uglyDrawerItem}
                 >
-                    Screen 2
+                    List
                 </Text>
                 <Text
-                    onPress={() => navigation.navigate("screen3")}
+                    onPress={() => navigation.navigate("Chat")}
                     style={styles.uglyDrawerItem}
                 >
-                    Screen 3
+                    Chat
                 </Text>
+                {/* ADD LINE DIVIDER HERE */}
                 <Text onPress={this.logout} style={styles.uglyDrawerItem}>
                     Log Out
                 </Text>

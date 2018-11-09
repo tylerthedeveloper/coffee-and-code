@@ -20,6 +20,7 @@ const data = [
 export default class {{ pascalCase name}} extends Component<Props> {
 
     constructor(props) {
+        super();
         this.state = {
 
         };

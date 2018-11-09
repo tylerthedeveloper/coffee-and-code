@@ -89,10 +89,10 @@ export default class Home extends Component<Props> {
           color: randomColor()
         }
       ]
-    }).catch((error)=>{
+    }).catch(error => {
       console.log("Api call error");
       alert(error.message);
-   });
+    });
     console.log(e.nativeEvent.coordinate);
   }
 
@@ -119,27 +119,27 @@ export default class Home extends Component<Props> {
             bio: "Ironman - Mechanic"
           }
         ]
-      }).catch((error)=>{
-     console.log("Api call error");
-     alert(error.message);
-  });
+      }).catch(error => {
+        console.log("Api call error");
+        alert(error.message);
+      });
   }
 
   // TODO: verify exuction order
   componentWillMount() {
+    // TODO: Combine like promises
     this._getLocationAsync();
     this._preLoadUsers();
   }
 
   _getLocationAsync = async () => {
     const { status } = await Permissions.askAsync(Permissions.LOCATION);
-    if (status === 'granted') {
-      return Location.getCurrentPositionAsync({enableHighAccuracy: true});
+    if (status !== "granted") {
+      // TODO: re-request for location permission
+      throw new Error("Location permission not granted");
     } else {
-      throw new Error('Location permission not granted');
-    }
-    const location = await Location.getCurrentPositionAsync({});
-    (id = 0),
+      const location = await Location.getCurrentPositionAsync({}); // {enableHighAccuracy: true}
+      id = 0;
       this.setState({
         region: {
           latitude: location.coords.latitude,
@@ -151,22 +151,20 @@ export default class Home extends Component<Props> {
           {
             coordinate: location.coords,
             key: id++,
-            color: currentLocationColor(),
+            color: this.currentLocationColor(),
             name: "Tony Stark",
             git_username: "starktony",
             bio: "Ironman - Mechanic"
           }
         ]
-      }).catch((error)=>{
-        console.log("Api call error");
-        alert(error.message);
-     });
-      
+      });
+    }
   };
 
   _preLoadUsers = async () => {
     try {
       let response = await fetch(
+        // TODO: CONST API SITE
         "https://coffee-and-code.azurewebsites.net/users"
       );
       let responseJson = await response.json();

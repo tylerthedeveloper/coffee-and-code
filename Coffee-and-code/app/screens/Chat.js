@@ -1,5 +1,4 @@
-import { parse } from "react-docgen";
-import Component from "!raw!./Component";
+// import { parse } from "react-docgen";
 import React, { Component } from "react";
 import {
     ScrollView,
@@ -15,7 +14,7 @@ import {
 import { Card, Button } from "react-native-elements";
 import { Constants, Location, Permissions } from "expo";
 
-const componentDocs = parse(Component);
+// const componentDocs = parse(Component);
 
 const data = [];
 

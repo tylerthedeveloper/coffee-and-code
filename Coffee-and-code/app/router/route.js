@@ -14,6 +14,8 @@ import { FontAwesome } from "react-native-vector-icons";
 
 import LogIn from "../screens/LogIn";
 import Home from "../screens/Home";
+import List from "../screens/List";
+import Chat from "../screens/Chat";
 import Menu from "../screens/Menu";
 
 export const SignedOut = createStackNavigator({
@@ -28,9 +30,9 @@ export const SignedOut = createStackNavigator({
 const DrawerStack = createDrawerNavigator(
     {
         // TODO: Get all pages included here
-        screen1: { screen: Home }
-        // screen2: { screen: Screen2 },
-        // screen3: { screen3een: Screen3 },
+        Home: { screen: Home },
+        List: { screen: List },
+        Chat: { screen: Chat },
     },
     {
         gesturesEnabled: false,

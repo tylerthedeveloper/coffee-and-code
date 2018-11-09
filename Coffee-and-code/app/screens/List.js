@@ -20,6 +20,7 @@ const data = [
 export default class List extends Component<Props> {
 
     constructor(props) {
+        super();
         this.state = {
 
         };
