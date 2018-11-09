@@ -1,6 +1,6 @@
 {
   "hooks" : {
-    "pre-commit": "npm run pretty && git add .",
+    "pre-commit": "npm run pretty && cd .. && git add Coffee-and-code",
     "post-commit": "npm run-script lint"
   }
 }

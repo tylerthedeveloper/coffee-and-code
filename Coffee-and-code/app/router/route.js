@@ -17,6 +17,7 @@ import Home from "../screens/Home";
 import List from "../screens/List";
 import Chat from "../screens/Chat";
 import Menu from "../screens/Menu";
+import Profile from "../screens/Profile";
 
 export const SignedOut = createStackNavigator({
     LogIn: {
@@ -33,6 +34,7 @@ const DrawerStack = createDrawerNavigator(
         Home: { screen: Home },
         List: { screen: List },
         Chat: { screen: Chat },
+        Profile: { screen: Profile }
     },
     {
         gesturesEnabled: false,
@@ -49,6 +51,7 @@ const drawerButton = navigation => (
             navigation.toggleDrawer();
         }}
     >
+        {/* TODO: Change to hamburger font awesome */}
         Menu
     </Text>
 );
@@ -69,11 +72,9 @@ export const DrawerNavigation = createStackNavigator(
     }
 );
 
-export const SignedIn = createStackNavigator(
-    {
-        DrawerStack: { screen: DrawerNavigation }
-    }
-);
+export const SignedIn = createStackNavigator({
+    DrawerStack: { screen: DrawerNavigation }
+});
 
 export const createRootNavigator = (signedIn = false) =>
     createSwitchNavigator(

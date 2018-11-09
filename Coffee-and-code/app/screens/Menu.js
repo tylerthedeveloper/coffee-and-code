@@ -1,8 +1,17 @@
 import React from "react";
-import { StyleSheet, Text, View, Image } from "react-native";
+import {
+    StyleSheet,
+    Text,
+    View,
+    Image,
+    TouchableHighlight
+} from "react-native";
 import { NavigationActions } from "react-navigation";
 
 export default class Menu extends React.Component {
+    // TODO: RESET STACK
+    // TODO: Clear state?
+    // TODO: ??? upload chat to DB from Redis
     logout = () => {
         // This will reset back to loginStack
         // https://github.com/react-community/react-navigation/issues/1127
@@ -20,6 +29,18 @@ export default class Menu extends React.Component {
         // TODO: STYLE AND Name each screen
         return (
             <View style={styles.container}>
+                <TouchableHighlight
+                    onPress={() => navigation.navigate("Profile")}
+                >
+                    <Image
+                        // source={{ uri: "https://facebook.github.io/react-native/docs/assets/favicon.png" }}
+                        source={require("../../assets/react.png")}
+                        style={styles.profileImage}
+                    />
+                </TouchableHighlight>
+                <Text onPress={() => navigation.navigate("Profile")}>
+                    Profile
+                </Text>
                 <Text
                     onPress={() => navigation.navigate("Home")}
                     style={styles.uglyDrawerItem}
@@ -54,6 +75,7 @@ const styles = StyleSheet.create({
         paddingTop: 40,
         paddingHorizontal: 20
     },
+    //TODO: Make better buttons
     uglyDrawerItem: {
         fontSize: 18,
         fontWeight: "bold",
@@ -64,5 +86,6 @@ const styles = StyleSheet.create({
         borderColor: "#E73536",
         borderWidth: 1,
         textAlign: "center"
-    }
+    },
+    profileImage: {}
 });
