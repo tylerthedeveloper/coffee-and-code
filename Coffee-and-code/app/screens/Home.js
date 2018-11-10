@@ -16,44 +16,19 @@ import {} from "react-native";
 
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps"; // remove PROVIDER_GOOGLE import if not using Google Maps
 import { Marker, ProviderPropType } from "react-native-maps";
-import { Constants, Location, Permissions } from "expo";
+import { Location, Permissions } from "expo";
+
+// import { SERVER_API } from "app/constants";
 
 const { width, height } = Dimensions.get("window");
 
 // TODO: Constants
 const ASPECT_RATIO = width / height;
 const LATITUDE = 39.1834026;
-const LONGITUDE = -86.523;
+const LONGITUDE = -106.523;
 const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 let id = 0;
-
-const images = [
-    {
-        key: 1,
-        name: "Nathan Anderson"
-        // image: require("../images/1.jpg"),
-        // url: "https://unsplash.com/photos/C9t94JC4_L8"
-    },
-    {
-        key: 2,
-        name: "Jamison McAndie"
-        // image: require("../images/2.jpg"),
-        // url: "https://unsplash.com/photos/waZEHLRP98s"
-    },
-    {
-        key: 3,
-        name: "Alberto Restifo"
-        // image: require("../images/3.jpg"),
-        // url: "https://unsplash.com/photos/cFplR9ZGnAk"
-    },
-    {
-        key: 4,
-        name: "John Towner"
-        // image: require("../images/4.jpg"),
-        // url: "https://unsplash.com/photos/89PFnHKg8HE"
-    }
-];
 
 // TODO: change id to this.state.markers.length
 
@@ -79,131 +54,72 @@ export default class Home extends Component<Props> {
         };
     }
 
-    onMapPress(e) {
-        this.setState({
-            markers: [
-                ...this.state.markers,
-                {
-                    coordinate: e.nativeEvent.coordinate,
-                    key: id++,
-                    color: randomColor()
-                }
-            ]
-        }).catch(error => {
-            console.log("Api call error");
-            alert(error.message);
-        });
-        // console.log(e.nativeEvent.coordinate);
-    }
-
-    resetInit() {
-        curlatitude = this.state.markers[0].coordinate.latitude;
-        curlongitude = this.state.markers[0].coordinate.longitude;
-        curcoordinate = this.state.markers[0].coordinate;
-        (id = 0),
-            this.setState({
-                region: {
-                    latitude: curlatitude,
-                    longitude: curlongitude,
-                    latitudeDelta: LATITUDE_DELTA,
-                    longitudeDelta: LONGITUDE_DELTA
-                },
-                // TODO: REMOVE
-                markers: [
-                    {
-                        coordinate: curcoordinate,
-                        key: id++,
-                        color: this.currentLocationColor(),
-                        name: "Tony Stark",
-                        git_username: "starktony",
-                        bio: "Ironman - Mechanic"
-                    }
-                ]
-            }).catch(error => {
-                console.log("Api call error");
-                alert(error.message);
-            });
-    }
-
-    // TODO: verify exuction order
     componentWillMount() {
-        // TODO: Combine like promises
-        this._getLocationAsync();
-        this._preLoadUsers();
+        this._initMap();
     }
 
-    _getLocationAsync = async () => {
+    _initMap = async () => {
         const { status } = await Permissions.askAsync(Permissions.LOCATION);
+        console.log("Location permission status: " + status);
         if (status !== "granted") {
             // TODO: re-request for location permission
             throw new Error("Location permission not granted");
         } else {
             const location = await Location.getCurrentPositionAsync({}); // {enableHighAccuracy: true}
-            id = 0;
+            const { latitude, longitude } = location.coords;
+            console.log(
+                "ABHI:: location: " +
+                    location.coords.latitude +
+                    " long: " +
+                    location.coords.longitude
+            );
+            const markers = [];
             this.setState({
                 region: {
-                    latitude: location.coords.latitude,
-                    longitude: location.coords.longitude,
+                    latitude: latitude,
+                    longitude: longitude,
                     latitudeDelta: LATITUDE_DELTA,
                     longitudeDelta: LONGITUDE_DELTA
-                },
-                markers: [
-                    {
-                        coordinate: location.coords,
-                        key: id++,
-                        color: this.currentLocationColor(),
-                        name: "Tony Stark",
-                        git_username: "starktony",
-                        bio: "Ironman - Mechanic"
-                    }
-                ]
+                }
+            });
+
+            const response = await fetch(
+                // TODO: CONST API SITE
+                "https://coffee-and-code.azurewebsites.net/users"
+            );
+            // TODO: test need for double await
+            let responseJson = await response.json();
+            let userInfoJson = responseJson.rows;
+
+            // TODO: Push logged in user
+            markers.push({
+                coordinate: location.coords,
+                key: id++,
+                color: this.currentLocationColor(),
+                name: "Tony Stark",
+                git_username: "starktony",
+                bio: "Ironman - Mechanic"
+            });
+            userInfoJson.map(user =>
+                markers.push({
+                    coordinate: {
+                        latitude: user.current_latitude,
+                        longitude: user.current_longitude
+                    },
+                    key: id++,
+                    color: this.randomColor(),
+                    name: user.name,
+                    git_username: user.git_username,
+                    bio: user.bio
+                })
+            );
+            this.setState({
+                markers
             });
         }
     };
 
-    _preLoadUsers = async () => {
-        try {
-            let response = await fetch(
-                // TODO: CONST API SITE
-                "https://coffee-and-code.azurewebsites.net/users"
-            );
-            let responseJson = await response.json();
-            //   console.log(responseJson.rows);
-            let userInfoJson = responseJson.rows;
-            id = 1;
-            //   console.log(userInfoJson)
-            {
-                userInfoJson.map(user =>
-                    this.setState({
-                        markers: [
-                            ...this.state.markers,
-                            {
-                                coordinate: {
-                                    latitude: user.current_latitude,
-                                    longitude: user.current_longitude
-                                },
-                                key: id++,
-                                color: this.randomColor(),
-                                name: user.name,
-                                git_username: user.git_username,
-                                bio: user.bio
-                            }
-                        ]
-                    })
-                );
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
     render() {
-        const { region } = this.props;
-        // console.log(
-        //     `latitude ${this.state.region.latitude} longitude ${
-        //         this.state.region.longitude
-        //     }`
-        // );
         return (
             <View style={styles.container}>
                 <View style={styles.maps}>
@@ -211,27 +127,16 @@ export default class Home extends Component<Props> {
                         provider={this.props.provider}
                         style={styles.map}
                         initialRegion={this.state.region}
-                        // onPress={e => this.onMapPress(e)}
+                        region={this.state.region}
                     >
                         {this.state.markers.map(marker => (
-                            // console.log(marker.coordinate),
                             <Marker
                                 key={marker.key}
                                 coordinate={marker.coordinate}
-                                description="Information"
                                 pinColor={marker.color}
                             />
                         ))}
                     </MapView>
-
-                    <View style={styles.buttonContainer}>
-                        <TouchableOpacity
-                            onPress={() => this.resetInit()}
-                            style={styles.bubble}
-                        >
-                            <Text>Tap to create a marker of random color</Text>
-                        </TouchableOpacity>
-                    </View>
                 </View>
 
                 {/* TODO: EXTRACT OUT INTO PersonList COMPONENT */}
@@ -267,8 +172,6 @@ Home.propTypes = {
 const styles = StyleSheet.create({
     container: {
         ...StyleSheet.absoluteFillObject,
-        // justifyContent: "flex-end",
-        // alignItems: "center"
         flex: 1,
         flexDirection: "column",
         alignItems: "stretch"
@@ -298,7 +201,6 @@ const styles = StyleSheet.create({
         backgroundColor: "transparent"
     },
     maps: {
-        // height: 400,
         flex: 0.67
     },
     cards: {
