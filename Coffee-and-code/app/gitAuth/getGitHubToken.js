@@ -5,7 +5,7 @@ import { AuthSession } from "expo";
 
 // The github auth callback should be something like: https://auth.expo.io/@bacon/github
 const REDIRECT_URL =
-    "https%3A%2F%2Fauth.expo.io%2F%40arpibhat%2FCoffee-and-code";
+    "https://auth.expo.io/@arpibhat/Coffee-and-code";
 
 // Add your API stuff here...
 const github = {
@@ -18,7 +18,6 @@ const githubFields = [
     "public_repo",
     "repo",
     "repo_deployment",
-
     "repo:status",
     "read:repo_hook",
     "read:org",
