@@ -17,6 +17,7 @@ import {} from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps"; // remove PROVIDER_GOOGLE import if not using Google Maps
 import { Marker, ProviderPropType } from "react-native-maps";
 import { Location, Permissions } from "expo";
+import PersonList from "../component/PersonList";
 
 // import { SERVER_API } from "app/constants";
 
@@ -60,7 +61,6 @@ export default class Home extends Component<Props> {
 
     _initMap = async () => {
         const { status } = await Permissions.askAsync(Permissions.LOCATION);
-        console.log("Location permission status: " + status);
         if (status !== "granted") {
             // TODO: re-request for location permission
             throw new Error("Location permission not granted");
@@ -140,25 +140,9 @@ export default class Home extends Component<Props> {
                 </View>
 
                 {/* TODO: EXTRACT OUT INTO PersonList COMPONENT */}
+
                 <View style={styles.cards}>
-                    <ScrollView>
-                        {this.state.markers.map(marker => (
-                            <Card key={marker.key}>
-                                <Text style={{ marginBottom: 10 }}>
-                                    {" "}
-                                    NAME: {marker.name}{" "}
-                                </Text>
-                                <Text style={{ marginBottom: 10 }}>
-                                    {" "}
-                                    USERNAME: {marker.git_username}{" "}
-                                </Text>
-                                <Text style={{ marginBottom: 10 }}>
-                                    {" "}
-                                    BIO: {marker.bio}{" "}
-                                </Text>
-                            </Card>
-                        ))}
-                    </ScrollView>
+                    <PersonList markers={this.state.markers} />
                 </View>
             </View>
         );

@@ -15,15 +15,12 @@ const GithubStorageKey = "@Expo:GithubToken";
 
 export default class Profile extends Component<Props> {
     async signInAsync() {
-        console.log("Entered in signInAsync");
         try {
             // TODO:  double await execution logic : MINOR
             const token =
                 (await AsyncStorage.getItem(GithubStorageKey)) ||
                 (await getGithubTokenAsync());
-            console.log("Received token: " + token);
             if (token) {
-                // console.log("ABHI:: Response: " + firebase.auth().currentUser);
                 await AsyncStorage.setItem(GithubStorageKey, token); // TODO: TTL? : MINOR
                 const credential = firebase.auth.GithubAuthProvider.credential(
                     token
@@ -32,7 +29,6 @@ export default class Profile extends Component<Props> {
                     .auth()
                     .signInAndRetrieveDataWithCredential(credential);
             } else {
-                console.log("Return Null");
                 return;
             }
         } catch ({ message }) {
