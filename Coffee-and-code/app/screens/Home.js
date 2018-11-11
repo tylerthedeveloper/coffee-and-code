@@ -51,7 +51,8 @@ export default class Home extends Component<Props> {
                 latitudeDelta: LATITUDE_DELTA,
                 longitudeDelta: LONGITUDE_DELTA
             },
-            markers: []
+            markers: [],
+            popup: true
         };
     }
 
@@ -136,6 +137,18 @@ export default class Home extends Component<Props> {
                                 pinColor={marker.color}
                             />
                         ))}
+                        {
+                            <Text
+                                style={{
+                                    flex: 2,
+                                    fontSize: 25,
+                                    color: "#000",
+                                    textAlign: "center"
+                                }}
+                            >
+                                Hello World
+                            </Text>
+                        }
                     </MapView>
                 </View>
 
