@@ -29,6 +29,7 @@
     "react-native-firebase": "^5.0.0",
     "react-native-link": "^4.1.0",
     "react-native-navigation": "^2.0.2641",
+    "react-native-paper": "^2.2.4",
     "react-navigation": "^2.18.2"
   },
   "devDependencies": {
