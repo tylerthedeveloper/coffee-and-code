@@ -4,7 +4,8 @@ import { AuthSession } from "expo";
 // Firebase Docs: https://firebase.google.com/docs/auth/web/github-auth
 
 // The github auth callback should be something like: https://auth.expo.io/@bacon/github
-const REDIRECT_URL = "https://auth.expo.io/@arpibhat/Coffee-and-code";
+const REDIRECT_URL =
+    "https%3A%2F%2Fauth.expo.io%2F%40arpibhat%2FCoffee-and-code";
 
 // Add your API stuff here...
 const github = {
@@ -31,6 +32,7 @@ function authUrlWithId(id, fields) {
         `?client_id=${id}` +
         `&redirect_uri=${encodeURIComponent(REDIRECT_URL)}` +
         `&scope=${encodeURIComponent(fields.join(" "))}`;
+    console.log("Auth URL" + url);
     return url;
 }
 
@@ -40,6 +42,7 @@ async function createTokenWithCode(code) {
         `?client_id=${github.id}` +
         `&client_secret=${github.secret}` +
         `&code=${code}`;
+    console.log(url);
     const res = await fetch(url, {
         method: "POST",
         headers: {
@@ -81,7 +84,6 @@ async function getGitHubTokenAsync() {
             params.code
         );
         // { token_type, scope, access_token }
-        console.log(access_token);
         return access_token;
     } catch ({ message }) {
         throw new Error(`Github Auth: ${message}`);

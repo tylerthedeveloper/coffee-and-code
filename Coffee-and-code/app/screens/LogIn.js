@@ -17,8 +17,8 @@ export default class Profile extends Component<Props> {
     async signInAsync() {
         console.log("Entered in signInAsync");
         try {
+            // TODO:  double await execution logic : MINOR
             const token =
-                //   TODO:  double await execution logic : MINOR
                 (await AsyncStorage.getItem(GithubStorageKey)) ||
                 (await getGithubTokenAsync());
             console.log("Received token: " + token);
