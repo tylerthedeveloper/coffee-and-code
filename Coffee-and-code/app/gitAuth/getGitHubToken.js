@@ -4,8 +4,7 @@ import { AuthSession } from "expo";
 // Firebase Docs: https://firebase.google.com/docs/auth/web/github-auth
 
 // The github auth callback should be something like: https://auth.expo.io/@bacon/github
-const REDIRECT_URL =
-    "https://auth.expo.io/@arpibhat/Coffee-and-code";
+const REDIRECT_URL = "https://auth.expo.io/@arpibhat/Coffee-and-code";
 
 // Add your API stuff here...
 const github = {
