@@ -93,7 +93,7 @@ export default class Home extends Component<Props> {
             console.log("Api call error");
             alert(error.message);
         });
-        console.log(e.nativeEvent.coordinate);
+       
     }
 
     resetInit() {
@@ -215,7 +215,7 @@ export default class Home extends Component<Props> {
                     >
                         {this.state.markers.map(
                             marker => (
-                                console.log(marker.coordinate),
+                               
                                 (
                                     <Marker
                                         key={marker.key}

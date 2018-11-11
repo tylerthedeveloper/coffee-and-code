@@ -26,9 +26,18 @@ export default class Profile extends Component<Props> {
                 const credential = firebase.auth.GithubAuthProvider.credential(
                     token
                 );
-                return firebase
+                const user= firebase
                     .auth()
-                    .signInAndRetrieveDataWithCredential(credential);
+                    .signInAndRetrieveDataWithCredential(credential).then(user =>{
+                        console.log("Arpit");
+                        const username = user.additionalUserInfo.username.toString(); 
+                        const photoURL = user.user.photoURL.toString(); 
+                        //const phone = user.user.phoneNumber.toString();
+                    
+                         fetchGitData(username); 
+                        
+                    });
+                    return user;
             } else {
                 return;
             }
@@ -37,46 +46,13 @@ export default class Profile extends Component<Props> {
         }
     }
 
-    // async function signOutAsync() {
-    //     try {
-    //         await AsyncStorage.removeItem(GithubStorageKey);
-    //         await firebase.auth().signOut();
-    //     } catch ({ message }) {
-    //         alert("Error: " + message);
-    //     }
-    // }
-
-    // async function attemptToRestoreAuthAsync() {
-    //     let token = await AsyncStorage.getItem(GithubStorageKey);
-    //     if (token) {
-    //         console.log("Sign in with token", token);
-    //         return signInAsync(token);
-    //     }
-    // }
+   
 
     signIn(navigation) {
         this.signInAsync()
             // TODO: createRootNavigator( true )
             .then(() => navigation.navigate("SignedIn"));
-        // .then(() => {
-        // const actionToDispatch = StackActions.reset({
-        //       index: 0,
-        //       // key: 'SignedIn',  // black magic
-        //       actions: [
-        //         NavigationActions.navigate({ routeName: 'SignedIn' })
-        //         // navigation.navigate("SignedIn")
-        //       ],
-        //       key: 'SignedIn'
-        //     });
-        //     navigation.dispatch(actionToDispatch)
-
-        // Navigation.setRoot({
-        //   component: {
-        //     name: 'SignedIn'
-        //   }
-        // })
-        // })
-        //     // .catch()
+        
     }
 
     render() {
@@ -112,3 +88,47 @@ export default class Profile extends Component<Props> {
 
 // TODO:
 // const styles = StyleSheet.create({
+
+    function fetchGitData(username){
+       //const langs = [];
+       var params =[ "language", "name", "description"];
+       var array = [];
+       var userRepoDetails = [];
+       const urls =[
+        `https://api.github.com/users/${username}/repos`,
+        `https://api.github.com/users/${username}`,
+        
+       ]
+       Promise.all(urls.map(url =>
+        fetch(url)
+           .then(res => res.json())
+       ))
+        .then(res => {
+                const repos = res[0].map(repo => { // (repos : IRepo) , repos => repo as IRepo
+                    const { id, name, language, description, html_url } = repo;
+                    const slimRepo = {
+                        id : id,
+                        name: name,
+                        language: language,
+                        description: description,
+                        html_url: html_url
+                    }
+                    // console.log(repo);
+                    console.log(slimRepo);
+                    return slimRepo;
+                });
+            
+                const { id,login, avatar_url, followers, following, public_repos, bio, name } = res[1];
+                const slimProfile = {
+                    id,
+                    login,
+                    avatar_url,
+                    followers,
+                    following,
+                    public_repos,
+                    bio,
+                    name
+                }
+                console.log(slimProfile);
+            });
+    }
