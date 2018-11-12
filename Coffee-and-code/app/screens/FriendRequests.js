@@ -56,7 +56,7 @@ export default class FriendRequests extends Component<Props> {
         console.log(this.props);
         return (
             // <View style={styles.container}>
-            <FriendsTab friends={this.state.friends_data} />
+            <TempFriendsTab friends={this.state.friends_data} />
             // </View>
         );
     }
