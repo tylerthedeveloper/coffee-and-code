@@ -93,10 +93,7 @@ export default class Profile extends Component<Props> {
 // const styles = StyleSheet.create({
 
     function fetchGitData(username){
-       //const langs = [];
-       var params =[ "language", "name", "description"];
-       var array = [];
-       var userRepoDetails = [];
+
        const urls =[
         `https://api.github.com/users/${username}/repos`,
         `https://api.github.com/users/${username}`,
@@ -108,29 +105,33 @@ export default class Profile extends Component<Props> {
        ))
         .then(res => {
                 const repos = res[0].map(repo => { // (repos : IRepo) , repos => repo as IRepo
-                    const { id, name, language, description, html_url } = repo;
+                    const { id, name, language, description, html_url, created_at, forks_count, stargazers_count, owner } = repo;
                     const slimRepo = {
-                        id : id,
-                        name: name,
-                        language: language,
-                        description: description,
-                        html_url: html_url
+                        repoID: id,
+                        user_name: owner.login,
+                        repo_name: name,
+                        language: language || "Not specified",
+                        description: description || "",
+                        repo_url: html_url,
+                        creation_date: created_at,
+                        forks_count: forks_count,
+                        stargazers_count: stargazers_count
                     }
-                    // console.log(repo);
-                    console.log(slimRepo);
+                     console.log(slimRepo);
+                    
                     return slimRepo;
                 });
-            
+                console.log(res[1]);
                 const { id,login, avatar_url, followers, following, public_repos, bio, name } = res[1];
                 const slimProfile = {
-                    id,
-                    login,
-                    avatar_url,
-                    followers,
-                    following,
-                    public_repos,
-                    bio,
-                    name
+                    user_id:  id,
+                    user_name: login,
+                    image_url: avatar_url,
+                    followers: followers,
+                    following: following,
+                    public_repos: public_repos,
+                    bio: bio,
+                    full_name: name
                 }
                 console.log(slimProfile);
             });
