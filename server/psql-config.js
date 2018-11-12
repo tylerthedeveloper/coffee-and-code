@@ -14,6 +14,7 @@ const pool = new Pool({
     // connectionTimeoutMillis: 2000,
 });
 
+
 module.exports = {
-    psqlPool: pool
+    psqlPool: pool,
 }

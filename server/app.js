@@ -11,8 +11,11 @@ const redisClient = require("./redis-client").redisClient;
 // TODO: Dele
 redisClient.set('my test key', 'my test value');
 
+// TODO: Dynamically add route
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+const reposRouter = require('./routes/repos');
+
 const friendRequestsRouter = require('./routes/friend-requests');
 
 const app = express();
@@ -43,9 +46,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/test2', function(req, res, next) {
   console.log('test2');
-  redisClient.get('my test key', function(error, reply) {
+  return redisClient.get('my test key', function(error, reply) {
     console.log(error);
     console.log(reply);
+    res.send( { test2: reply })
   });
 });
 
@@ -63,6 +67,7 @@ app.use('/test', function(req, res, next) {
 })
 app.use('/users', usersRouter);
 app.use('/friend-requests', friendRequestsRouter);
+app.use('/repos', reposRouter);
 
 // TODO: catch 404 and forward to error handler
 app.use(function(req, res, next) {
