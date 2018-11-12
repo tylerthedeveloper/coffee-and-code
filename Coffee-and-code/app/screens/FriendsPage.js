@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { Card, Button } from "react-native-elements";
 import { Constants, Location, Permissions } from "expo";
-import FriendsTab from "../component/FriendsTab";
+import TempFriendsPage from "../component/TempFriendsPage";
 
 const data = [];
 
@@ -56,7 +56,7 @@ export default class FriendRequests extends Component<Props> {
         console.log(this.props);
         return (
             // <View style={styles.container}>
-            <TempFriendsTab friends={this.state.friends_data} />
+            <TempFriendsPage friends={this.state.friends_data} />
             // </View>
         );
     }
