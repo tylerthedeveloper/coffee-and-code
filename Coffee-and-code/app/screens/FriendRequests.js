@@ -12,7 +12,8 @@ import {
 } from "react-native";
 import { Card, Button } from "react-native-elements";
 import { Constants, Location, Permissions } from "expo";
-import FriendsTab from "../component/FriendsTab";
+import TempFriendsTab from "../component/TempFriendsTab";
+
 
 const data = [];
 

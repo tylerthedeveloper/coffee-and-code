@@ -10,10 +10,10 @@ import {
 import { Constants } from "expo";
 
 // You can import from local files
-import AssetExample from "./components/AssetExample";
+//import AssetExample from "./components/AssetExample";
 
 // or any pure javascript modules available in npm
-import { Card } from "react-native-paper";
+
 
 export default class App extends React.Component {
     state = {
@@ -31,7 +31,7 @@ export default class App extends React.Component {
 
     render() {
         return (
-            <React.Fragment
+            <View
                 style={{ backgroundColor: "white", height: 700, padding: 20 }}
             >
                 <ScrollView style={{ marginTop: 50 }}>
@@ -39,7 +39,7 @@ export default class App extends React.Component {
                         <View style={styles.imageViewSource}>
                             <Image
                                 style={styles.image}
-                                source={require("./assets/Nishchay.jpg")}
+                                source={require("../../assets/Nishchayjpg.jpg")}
                             />
                         </View>
                         <View style={styles.textViewStyle}>
@@ -62,7 +62,7 @@ export default class App extends React.Component {
                                     style={{
                                         color: "white",
                                         marginTop: 5,
-                                        fontFamily: "Calibri"
+                                        
                                     }}
                                 >
                                     Remove
@@ -75,7 +75,7 @@ export default class App extends React.Component {
                         <View style={styles.imageViewSource}>
                             <Image
                                 style={styles.image}
-                                source={require("./assets/Arpit.jpg")}
+                                source={require("../../assets/Arpit.jpg")}
                             />
                         </View>
                         <View style={styles.textViewStyle}>
@@ -98,7 +98,7 @@ export default class App extends React.Component {
                                     style={{
                                         color: "white",
                                         marginTop: 5,
-                                        fontFamily: "Calibri"
+                                        
                                     }}
                                 >
                                     Remove
@@ -111,7 +111,7 @@ export default class App extends React.Component {
                         <View style={styles.imageViewSource}>
                             <Image
                                 style={styles.image}
-                                source={require("./assets/Abhishekjpg.jpg")}
+                                source={require("../../assets/Abhishekjpg.jpg")}
                             />
                         </View>
                         <View style={styles.textViewStyle}>
@@ -134,7 +134,7 @@ export default class App extends React.Component {
                                     style={{
                                         color: "white",
                                         marginTop: 5,
-                                        fontFamily: "Calibri"
+                                        
                                     }}
                                 >
                                     Remove
@@ -147,7 +147,7 @@ export default class App extends React.Component {
                         <View style={styles.imageViewSource}>
                             <Image
                                 style={styles.image}
-                                source={require("./assets/Tyler.jpg")}
+                                source={require("../../assets/Tyler.jpg")}
                             />
                         </View>
                         <View style={styles.textViewStyle}>
@@ -170,7 +170,7 @@ export default class App extends React.Component {
                                     style={{
                                         color: "white",
                                         marginTop: 5,
-                                        fontFamily: "Calibri"
+                                        
                                     }}
                                 >
                                     Remove
@@ -179,7 +179,7 @@ export default class App extends React.Component {
                         </View>
                     </View>
                 </ScrollView>
-            </React.Fragment>
+            </View>
         );
     }
 }

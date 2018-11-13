@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Image, Text } from "react-native";
+import { View, Image, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { Card, Button } from "react-native-elements";
 import * as firebase from "firebase";
 import getGithubTokenAsync from "../gitAuth/getGitHubToken";
@@ -7,6 +7,7 @@ import { AsyncStorage } from "react-native";
 import { NavigationActions, StackActions } from "react-navigation";
 import { Navigation } from "react-native-navigation";
 import SignedIn from "../router/route";
+import { FontAwesome as Icon} from '@expo/vector-icons';
 
 // TODO: MINOR
 // import Constants from '../constants';
@@ -81,33 +82,59 @@ export default class Profile extends Component<Props> {
     render() {
         const { navigation } = this.props;
         return (
-            <View
-                style={{
-                    paddingVertical: 20,
-                    backgroundColor: "#FFFFFF",
-                    height: 700
-                }}
-            >
-                <Image
-                    source={require("../images/logo.png")}
-                    style={{
-                        width: 250,
-                        height: 250,
-                        alignItems: "center",
-                        backgroundColor: "transparent",
-                        marginLeft: 80
-                    }}
-                />
-                <Button
-                    buttonStyle={{ marginTop: 200 }}
-                    backgroundColor="#03A9F4"
-                    title="Login with GitHub"
-                    onPress={() => this.signIn(navigation)}
-                />
-            </View>
-        );
+            
+                <View style={styles.container}>
+                    <Image
+                        source={require("../../assets/giphy.gif")}
+                        style={{ width: 200, height: 350, marginLeft: 100 }}
+                    />
+                    <Text
+                        style={{
+                            color: "white",
+                            fontSize: 50,
+                            marginLeft: 180,
+                            fontWeight: "bold"
+                        }}
+                    >
+                        &
+                    </Text>
+                    <Text
+                        style={{
+                            color: "white",
+                            fontSize: 50,
+                            marginLeft: 140,
+                            fontWeight: "bold",
+                        }}
+                    >
+                        Code
+                    </Text>
+                    <TouchableOpacity
+                        style={{
+                            width: 175,
+                            height: 50,
+                            marginLeft: 110,
+                            marginTop: 100
+                        }}
+                    >
+                        <Icon.Button
+                            name="github"
+                            style={{ width: 180, height: 50 }}
+                            color="black"
+                            backgroundColor="white"
+                            onPress={() => this.signIn(navigation)}
+                        >
+                            Sign In with Github a
+                        </Icon.Button>
+                    </TouchableOpacity>
+                </View>
+            );
+        }
     }
-}
-
-// TODO:
-// const styles = StyleSheet.create({
+    
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: "black",
+        }
+    });
+    
