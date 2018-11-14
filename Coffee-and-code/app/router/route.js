@@ -21,6 +21,7 @@ import Chat from "../screens/Chat";
 import Menu from "../screens/Menu";
 import Profile from "../screens/Profile";
 import FriendRequests from "../screens/FriendRequests";
+import FriendsPage from "../screens/FriendsPage";
 
 export const SignedOut = createStackNavigator({
     LogIn: {
@@ -39,13 +40,13 @@ const ProfileTabNavigator = createMaterialTopTabNavigator({
         }
     },
     Pending_Friend_Requests: {
-        screen: FriendRequests,
+        screen: FriendsPage,
         navigationOptions: {
             title: "Pending Friend Requests"
         }
     },
     Friends: {
-        screen: Profile,
+        screen: FriendRequests,
         navigationOptions: {
             title: "Friends"
         }
