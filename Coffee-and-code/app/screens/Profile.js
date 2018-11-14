@@ -1,113 +1,100 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
-    ScrollView,
-    Text,
-    Linking,
-    View,
-    Alert,
-    Platform,
-    StyleSheet,
-    Dimensions,
-    TouchableOpacity,
-    Image
-} from "react-native";
-// import { Text, View, StyleSheet, Image, ScrollView } from 'react-native';
-import { Card, Button } from "react-native-elements";
-import { Constants, Location, Permissions } from "expo";
-import Repo from "../component/Repo";
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 
-const data = [];
+export default class Profile extends Component {
 
-export default class Profile extends Component<Props> {
-    constructor(props) {
-        super();
-        this.state = {
-            repoData: [
-                {
-                    id: "1",
-                    title: "Coffee and Code",
-                    language: "React-Native",
-                    desc: "Tutoring service made easy"
-                },
-                {
-                    id: "2",
-                    title: "Restaurant Website",
-                    language: "HTML/CSS/PHP",
-                    desc: "Malibu Grill Website Development"
-                },
-                {
-                    id: "3",
-                    title: "Coffee and Code",
-                    language: "React-Native",
-                    desc: "Tutoring service made easy"
-                }
-            ]
-        };
-    }
-
-    componentDidMount() {}
-
-    render() {
-        const {} = this.props;
-        console.log(this.props);
-        return (
-            <View style={styles.container}>
-                <Image
-                    style={styles.logo}
-                    source={require("../../assets/ironman.png")}
-                />
-                <Text style={styles.paragraph}> Name: Abhishek </Text>
-                <Text style={styles.paragraph}> Bio: Stark Industries </Text>
-                <Text style={styles.paragraph}> Skills: </Text>
-                <ScrollView
-                    horizontal={true}
-                    style={{ width: 160, height: 80 }}
-                >
-                    <Text style={styles.skills}>C</Text>
-                    <Text style={styles.skills}>C++</Text>
-                    <Text style={styles.skills}>Python</Text>
-                </ScrollView>
-                <Text style={styles.paragraph}> Repos: </Text>
-
-                <Repo repoData={this.state.repoData} />
+  render() {
+    return (
+        <ScrollView>
+      <View style={styles.container}>
+          <View style={styles.header}></View>
+          <Image style={styles.avatar} source={{uri: 'https://avatars3.githubusercontent.com/u/1481628?v=4'}}/>
+          <View style={styles.body}>
+            <View style={styles.bodyContent}>
+              <Text style={styles.name}>Arpit Bhatnagar</Text>
+              <Text style={styles.info}>Mobile developer</Text>
+              <Text style={styles.description}>Skills Set:React Native</Text>
+              
+              <TouchableOpacity style={styles.buttonContainer}>
+                <Text>Edit Profile</Text>  
+              </TouchableOpacity>              
+              <TouchableOpacity style={styles.buttonContainer}>
+                <Text>Logout</Text> 
+              </TouchableOpacity>
             </View>
-        );
-    }
+        </View>
+      </View>
+      </ScrollView>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
-    container: {
-        alignItems: "center",
-        flex: 1,
-        justifyContent: "center",
-        paddingTop: Constants.statusBarHeight,
-        backgroundColor: "#ecf0f1",
-        padding: 8
-    },
-    paragraph: {
-        margin: 10,
-        fontSize: 18,
-        fontWeight: "bold",
-        textAlign: "center"
-    },
-    logo: {
-        height: 128,
-        width: 128
-    },
-    skills: {
-        textAlign: "center",
-        fontSize: 18,
-        height: 25,
-        width: 80,
-        borderRadius: 4,
-        borderWidth: 0.5,
-        borderColor: "#d6d7da"
-    },
-    textarea: {
-        width: 200,
-        height: 100,
-        borderRadius: 4,
-        borderWidth: 0.5,
-        borderColor: "#d6d7da"
-    }
+  header:{
+    backgroundColor: "#000000",
+    height:150,
+  },
+  avatar: {
+    width: 130,
+    height: 130,
+    borderRadius: 63,
+    borderWidth: 4,
+    borderColor: "white",
+    marginBottom:10,
+    alignSelf:'center',
+    position: 'absolute',
+    marginTop:70
+  },
+  name:{
+    fontSize:22,
+    color:"#FFFFFF",
+    fontWeight:'600',
+    
+    
+  },
+  body:{
+    marginTop:30,
+  },
+  bodyContent: {
+    flex: 1,
+    alignItems: 'center',
+    padding:30,
+
+   
+  },
+  name:{
+    fontSize:28,
+    color: "#696969",
+    fontWeight: "600"
+  },
+  info:{
+    fontSize:16,
+    color: "#00BFFF",
+    marginTop:10
+  },
+  description:{
+    fontSize:16,
+    color: "#696969",
+    marginTop:10,
+    textAlign: 'center'
+  },
+  buttonContainer: {
+    marginTop:10,
+    height:45,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom:20,
+    width:200,
+    borderRadius:30,
+    backgroundColor: "#00BFFF",
+  },
 });
+ 
