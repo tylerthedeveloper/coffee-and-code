@@ -68,7 +68,6 @@ export default class Home extends Component<Props> {
             console.log("Api call error");
             alert(error.message);
         });
-       
     }
 
     resetInit() {
@@ -176,19 +175,14 @@ export default class Home extends Component<Props> {
                         initialRegion={this.state.region}
                         region={this.state.region}
                     >
-                        {this.state.markers.map(
-                            marker => (
-                               
-                                (
-                                    <Marker
-                                        key={marker.key}
-                                        coordinate={marker.coordinate}
-                                        description="Information"
-                                        pinColor={marker.color}
-                                    />
-                                )
-                            )
-                        )}
+                        {this.state.markers.map(marker => (
+                            <Marker
+                                key={marker.key}
+                                coordinate={marker.coordinate}
+                                description="Information"
+                                pinColor={marker.color}
+                            />
+                        ))}
                     </MapView>
                 </View>
 
