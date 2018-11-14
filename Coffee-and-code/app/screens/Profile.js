@@ -46,7 +46,7 @@ export default class Profile extends Component<Props> {
     }
 
     componentDidMount() {}
-
+    /** This is asd */
     render() {
         const {} = this.props;
         console.log(this.props);
