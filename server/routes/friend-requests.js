@@ -42,14 +42,15 @@ router.get("/:git_username/sent", function(req, res, next) {
     });
 });
 
+/**
+ * add new friend request for both sent and received
+ */
 router.post("/", function(req, res, next) {
     const data = req.body.data;
-    console.log(data.fromUser);
     const { git_username_from, picture_url_from } = data.fromUser;
     const { git_username_to, picture_url_to } = data.toUser;
     const fromLookup = `${git_username_from}-sent`;
     const toLookup = `${git_username_to}-received`;
-    console.log(fromLookup, git_username_from);
     const multiClient = redisClient.multi();
     multiClient.rpush(fromLookup, `${git_username_to}:${picture_url_to}`);
     multiClient.rpush(toLookup, `${git_username_from}:${picture_url_from}`);
@@ -63,24 +64,24 @@ router.post("/", function(req, res, next) {
     });
 });
 
-// TODO:
 /**
- * delete friend-request by ID
+ * delete friend-request by username-picture_url
  */
-router.delete("/:git_username_from/:git_username_to", function(req, res, next) {
-    const git_username_from = req.params["git_username_from"];
-    const git_username_to = req.params["git_username_to"];
+router.delete("/", function(req, res, next) {
+    const data = req.body.data;
+    const { git_username_from, picture_url_from } = data.fromUser;
+    const { git_username_to, picture_url_to } = data.toUser;
     const fromLookup = `${git_username_from}-sent`;
     const toLookup = `${git_username_to}-received`;
     const multiClient = redisClient.multi();
-    multiClient.lrem(fromLookup, 1, git_username_to);
-    multiClient.lrem(toLookup, 1, git_username_from);
+    multiClient.lrem(fromLookup, 1, `${git_username_to}:${picture_url_to}`);
+    multiClient.lrem(toLookup, 1, `${git_username_from}:${picture_url_from}`);
     return multiClient.exec(function(error, result) {
         if (error) {
             console.log(error);
             throw error;
         }
-        console.log("DEL result -> " + result);
+        console.log("SET result -> " + result);
         res.send({ result: "res" });
     });
 });
