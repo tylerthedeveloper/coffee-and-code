@@ -40,13 +40,13 @@ const ProfileTabNavigator = createMaterialTopTabNavigator({
         }
     },
     Pending_Friend_Requests: {
-        screen: FriendsPage,
+        screen: FriendRequests,
         navigationOptions: {
             title: "Pending Friend Requests"
         }
     },
     Friends: {
-        screen: FriendRequests,
+        screen: FriendsPage,
         navigationOptions: {
             title: "Friends"
         }
