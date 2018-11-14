@@ -35,7 +35,7 @@ export default class Profile extends Component<Props> {
                         const username = user.additionalUserInfo.username.toString(); 
                         const photoURL = user.user.photoURL.toString(); 
                         //const phone = user.user.phoneNumber.toString();
-                    
+                    //TODO:  strategy implementation of fetching data
                          fetchGitData(username); 
                         
                     });
@@ -129,7 +129,7 @@ export default class Profile extends Component<Props> {
                     image_url: avatar_url,
                     followers: followers,
                     following: following,
-                    public_repos: public_repos,
+                    public_repos: public_repos, 
                     bio: bio,
                     full_name: name
                 }
