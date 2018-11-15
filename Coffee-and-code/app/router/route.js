@@ -17,11 +17,14 @@ import { FontAwesome } from "react-native-vector-icons";
 import LogIn from "../screens/LogIn";
 import Home from "../screens/Home";
 import List from "../screens/List";
-import Chat from "../screens/Chat";
 import Menu from "../screens/Menu";
 import Profile from "../screens/Profile";
 import FriendRequests from "../screens/FriendRequests";
 import FriendsPage from "../screens/FriendsPage";
+import ChatThreads from "../screens/ChatThreads";
+import ChatMessages from "../screens/ChatMessages";
+
+// TODO: Separate files
 
 export const SignedOut = createStackNavigator({
     LogIn: {
@@ -46,9 +49,24 @@ const ProfileTabNavigator = createMaterialTopTabNavigator({
         }
     },
     Friends: {
-        screen: FriendsPage,
+        screen: FriendRequests,
         navigationOptions: {
             title: "Friends"
+        }
+    }
+});
+
+const ChatStackNavigator = createStackNavigator({
+    Chat: {
+        screen: ChatThreads,
+        navigationOptions: {
+            title: "Chats"
+        }
+    },
+    Messages: {
+        screen: ChatMessages,
+        navigationOptions: {
+            title: "Custom from props"
         }
     }
 });
@@ -67,8 +85,14 @@ const ScreenStackNavigator = createStackNavigator(
                 title: "List"
             }
         },
+        // Chat: {
+        //     screen: ChatThreads,
+        //     navigationOptions: {
+        //         title: "Chat"
+        //     }
+        // },
         Chat: {
-            screen: Chat,
+            screen: ChatStackNavigator,
             navigationOptions: {
                 title: "Chat"
             }

@@ -15,7 +15,8 @@ import { Card, Button } from "react-native-elements";
 import {} from "react-native";
 
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps"; // remove PROVIDER_GOOGLE import if not using Google Maps
-import { Marker, ProviderPropType } from "react-native-maps";
+import { Marker, ProviderPropType, Callout } from "react-native-maps";
+import CustomCallout from "./CustomCallout";
 import { Location, Permissions } from "expo";
 import PersonList from "../component/PersonList";
 
@@ -120,6 +121,11 @@ export default class Home extends Component<Props> {
         }
     };
 
+    popup() {
+        {
+            console.log("Printed");
+        }
+    }
     render() {
         return (
             <View style={styles.container}>
@@ -135,20 +141,31 @@ export default class Home extends Component<Props> {
                                 key={marker.key}
                                 coordinate={marker.coordinate}
                                 pinColor={marker.color}
-                            />
-                        ))}
-                        {
-                            <Text
-                                style={{
-                                    flex: 2,
-                                    fontSize: 25,
-                                    color: "#000",
-                                    textAlign: "center"
-                                }}
                             >
-                                Hello World
-                            </Text>
-                        }
+                                <Callout tooltip style={styles.customView}>
+                                    <CustomCallout>
+                                        <Card key={marker.key}>
+                                            <Text style={{ marginBottom: 10 }}>
+                                                {" "}
+                                                NAME: {marker.name}{" "}
+                                            </Text>
+                                            <Text style={{ marginBottom: 10 }}>
+                                                {" "}
+                                                USERNAME: {
+                                                    marker.git_username
+                                                }{" "}
+                                            </Text>
+                                            <Text style={{ marginBottom: 10 }}>
+                                                {" "}
+                                                BIO: {marker.bio}{" "}
+                                            </Text>
+                                        </Card>
+
+                                        {/* {<Text>This is a custom callout bubble view</Text>} */}
+                                    </CustomCallout>
+                                </Callout>
+                            </Marker>
+                        ))}
                     </MapView>
                 </View>
 
@@ -202,5 +219,8 @@ const styles = StyleSheet.create({
     },
     cards: {
         flex: 0.33
+    },
+    customView: {
+        flex: 4
     }
 });
