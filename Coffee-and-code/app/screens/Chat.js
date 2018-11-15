@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { Card, Button } from "react-native-elements";
 import { Constants, Location, Permissions } from "expo";
+// import { GiftedChat } from 'react-native-gifted-chat'
 
 // const componentDocs = parse(Component);
 
@@ -30,6 +31,11 @@ export default class Chat extends Component<Props> {
         const {} = this.props;
         console.log(this.props);
         return <View style={styles.container} />;
+        // return (
+        //     <GiftedChat
+        //         messages={[]}
+        //     />
+        // )
     }
 }
 
