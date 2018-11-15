@@ -2,54 +2,74 @@ const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+// TODO: Setup morgan logger
 const logger = require('morgan');
-const { Pool } = require('pg')
-const dotenv = require('dotenv');
-dotenv.load();
+const pool = require('./psql-config').psqlPool;
+const redisClient = require("./redis-client").redisClient;
 
-// TODO: PUT IN CONFIG + ENV VARIABLE
-const pool = new Pool({
-  host: process.env.PGHOST,
-  user: process.env.PGUSER,
-  database: process.env.PGDATABASE,
-  password: process.env.PGPASSWORD,
-  port: process.env.PGPORT,
-  ssl: true,
-  max: 20,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
-});
+// TODO: Dele
+redisClient.set('my test key', 'my test value');
 
-
-
+// TODO: Dynamically add route
 const indexRouter = require('./routes/index');
-// const usersRouter = require('./routes/users');
+const usersRouter = require('./routes/users');
+const reposRouter = require('./routes/repos');
+
+const friendRequestsRouter = require('./routes/friend-requests');
 
 const app = express();
 
+/*
+app.use(function(req, res, next) {
+  if (!req.headers.access_token && !req.query.access_token) {
+    return res.status(403).json({ error: 'No credentials sent!' });
+  }
+  next();
+});
+*/
+
 // view engine setup
-// app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'jade');
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/test', () => {
-    pool.query('SELECT NOW()', (err, result) => {
+app.use('/test2', function(req, res, next) {
+  console.log('test2');
+  return redisClient.get('my test key', function(error, reply) {
+    console.log(error);
+    console.log(reply);
+    res.send( { test2: reply })
+  });
+});
+
+
+app.use('/test', function(req, res, next) {
+    console.log('in test')
+    return pool.query('SELECT NOW()', (err, result) => {
       if (err) {
         return console.error('Error executing query', err.stack)
       }
       console.log('in query')
       console.log(result.rows)
+      res.send({ rows: result.rows });
     })
 })
-// app.use('/users', usersRouter);
+app.use('/users', usersRouter);
+app.use('/friend-requests', friendRequestsRouter);
+app.use('/repos', reposRouter);
 
-// catch 404 and forward to error handler
+// TODO: catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
