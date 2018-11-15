@@ -15,6 +15,7 @@ redisClient.set('my test key', 'my test value');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const reposRouter = require('./routes/repos');
+const friendsRouter = require('./routes/friends');
 
 const friendRequestsRouter = require('./routes/friend-requests');
 
@@ -44,16 +45,10 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/test2', function(req, res, next) {
-  console.log('test2');
-  return redisClient.get('my test key', function(error, reply) {
-    console.log(error);
-    console.log(reply);
-    res.send( { test2: reply })
-  });
-});
-
-
+app.use('/users', usersRouter);
+app.use('/friend-requests', friendRequestsRouter);
+app.use('/repos', reposRouter);
+app.use('/friends', friendsRouter);
 app.use('/test', function(req, res, next) {
     console.log('in test')
     return pool.query('SELECT NOW()', (err, result) => {
@@ -65,9 +60,14 @@ app.use('/test', function(req, res, next) {
       res.send({ rows: result.rows });
     })
 })
-app.use('/users', usersRouter);
-app.use('/friend-requests', friendRequestsRouter);
-app.use('/repos', reposRouter);
+app.use('/test2', function(req, res, next) {
+  console.log('test2');
+  return redisClient.get('my test key', function(error, reply) {
+    console.log(error);
+    console.log(reply);
+    res.send( { test2: reply })
+  });
+});
 
 // TODO: catch 404 and forward to error handler
 app.use(function(req, res, next) {
