@@ -33,9 +33,18 @@ export default class Profile extends Component<Props> {
                 const credential = firebase.auth.GithubAuthProvider.credential(
                     token
                 );
-                return firebase
+                const user = firebase
                     .auth()
-                    .signInAndRetrieveDataWithCredential(credential);
+                    .signInAndRetrieveDataWithCredential(credential)
+                    .then(user => {
+                        console.log("Arpit");
+                        const username = user.additionalUserInfo.username.toString();
+                        const photoURL = user.user.photoURL.toString();
+                        //const phone = user.user.phoneNumber.toString();
+                        //TODO:  strategy implementation of fetching data
+                        fetchGitData(username);
+                    });
+                return user;
             } else {
                 return;
             }
@@ -44,46 +53,10 @@ export default class Profile extends Component<Props> {
         }
     }
 
-    // async function signOutAsync() {
-    //     try {
-    //         await AsyncStorage.removeItem(GithubStorageKey);
-    //         await firebase.auth().signOut();
-    //     } catch ({ message }) {
-    //         alert("Error: " + message);
-    //     }
-    // }
-
-    // async function attemptToRestoreAuthAsync() {
-    //     let token = await AsyncStorage.getItem(GithubStorageKey);
-    //     if (token) {
-    //         console.log("Sign in with token", token);
-    //         return signInAsync(token);
-    //     }
-    // }
-
     signIn(navigation) {
         this.signInAsync()
             // TODO: createRootNavigator( true )
             .then(() => navigation.navigate("SignedIn"));
-        // .then(() => {
-        // const actionToDispatch = StackActions.reset({
-        //       index: 0,
-        //       // key: 'SignedIn',  // black magic
-        //       actions: [
-        //         NavigationActions.navigate({ routeName: 'SignedIn' })
-        //         // navigation.navigate("SignedIn")
-        //       ],
-        //       key: 'SignedIn'
-        //     });
-        //     navigation.dispatch(actionToDispatch)
-
-        // Navigation.setRoot({
-        //   component: {
-        //     name: 'SignedIn'
-        //   }
-        // })
-        // })
-        //     // .catch()
     }
 
     render() {
@@ -143,3 +116,65 @@ const styles = StyleSheet.create({
         backgroundColor: "black"
     }
 });
+
+// TODO: Arpit
+function fetchGitData(username) {
+    const urls = [
+        `https://api.github.com/users/${username}/repos`,
+        `https://api.github.com/users/${username}`
+    ];
+    Promise.all(urls.map(url => fetch(url).then(res => res.json()))).then(
+        res => {
+            const repos = res[0].map(repo => {
+                // (repos : IRepo) , repos => repo as IRepo
+                const {
+                    id,
+                    name,
+                    language,
+                    description,
+                    html_url,
+                    created_at,
+                    forks_count,
+                    stargazers_count,
+                    owner
+                } = repo;
+                const slimRepo = {
+                    repoID: id,
+                    user_name: owner.login,
+                    repo_name: name,
+                    language: language || "Not specified",
+                    description: description || "",
+                    repo_url: html_url,
+                    creation_date: created_at,
+                    forks_count: forks_count,
+                    stargazers_count: stargazers_count
+                };
+                console.log(slimRepo);
+
+                return slimRepo;
+            });
+            console.log(res[1]);
+            const {
+                id,
+                login,
+                avatar_url,
+                followers,
+                following,
+                public_repos,
+                bio,
+                name
+            } = res[1];
+            const slimProfile = {
+                user_id: id,
+                user_name: login,
+                image_url: avatar_url,
+                followers: followers,
+                following: following,
+                public_repos: public_repos,
+                bio: bio,
+                full_name: name
+            };
+            console.log(slimProfile);
+        }
+    );
+}
