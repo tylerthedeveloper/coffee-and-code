@@ -1,25 +1,15 @@
 import React, { Component } from "react";
-import {
-    View,
-    Image,
-    Text,
-    StyleSheet,
-    TouchableOpacity,
-    ScrollView
-} from "react-native";
-import { Card, Button } from "react-native-elements";
+import { View, Image, Text, StyleSheet, TouchableOpacity } from "react-native";
 import * as firebase from "firebase";
 import getGithubTokenAsync from "../gitAuth/getGitHubToken";
 import { AsyncStorage } from "react-native";
-import { NavigationActions, StackActions } from "react-navigation";
-import { Navigation } from "react-native-navigation";
-import SignedIn from "../router/route";
 import { FontAwesome as Icon } from "@expo/vector-icons";
 
 // TODO: MINOR
 // import Constants from '../constants';
 // get GithubStorageKey from cosntants
 const GithubStorageKey = "@Expo:GithubToken";
+export let username = "";
 
 export default class Profile extends Component<Props> {
     async signInAsync() {
@@ -33,18 +23,19 @@ export default class Profile extends Component<Props> {
                 const credential = firebase.auth.GithubAuthProvider.credential(
                     token
                 );
-                const user = firebase
+                return firebase
                     .auth()
                     .signInAndRetrieveDataWithCredential(credential)
                     .then(user => {
-                        console.log("Arpit");
-                        const username = user.additionalUserInfo.username.toString();
-                        const photoURL = user.user.photoURL.toString();
-                        //const phone = user.user.phoneNumber.toString();
+                        const username = AsyncStorage.setItem(
+                            "Username",
+                            user.additionalUserInfo.username.toString()
+                        );
                         //TODO:  strategy implementation of fetching data
-                        fetchGitData(username);
+                        // fetchGitData(username);
+                        return username;
                     });
-                return user;
+                // return user;
             } else {
                 return;
             }
@@ -125,35 +116,6 @@ function fetchGitData(username) {
     ];
     Promise.all(urls.map(url => fetch(url).then(res => res.json()))).then(
         res => {
-            const repos = res[0].map(repo => {
-                // (repos : IRepo) , repos => repo as IRepo
-                const {
-                    id,
-                    name,
-                    language,
-                    description,
-                    html_url,
-                    created_at,
-                    forks_count,
-                    stargazers_count,
-                    owner
-                } = repo;
-                const slimRepo = {
-                    repoID: id,
-                    user_name: owner.login,
-                    repo_name: name,
-                    language: language || "Not specified",
-                    description: description || "",
-                    repo_url: html_url,
-                    creation_date: created_at,
-                    forks_count: forks_count,
-                    stargazers_count: stargazers_count
-                };
-                console.log(slimRepo);
-
-                return slimRepo;
-            });
-            console.log(res[1]);
             const {
                 id,
                 login,
@@ -174,7 +136,6 @@ function fetchGitData(username) {
                 bio: bio,
                 full_name: name
             };
-            console.log(slimProfile);
         }
     );
 }

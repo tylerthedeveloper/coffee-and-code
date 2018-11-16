@@ -5,12 +5,14 @@ import {
     View,
     Image,
     TouchableOpacity,
-    ScrollView
+    ScrollView,
+    AsyncStorage
 } from "react-native";
 
 //const apiurl = 'https://coffee-and-code.azurewebsites.net';
 import { getUserByID } from "../services/user-service";
-
+import { username } from "../screens/LogIn";
+import firebase from "firebase";
 // TODO: import firebase
 
 export default class Profile extends Component {
@@ -26,7 +28,10 @@ export default class Profile extends Component {
 
     componentDidMount() {
         // // TODO: get current username
-        getUserByID("tylerthedeveloper");
+        const user = AsyncStorage.getItem("Username").then(username =>
+            console.log("Username is" + username)
+        );
+        getUserByID(username);
     }
 
     render() {
