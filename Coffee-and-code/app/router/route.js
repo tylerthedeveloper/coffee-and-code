@@ -104,8 +104,6 @@ const drawerButton = navigation => (
     <Text
         style={{ padding: 5, color: "white" }}
         onPress={() => {
-            console.log("open drawer");
-            console.log(navigation.state);
             navigation.toggleDrawer();
         }}
     >

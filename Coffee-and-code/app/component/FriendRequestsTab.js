@@ -10,8 +10,6 @@ import {
 
 export default class FriendsTab extends React.Component {
     render() {
-        console.log(this.props.friends);
-
         return (
             <View style={{ height: 700 }}>
                 <ScrollView>

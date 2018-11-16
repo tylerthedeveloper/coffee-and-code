@@ -68,12 +68,7 @@ export default class Home extends Component<Props> {
         } else {
             const location = await Location.getCurrentPositionAsync({}); // {enableHighAccuracy: true}
             const { latitude, longitude } = location.coords;
-            console.log(
-                "ABHI:: location: " +
-                    location.coords.latitude +
-                    " long: " +
-                    location.coords.longitude
-            );
+
             const markers = [];
             this.setState({
                 region: {
