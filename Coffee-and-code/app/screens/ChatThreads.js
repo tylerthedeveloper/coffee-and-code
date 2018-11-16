@@ -31,7 +31,9 @@ export default class ChatThreads extends Component<Props> {
 
     onSelect(chatThreadID) {
         // console.log(chatThreadID);
-        this.props.navigation.push("Messages");
+        this.props.navigation.push("Messages", {
+            id: chatThreadID
+        });
     }
 
     render() {
