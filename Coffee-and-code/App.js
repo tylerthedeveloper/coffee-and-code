@@ -4,6 +4,7 @@ import * as firebase from 'firebase';
 import initializeFirebase from './app/screens/LogIn';
 // import attemptToRestoreAuthAsync from './app/screens/LogIn';
 // import firebaseConfig from './firebaseConfig'
+import firestore from 'firebase/firestore';
 
 // TODO: environment
   const firebaseConfig = {
@@ -14,6 +15,7 @@ import initializeFirebase from './app/screens/LogIn';
     storageBucket: "coffee-and-code-41247.appspot.com",
     messagingSenderId: "115392856682"
   };
+  const settings = { timestampsInSnapshots: true };
 
 export default class App extends React.Component {
   constructor(props) {
@@ -27,7 +29,9 @@ export default class App extends React.Component {
   setupFirebaseAsync = async () => {
     // Prevent reinitializing the app in snack.
     if (!firebase.apps.length) {
+
       return firebase.initializeApp(firebaseConfig);
+
     }
     console.log('tyler: initializeFirebase');
 
@@ -44,6 +48,7 @@ export default class App extends React.Component {
 
   componentDidMount() {
     this.setupFirebaseAsync();
+    // firestore.settings(settings);
   }
 
   render() {

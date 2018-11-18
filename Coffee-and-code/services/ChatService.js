@@ -1,16 +1,18 @@
+import firebase from "firebase";
+
 // import { ChatThread, ChatMessage } from 'app/models/chat';
 // import { Observable } from 'rxjs';
 
-export default class ChatService {
+export class ChatService {
 
-    private chatThreadsCollection;
-  
-    constructor(private afs) {
-      this.chatThreadsCollection = afs.collection('chat-threads');
+    constructor() {
+      // this.chatThreadsCollection = firestore.collection('chat-threads');
+      this.firestore = firebase.firestore();
+      this.chatThreadsCollection = this.firestore.collection('chat-threads')
     }
   
     async createNewChatThread(_chatThreadID) {
-      const chatThreadID = _chatThreadID || this.afs.createId();
+      const chatThreadID = _chatThreadID || this.firestore.createId();
       const chatThreadObj = {
         chatThreadID: chatThreadID,
         active: true,
@@ -27,11 +29,12 @@ export default class ChatService {
     getAllChatThreadsByUserID(userID) {
       return this.chatThreadsCollection
           .doc(userID)
+          .collection('chatThreads')
           .valueChanges();
     }
   
     getMessagesForChatThread(activeThreadID) {
-      return this.afs
+      return this.firestore
           .collection('chat-messages')
           .doc(activeThreadID)
           .collection('messages')
@@ -39,19 +42,19 @@ export default class ChatService {
     }
   
     getActiveChatThreads() {
-      return this.afs.collection('chat-threads',
+      return this.firestore.collection('chat-threads',
           ref => ref.where('active', '==', true))
         .valueChanges();
     }
   
-    updateChatThread(activeThreadID, data: {}) {
+    updateChatThread(activeThreadID, data) {
       return this.chatThreadsCollection
         .doc(activeThreadID)
         .update(data);
     }
   
     getMessagesForChat(activeThreadID) {
-      return this.afs.collection('chat-threads')
+      return this.firestore.collection('chat-threads')
         .doc(activeThreadID)
         .collection('messages', ref => ref.orderBy('sentAt'))
         .valueChanges();
@@ -59,7 +62,7 @@ export default class ChatService {
   
     sendMessage(messageObj) {
       console.log(messageObj);
-      const messageID = this.afs.createId();
+      const messageID = this.firestore.createId();
       const { messageText, chatThreadID, sender } = messageObj;
       const chatThreadObj = {
         messageID: messageID,

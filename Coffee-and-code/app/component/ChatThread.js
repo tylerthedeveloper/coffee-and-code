@@ -11,14 +11,14 @@ export default class ChatThread extends Component<Props> {
     componentWillMount() {}
 
     render() {
-        const { username, chatThreadID } = this.props.chatInfo;
+        const { git_username, chatThreadID } = this.props.chatInfo;
         return (
             <TouchableHighlight
                 onPress={() => this.props.onSelect(chatThreadID)}
             >
                 <Card>
                     <Text style={{ marginBottom: 10 }}>
-                        USERNAME: {username}
+                        USERNAME: {git_username}
                     </Text>
                 </Card>
             </TouchableHighlight>
