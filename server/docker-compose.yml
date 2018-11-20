@@ -1,7 +1,7 @@
 version: "3"
 services:
   express_server:
-    image: loadingdock.azurecr.io/express-server:latest 
+    image: codeandcoffee.azurecr.io/express-server:latest 
     build: .
     ports:
       - "3000:3000"
