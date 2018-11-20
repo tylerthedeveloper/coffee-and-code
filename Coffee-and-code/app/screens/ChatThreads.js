@@ -1,6 +1,6 @@
 // import { parse } from "react-docgen";
 import React, { Component } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { AsyncStorage, StyleSheet, Text, View } from "react-native";
 import ChatThread from "../component/ChatThread";
 import { ChatService } from "../../services/ChatService";
 import * as firebase from "firebase";
@@ -11,6 +11,7 @@ export default class ChatThreads extends Component<Props> {
     constructor(props) {
         super();
         // console.log(props.navigation);
+        console.ignoredYellowBox = ["Setting a timer"];
         this.state = {
             git_username: "",
             chatThreads: [
@@ -31,9 +32,9 @@ export default class ChatThreads extends Component<Props> {
     }
 
     // TODO: Export this from chat service
-    getAllChatThreadsByUserID(/** TODO: this.state.git_username */ userID) {
+    getAllChatThreadsByUserID(git_username) {
         this.chatThreadsCollection
-            .doc(userID)
+            .doc(git_username)
             .collection("chatThreads")
             .onSnapshot(snapshot => {
                 const chatThreads = [];
@@ -44,10 +45,9 @@ export default class ChatThreads extends Component<Props> {
             });
     }
 
-    createChatThread(
-        /** TODO: this.state.git_username */ git_username,
-        git_recipient
-    ) {
+    // TODO: where oes this go??? ... chat service
+    createChatThread(git_recipient) {
+        const git_username = this.state.git_username;
         const chatRoomKey = this.firestore.collection("messages").doc().id;
         const firstObj = {
             chatThreadID: chatRoomKey,
@@ -80,17 +80,42 @@ export default class ChatThreads extends Component<Props> {
         batch.commit();
     }
 
+    async storeUsernameLocally(username) {
+        try {
+            await AsyncStorage.setItem("git_username", username);
+        } catch (error) {
+            // Error saving data
+        }
+    }
+
+    // TODO: separate file
+    async _loadInitialState() {
+        try {
+            const git_username = await AsyncStorage.getItem("git_username");
+            if (git_username !== null) {
+                console.log(git_username);
+                this.setState({ git_username: git_username });
+                this.getAllChatThreadsByUserID(git_username);
+            }
+        } catch (error) {
+            // TODO:
+            // Error retrieving data
+            console.log(error);
+        }
+    }
+
     componentDidMount() {
-        // TODO: get firebase auth username from local storage
-        // const git_username = ....
-        // this.setState({ git_username: git_username });
-        this.getAllChatThreadsByUserID(/* git_username */ "akanai");
-        setTimeout(() => this.createChatThread("akanai", "priya"), 3000);
+        // TODO: REMOVE
+        // this.storeUsernameLocally('akanai');
+        AsyncStorage.setItem("git_username", "akanai");
+        this._loadInitialState().done();
     }
 
     onSelect(chatThreadID) {
+        const git_username = this.state.git_username;
         this.props.navigation.push("Messages", {
-            id: chatThreadID
+            id: chatThreadID,
+            git_username: git_username
         });
     }
 
