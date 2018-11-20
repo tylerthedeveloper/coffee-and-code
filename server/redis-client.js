@@ -3,7 +3,8 @@ const dotenv = require('dotenv');
 dotenv.load();
 
 const client = redis.createClient({
-    host: process.env.REDIS_URI,
+    host: process.env.REDIS_HOST,
+    url: process.env.REDIS_URL,
     port: 6379,
     password: process.env.REDIS_PWD
 });
