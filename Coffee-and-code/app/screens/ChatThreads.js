@@ -10,7 +10,6 @@ import * as firebase from "firebase";
 export default class ChatThreads extends Component<Props> {
     constructor(props) {
         super();
-        // console.log(props.navigation);
         console.ignoredYellowBox = ["Setting a timer"];
         this.state = {
             git_username: "",
@@ -36,6 +35,7 @@ export default class ChatThreads extends Component<Props> {
         this.chatThreadsCollection
             .doc(git_username)
             .collection("chatThreads")
+            // split here and this is the thenable
             .onSnapshot(snapshot => {
                 const chatThreads = [];
                 snapshot.docs.map(doc => chatThreads.push(doc.data()));
@@ -80,6 +80,7 @@ export default class ChatThreads extends Component<Props> {
         batch.commit();
     }
 
+    // TODO: remove
     async storeUsernameLocally(username) {
         try {
             await AsyncStorage.setItem("git_username", username);
@@ -88,7 +89,7 @@ export default class ChatThreads extends Component<Props> {
         }
     }
 
-    // TODO: separate file
+    // TODO: general UTILS / service separate file
     async _loadInitialState() {
         try {
             const git_username = await AsyncStorage.getItem("git_username");
@@ -106,7 +107,6 @@ export default class ChatThreads extends Component<Props> {
 
     componentDidMount() {
         // TODO: REMOVE
-        // this.storeUsernameLocally('akanai');
         AsyncStorage.setItem("git_username", "akanai");
         this._loadInitialState().done();
     }
