@@ -111,11 +111,13 @@ export default class ChatThreads extends Component<Props> {
         this._loadInitialState().done();
     }
 
-    onSelect(chatThreadID) {
+    onSelect(chatThread) {
+        const { git_username_recipient, chatThreadID } = chatThread;
         const git_username = this.state.git_username;
         this.props.navigation.push("Messages", {
             id: chatThreadID,
-            git_username: git_username
+            git_username: git_username,
+            title: git_username_recipient
         });
     }
 

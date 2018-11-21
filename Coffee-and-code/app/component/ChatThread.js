@@ -12,9 +12,15 @@ export default class ChatThread extends Component<Props> {
 
     render() {
         const { git_username, chatThreadID } = this.props.chatInfo;
+        const git_username_recipient = git_username;
         return (
             <TouchableHighlight
-                onPress={() => this.props.onSelect(chatThreadID)}
+                onPress={() =>
+                    this.props.onSelect({
+                        git_username_recipient,
+                        chatThreadID
+                    })
+                }
             >
                 <Card>
                     <Text style={{ marginBottom: 10 }}>

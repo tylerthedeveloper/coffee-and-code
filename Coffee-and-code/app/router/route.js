@@ -65,9 +65,11 @@ const ChatStackNavigator = createStackNavigator({
     },
     Messages: {
         screen: ChatMessages,
-        navigationOptions: {
-            title: "Custom from props"
-        }
+        navigationOptions: ({ navigation }) => ({
+            // headerStyle: { backgroundColor: "#4C3E54" },
+            // set height
+            title: `${navigation.state.params.title}`
+        })
     }
 });
 
@@ -85,12 +87,6 @@ const ScreenStackNavigator = createStackNavigator(
                 title: "List"
             }
         },
-        // Chat: {
-        //     screen: ChatThreads,
-        //     navigationOptions: {
-        //         title: "Chat"
-        //     }
-        // },
         Chat: {
             screen: ChatStackNavigator,
             navigationOptions: {
