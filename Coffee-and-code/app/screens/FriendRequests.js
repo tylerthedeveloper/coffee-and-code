@@ -53,9 +53,13 @@ export default class FriendRequests extends Component<Props> {
         const {} = this.props;
         console.log(this.props);
         return (
-            // <View style={styles.container}>
-            <FriendRequestsTab friends={this.state.friends_data} />
-            // </View>
+            <View style={styles.container}>
+                <ScrollView>
+                    {this.state.friends.map(friend => (
+                        <FriendRequestCard friendCard={friend} />
+                    ))}
+                </ScrollView>
+            </View>
         );
     }
 }

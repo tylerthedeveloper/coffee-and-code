@@ -13,6 +13,7 @@ import {
 import { Card, Button } from "react-native-elements";
 import { Constants, Location, Permissions } from "expo";
 import FriendsTab from "../component/FriendsTab";
+import * as constants from "../component/constants";
 
 const data = [];
 
@@ -27,7 +28,6 @@ export default class FriendsPage extends Component<Props> {
     }
 
     componentWillMount() {}
-
     // fetchDataFromUserbase() {
     //   let username = "nishchayagupta";
     //   const URL = `https://coffee-and-code.azurewebsites.net/friend-requests/nishchayagupta/sent`;
