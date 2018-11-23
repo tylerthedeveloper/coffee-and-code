@@ -27,13 +27,14 @@ export default class Profile extends Component<Props> {
                     .auth()
                     .signInAndRetrieveDataWithCredential(credential)
                     .then(user => {
-                        const username = AsyncStorage.setItem(
+                        const git_username = user.additionalUserInfo.username.toString();
+                         AsyncStorage.setItem(
                             "Username",
-                            user.additionalUserInfo.username.toString()
+                            git_username
                         );
                         //TODO:  strategy implementation of fetching data
-                         fetchGitData(username);
-                        return username;
+                         fetchGitData(git_username);
+                        return git_username;
                     });
                 // return user;
             } else {
