@@ -28,26 +28,28 @@ export default class FriendsPage extends Component<Props> {
     }
 
     componentWillMount() {}
-    // fetchDataFromUserbase() {
-    //   let username = "nishchayagupta";
-    //   const URL = `https://coffee-and-code.azurewebsites.net/friend-requests/nishchayagupta/sent`;
-    //   fetch(URL, {
-    //     method: "GET",
-    //     headers: {
-    //       Accept: "application/json",
-    //       "Content-Type": "application/json"
-    //     }
-    //   })
-    //     .then(response => {
-    //       return response.json();
-    //     })
-    //     .then(responseData => {
-    //       return responseData.result;
-    //     })
-    //     .then(result => {
-    //       this.setState({ friends: result });
-    //     });
-    // }
+
+    fetchDataFromUserbase() {
+        const body = {
+            data: {
+                gitusername_1: {
+                    currentOp: "=",
+                    value: "kanikeabhishek",
+                    nextOp: null
+                }
+            }
+        };
+        fetch("https://code-and-coffee2.azurewebsites.net/friends/query", {
+            method: "POST",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+        })
+            .then(res => res.json())
+            .then(resData => this.setState({ friends: resData.rows }));
+    }
 
     render() {
         const {} = this.props;

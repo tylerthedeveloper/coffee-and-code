@@ -25,11 +25,7 @@ export default class FriendsTab extends React.Component {
                             </View>
                             <View style={styles.textViewStyle}>
                                 <Text style={{ color: "white", marginTop: 5 }}>
-                                    Name : {friend.id}
-                                </Text>
-                                <Text style={{ color: "white", marginTop: 5 }}>
-                                    {" "}
-                                    Friend Since : {friend.time}
+                                    Name : {friend.gitusername_2}
                                 </Text>
                             </View>
                             <View>
