@@ -133,7 +133,8 @@ export default class Home extends Component<Props> {
 
             const response = await fetch(
                 // TODO: CONST API SITE
-                "https://coffee-and-code.azurewebsites.net/users"
+                // TODO: Shouldnt this be query or is it already ???
+                "http://code-and-coffee2.azurewebsites.net/users"
             );
             // TODO: test need for double await
             let responseJson = await response.json();

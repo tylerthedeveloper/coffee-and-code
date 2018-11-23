@@ -8,7 +8,7 @@ import {
     ScrollView
 } from "react-native";
 
-export default class Profile extends Component {
+export default class Profile extends Component<Props> {
     render() {
         return (
             <ScrollView>
