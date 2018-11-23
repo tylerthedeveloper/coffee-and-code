@@ -32,7 +32,7 @@ export default class Profile extends Component<Props> {
                             user.additionalUserInfo.username.toString()
                         );
                         //TODO:  strategy implementation of fetching data
-                        // fetchGitData(username);
+                         fetchGitData(username);
                         return username;
                     });
                 // return user;
@@ -116,6 +116,36 @@ function fetchGitData(username) {
     ];
     Promise.all(urls.map(url => fetch(url).then(res => res.json()))).then(
         res => {
+            console.log(res[0]);
+            const repos = res[0].map(repo => {
+                // (repos : IRepo) , repos => repo as IRepo
+                const {
+                    id,
+                    name,
+                    language,
+                    description,
+                    html_url,
+                    created_at,
+                    forks_count,
+                    stargazers_count,
+                    owner
+                } = repo;
+                const slimRepo = {
+                    repoID: id,
+                    user_name: owner.login,
+                    repo_name: name,
+                    language: language || "Not specified",
+                    description: description || "",
+                    repo_url: html_url,
+                    creation_date: created_at,
+                    forks_count: forks_count,
+                    stargazers_count: stargazers_count
+                };
+                console.log(slimRepo);
+
+                return slimRepo;
+            });
+            console.log(res[1]);
             const {
                 id,
                 login,
@@ -136,6 +166,7 @@ function fetchGitData(username) {
                 bio: bio,
                 full_name: name
             };
+            console.log(slimProfile);
         }
     );
 }
