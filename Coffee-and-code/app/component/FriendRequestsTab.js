@@ -21,11 +21,7 @@ export default class FriendRequestsTab extends React.Component {
                 </View>
                 <View style={styles.textViewStyle}>
                     <Text style={{ color: "white", marginTop: 5 }}>
-                        Name : {friend.id}
-                    </Text>
-                    <Text style={{ color: "white", marginTop: 5 }}>
-                        {" "}
-                        Friend Since : {friend.time}
+                        Name : {friend.username}
                     </Text>
                 </View>
                 <View>

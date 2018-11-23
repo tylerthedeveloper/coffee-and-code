@@ -29,23 +29,26 @@ export default class FriendRequests extends Component<Props> {
     componentWillMount() {}
 
     fetchDataFromUserbase() {
-        let username = "nishchayagupta";
-        const URL = `https://coffee-and-code.azurewebsites.net/friend-requests/nishchayagupta/sent`;
-        fetch(URL, {
-            method: "GET",
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json"
+        fetch(
+            `https://code-and-coffee2.azurewebsites.net/friend-requests/nishchayagupta/received`,
+            {
+                method: "GET",
+                headers: {
+                    "Content-type": "application/json"
+                    // TODO: Credentials / accesstoken
+                }
             }
-        })
-            .then(response => {
-                return response.json();
-            })
-            .then(responseData => {
-                return responseData.result;
-            })
-            .then(result => {
-                this.setState({ friends: result });
+        )
+            .then(res => res.json())
+            .then(resData => {
+                const friendCards = resData.result.map(friend => {
+                    const splitStringArr = friend.split(/:(.+)/);
+                    return {
+                        username: splitStringArr[0],
+                        photoUrl: splitStringArr[1]
+                    };
+                });
+                this.setState({ friends: friendCards });
             });
     }
 
