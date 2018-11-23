@@ -19,7 +19,7 @@ const data = [];
 export default class FriendRequests extends Component<Props> {
     constructor(props) {
         super();
-        this.state = { friends: [] };
+        this.state = { friendRequest: [] };
     }
 
     componentDidMount() {
@@ -48,18 +48,19 @@ export default class FriendRequests extends Component<Props> {
                         photoUrl: splitStringArr[1]
                     };
                 });
-                this.setState({ friends: friendCards });
+                this.setState({ friendRequest: friendCards });
             });
     }
 
     render() {
         const {} = this.props;
-        console.log(this.props);
+        //console.log(this.props);
+        console.log("State is:",this.state);
         return (
             <View style={styles.container}>
                 <ScrollView>
-                    {this.state.friends.map(friend => (
-                        <FriendRequestCard friendCard={friend} />
+                    {this.state.friendRequest.map(friendRequest => (
+                        <FriendRequestsTab friends={friendRequest} />
                     ))}
                 </ScrollView>
             </View>

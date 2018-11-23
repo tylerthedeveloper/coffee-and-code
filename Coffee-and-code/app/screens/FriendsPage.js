@@ -23,11 +23,11 @@ export default class FriendsPage extends Component<Props> {
         this.state = { friends: [] };
     }
 
-    componentDidMount() {
+    componentWillMount() {
         this.fetchDataFromUserbase();
     }
 
-    componentWillMount() {}
+    componentDidMount() {}
 
     fetchDataFromUserbase() {
         const body = {
@@ -53,12 +53,12 @@ export default class FriendsPage extends Component<Props> {
 
     render() {
         const {} = this.props;
-        console.log(this.props);
+        console.log("friends : ", this.state.friends);
         return (
             <View style={styles.container}>
                 <ScrollView>
                     {this.state.friends.map(friend => (
-                        <FriendsTab friendCard={friend} />
+                        <FriendsTab addedFriends = {friend} />
                     ))}
                 </ScrollView>
             </View>

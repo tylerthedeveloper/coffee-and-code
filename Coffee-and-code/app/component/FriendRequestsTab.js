@@ -12,7 +12,7 @@ export default class FriendRequestsTab extends React.Component {
     render() {
         console.log(this.props.friends);
         return (
-            <View key={friend.key} style={styles.mainViewStyle}>
+            <View style={styles.mainViewStyle}>
                 <View style={styles.imageViewSource}>
                     <Image
                         style={styles.image}
@@ -21,7 +21,7 @@ export default class FriendRequestsTab extends React.Component {
                 </View>
                 <View style={styles.textViewStyle}>
                     <Text style={{ color: "white", marginTop: 5 }}>
-                        Name : {friend.username}
+                        Name : {this.props.friends.username}
                     </Text>
                 </View>
                 <View>

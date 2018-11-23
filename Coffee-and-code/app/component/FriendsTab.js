@@ -10,13 +10,9 @@ import {
 
 export default class FriendsTab extends React.Component {
     render() {
-        console.log(this.props.friends);
-
+        console.log("inside friends Tab", this.props.addedFriends)
         return (
-            <View style={{ height: 700 }}>
-                <ScrollView>
-                    {this.props.friends.map(friend => (
-                        <View key={friend.key} style={styles.mainViewStyle}>
+                        <View style={styles.mainViewStyle}>
                             <View style={styles.imageViewSource}>
                                 <Image
                                     style={styles.image}
@@ -25,7 +21,7 @@ export default class FriendsTab extends React.Component {
                             </View>
                             <View style={styles.textViewStyle}>
                                 <Text style={{ color: "white", marginTop: 5 }}>
-                                    Name : {friend.gitusername_2}
+                                    Name : {this.props.addedFriends.gitusername_2}
                                 </Text>
                             </View>
                             <View>
@@ -38,9 +34,6 @@ export default class FriendsTab extends React.Component {
                                 </TouchableOpacity>
                             </View>
                         </View>
-                    ))}
-                </ScrollView>
-            </View>
         );
     }
 }
