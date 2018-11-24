@@ -1,6 +1,6 @@
 export function postUserFriendRequest(username) {
     const apiurl =
-        "https://www.coffee-and-code.azurewebsites.net/friends/query";
+        "https://www.code-and-coffee2.azurewebsites.net/friends/query";
     const body = {
         data: {
             gitusername_1: {

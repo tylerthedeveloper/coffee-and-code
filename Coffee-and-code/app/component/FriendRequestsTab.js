@@ -10,7 +10,6 @@ import {
 
 export default class FriendRequestsTab extends React.Component {
     render() {
-        console.log(this.props.friends);
         return (
             <View style={styles.mainViewStyle}>
                 <View style={styles.imageViewSource}>

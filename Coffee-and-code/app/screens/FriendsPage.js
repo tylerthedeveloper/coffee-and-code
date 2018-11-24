@@ -1,35 +1,27 @@
 import React, { Component } from "react";
-import {
-    ScrollView,
-    Text,
-    Linking,
-    View,
-    Alert,
-    Platform,
-    StyleSheet,
-    Dimensions,
-    TouchableOpacity
-} from "react-native";
-import { Card, Button } from "react-native-elements";
-import { Constants, Location, Permissions } from "expo";
+import { ScrollView, View, StyleSheet } from "react-native";
 import FriendsTab from "../component/FriendsTab";
-import * as constants from "../component/constants";
-
-const data = [];
 
 export default class FriendsPage extends Component<Props> {
-    constructor(props) {
+    constructor() {
         super();
-        this.state = { friends: [] };
+        this.state = {
+            friends: []
+        };
     }
 
-    componentWillMount() {
-        this.fetchDataFromUserbase();
+    componentDidMount() {
+        AsyncStorage.getItem("git_username").then(git_username => {
+            let _username = git_username || "nishchaya";
+            console.log("mounting " + _username);
+            this.setState({ _username });
+            this.fetchDataFromUserbase(_username);
+            // .then(res => console.log(res));
+        });
     }
-
-    componentDidMount() {}
 
     fetchDataFromUserbase() {
+        // TODO: get username
         const body = {
             data: {
                 gitusername_1: {
@@ -53,12 +45,14 @@ export default class FriendsPage extends Component<Props> {
 
     render() {
         const {} = this.props;
-        console.log("friends : ", this.state.friends);
         return (
             <View style={styles.container}>
                 <ScrollView>
                     {this.state.friends.map(friend => (
-                        <FriendsTab addedFriends = {friend} />
+                        <FriendsTab
+                            addedFriends={friend}
+                            key={friend.gitusername_2}
+                        />
                     ))}
                 </ScrollView>
             </View>

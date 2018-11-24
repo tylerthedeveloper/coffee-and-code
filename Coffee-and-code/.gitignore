@@ -5,3 +5,4 @@ npm-debug.*
 ./.idea
 .idea/
 .env
+../.vscode/

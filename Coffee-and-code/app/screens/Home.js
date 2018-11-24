@@ -56,6 +56,52 @@ export default class Home extends Component<Props> {
         };
     }
 
+    onMapPress(e) {
+        this.setState({
+            markers: [
+                ...this.state.markers,
+                {
+                    coordinate: e.nativeEvent.coordinate,
+                    key: id++,
+                    color: randomColor()
+                }
+            ]
+        }).catch(error => {
+            console.log("Api call error");
+            alert(error.message);
+        });
+    }
+
+    resetInit() {
+        curlatitude = this.state.markers[0].coordinate.latitude;
+        curlongitude = this.state.markers[0].coordinate.longitude;
+        curcoordinate = this.state.markers[0].coordinate;
+        (id = 0),
+            this.setState({
+                region: {
+                    latitude: curlatitude,
+                    longitude: curlongitude,
+                    latitudeDelta: LATITUDE_DELTA,
+                    longitudeDelta: LONGITUDE_DELTA
+                },
+                // TODO: REMOVE
+                markers: [
+                    {
+                        coordinate: curcoordinate,
+                        key: id++,
+                        color: this.currentLocationColor(),
+                        name: "Tony Stark",
+                        git_username: "starktony",
+                        bio: "Ironman - Mechanic"
+                    }
+                ]
+            }).catch(error => {
+                console.log("Api call error");
+                alert(error.message);
+            });
+    }
+
+    // TODO: verify exuction order
     componentWillMount() {
         this._initMap();
     }
@@ -68,12 +114,7 @@ export default class Home extends Component<Props> {
         } else {
             const location = await Location.getCurrentPositionAsync({}); // {enableHighAccuracy: true}
             const { latitude, longitude } = location.coords;
-            console.log(
-                "ABHI:: location: " +
-                    location.coords.latitude +
-                    " long: " +
-                    location.coords.longitude
-            );
+
             const markers = [];
             this.setState({
                 region: {
@@ -134,6 +175,7 @@ export default class Home extends Component<Props> {
                             <Marker
                                 key={marker.key}
                                 coordinate={marker.coordinate}
+                                description="Information"
                                 pinColor={marker.color}
                             />
                         ))}

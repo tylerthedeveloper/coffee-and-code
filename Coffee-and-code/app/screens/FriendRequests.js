@@ -1,36 +1,29 @@
 import React, { Component } from "react";
-import {
-    ScrollView,
-    Text,
-    Linking,
-    View,
-    Alert,
-    Platform,
-    StyleSheet,
-    Dimensions,
-    TouchableOpacity
-} from "react-native";
-import { Card, Button } from "react-native-elements";
-import { Constants, Location, Permissions } from "expo";
+import { ScrollView, View, StyleSheet, AsyncStorage } from "react-native";
 import FriendRequestsTab from "../component/FriendRequestsTab";
 
-const data = [];
-
 export default class FriendRequests extends Component<Props> {
-    constructor(props) {
+    constructor() {
         super();
-        this.state = { friendRequest: [] };
+        this.state = {
+            git_username: "",
+            friendRequest: []
+        };
     }
 
     componentDidMount() {
-        this.fetchDataFromUserbase();
+        AsyncStorage.getItem("git_username").then(git_username => {
+            let _username = git_username || "nishchaya";
+            console.log("mounting " + _username);
+            this.setState({ _username });
+            this.fetchDataFromUserbase(_username);
+            // .then(res => console.log(res));
+        });
     }
 
-    componentWillMount() {}
-
-    fetchDataFromUserbase() {
+    fetchDataFromUserbase(git_username) {
         fetch(
-            `https://code-and-coffee2.azurewebsites.net/friend-requests/nishchayagupta/received`,
+            `https://code-and-coffee2.azurewebsites.net/friend-requests/${git_username}/received`,
             {
                 method: "GET",
                 headers: {
@@ -41,6 +34,7 @@ export default class FriendRequests extends Component<Props> {
         )
             .then(res => res.json())
             .then(resData => {
+                console.log(resData);
                 const friendCards = resData.result.map(friend => {
                     const splitStringArr = friend.split(/:(.+)/);
                     return {
@@ -48,19 +42,22 @@ export default class FriendRequests extends Component<Props> {
                         photoUrl: splitStringArr[1]
                     };
                 });
-                this.setState({ friendRequest: friendCards });
+                this.setState({
+                    friendRequest: friendCards
+                });
             });
     }
 
     render() {
         const {} = this.props;
-        //console.log(this.props);
-        console.log("State is:",this.state);
         return (
             <View style={styles.container}>
                 <ScrollView>
                     {this.state.friendRequest.map(friendRequest => (
-                        <FriendRequestsTab friends={friendRequest} />
+                        <FriendRequestsTab
+                            friends={friendRequest}
+                            key={friendRequest}
+                        />
                     ))}
                 </ScrollView>
             </View>
