@@ -1,21 +1,7 @@
 import React, { Component } from "react";
-import {
-    ScrollView,
-    Text,
-    Linking,
-    View,
-    Alert,
-    Platform,
-    StyleSheet,
-    Dimensions,
-    TouchableOpacity
-} from "react-native";
-import { Card, Button } from "react-native-elements";
+import { Text, View, StyleSheet, Dimensions } from "react-native";
 
-import {} from "react-native";
-
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps"; // remove PROVIDER_GOOGLE import if not using Google Maps
-import { Marker, ProviderPropType } from "react-native-maps";
+import MapView, { Marker, ProviderPropType } from "react-native-maps";
 import { Location, Permissions } from "expo";
 import PersonList from "../component/PersonList";
 

@@ -20,6 +20,7 @@ export default class Profile extends Component<Props> {
                 (await AsyncStorage.getItem(GithubStorageKey)) ||
                 (await getGithubTokenAsync());
             if (token) {
+                // TODO: Arpit: do we need await?
                 AsyncStorage.setItem(GithubStorageKey, token); // TODO: TTL? : MINOR
                 const credential = firebase.auth.GithubAuthProvider.credential(
                     token
@@ -33,6 +34,8 @@ export default class Profile extends Component<Props> {
                         const git_username = user.additionalUserInfo.username.toString();
                         console.log("git_username");
                         console.log(git_username);
+                        // TODO: Arpit: do we need await?
+                        // TODO: Arpit: should we use AsyncStorage.multiSet([]) ??
                         AsyncStorage.setItem("git_username", git_username);
                         //TODO:  strategy implementation of fetching data
                         // fetchGitData(git_username);

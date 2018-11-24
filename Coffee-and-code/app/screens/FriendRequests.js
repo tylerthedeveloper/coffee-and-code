@@ -7,7 +7,7 @@ export default class FriendRequests extends Component<Props> {
         super();
         this.state = {
             git_username: "",
-            friendRequest: []
+            friendRequests: []
         };
     }
 
@@ -17,7 +17,6 @@ export default class FriendRequests extends Component<Props> {
             console.log("mounting " + _username);
             this.setState({ _username });
             this.fetchDataFromUserbase(_username);
-            // .then(res => console.log(res));
         });
     }
 
@@ -43,7 +42,7 @@ export default class FriendRequests extends Component<Props> {
                     };
                 });
                 this.setState({
-                    friendRequest: friendCards
+                    friendRequests: friendCards
                 });
             });
     }
@@ -53,7 +52,7 @@ export default class FriendRequests extends Component<Props> {
         return (
             <View style={styles.container}>
                 <ScrollView>
-                    {this.state.friendRequest.map(friendRequest => (
+                    {this.state.friendRequests.map(friendRequest => (
                         <FriendRequestsTab
                             friends={friendRequest}
                             key={friendRequest}

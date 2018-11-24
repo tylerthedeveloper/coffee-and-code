@@ -16,17 +16,16 @@ export default class FriendsPage extends Component<Props> {
             console.log("mounting " + _username);
             this.setState({ _username });
             this.fetchDataFromUserbase(_username);
-            // .then(res => console.log(res));
         });
     }
 
-    fetchDataFromUserbase() {
+    fetchDataFromUserbase(username) {
         // TODO: get username
         const body = {
             data: {
                 gitusername_1: {
                     currentOp: "=",
-                    value: "kanikeabhishek",
+                    value: username, // "kanikeabhishek",
                     nextOp: null
                 }
             }
@@ -40,7 +39,11 @@ export default class FriendsPage extends Component<Props> {
             body: JSON.stringify(body)
         })
             .then(res => res.json())
-            .then(resData => this.setState({ friends: resData.rows }));
+            .then(resData =>
+                this.setState({
+                    friends: resData.rows
+                })
+            );
     }
 
     render() {
