@@ -1,22 +1,8 @@
 import React, { Component } from "react";
-import {
-    ScrollView,
-    Text,
-    Linking,
-    View,
-    Alert,
-    Platform,
-    StyleSheet,
-    Dimensions,
-    TouchableOpacity
-} from "react-native";
-import { Card, Button } from "react-native-elements";
-
-import {} from "react-native";
-
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps"; // remove PROVIDER_GOOGLE import if not using Google Maps
-import { Marker, ProviderPropType, Callout } from "react-native-maps";
+import { Text, View, StyleSheet, Dimensions } from "react-native";
+import { Card } from "react-native-elements";
 import CustomCallout from "./CustomCallout";
+import MapView, { Marker, ProviderPropType, Callout } from "react-native-maps";
 import { Location, Permissions } from "expo";
 import PersonList from "../component/PersonList";
 
@@ -57,51 +43,6 @@ export default class Home extends Component<Props> {
         };
     }
 
-    onMapPress(e) {
-        this.setState({
-            markers: [
-                ...this.state.markers,
-                {
-                    coordinate: e.nativeEvent.coordinate,
-                    key: id++,
-                    color: randomColor()
-                }
-            ]
-        }).catch(error => {
-            console.log("Api call error");
-            alert(error.message);
-        });
-    }
-
-    resetInit() {
-        curlatitude = this.state.markers[0].coordinate.latitude;
-        curlongitude = this.state.markers[0].coordinate.longitude;
-        curcoordinate = this.state.markers[0].coordinate;
-        (id = 0),
-            this.setState({
-                region: {
-                    latitude: curlatitude,
-                    longitude: curlongitude,
-                    latitudeDelta: LATITUDE_DELTA,
-                    longitudeDelta: LONGITUDE_DELTA
-                },
-                // TODO: REMOVE
-                markers: [
-                    {
-                        coordinate: curcoordinate,
-                        key: id++,
-                        color: this.currentLocationColor(),
-                        name: "Tony Stark",
-                        git_username: "starktony",
-                        bio: "Ironman - Mechanic"
-                    }
-                ]
-            }).catch(error => {
-                console.log("Api call error");
-                alert(error.message);
-            });
-    }
-
     // TODO: verify exuction order
     componentWillMount() {
         this._initMap();
@@ -115,12 +56,6 @@ export default class Home extends Component<Props> {
         } else {
             const location = await Location.getCurrentPositionAsync({}); // {enableHighAccuracy: true}
             const { latitude, longitude } = location.coords;
-            console.log(
-                "ABHI:: location: " +
-                    location.coords.latitude +
-                    " long: " +
-                    location.coords.longitude
-            );
             const markers = [];
             this.setState({
                 region: {
@@ -131,10 +66,11 @@ export default class Home extends Component<Props> {
                 }
             });
 
+            console.log("");
             const response = await fetch(
                 // TODO: CONST API SITE
                 // TODO: Shouldnt this be query or is it already ???
-                "http://code-and-coffee2.azurewebsites.net/users"
+                "https://code-and-coffee2.azurewebsites.net/users"
             );
             // TODO: test need for double await
             let responseJson = await response.json();
@@ -149,6 +85,7 @@ export default class Home extends Component<Props> {
                 git_username: "starktony",
                 bio: "Ironman - Mechanic"
             });
+
             userInfoJson.map(user =>
                 markers.push({
                     coordinate: {
@@ -169,10 +106,9 @@ export default class Home extends Component<Props> {
     };
 
     popup() {
-        {
-            console.log("Printed");
-        }
+        console.log("Printed");
     }
+
     render() {
         return (
             <View style={styles.container}>
@@ -187,6 +123,7 @@ export default class Home extends Component<Props> {
                             <Marker
                                 key={marker.key}
                                 coordinate={marker.coordinate}
+                                description="Information"
                                 pinColor={marker.color}
                             >
                                 <Callout tooltip style={styles.customView}>

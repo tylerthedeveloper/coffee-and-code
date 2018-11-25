@@ -10,40 +10,26 @@ import {
 
 export default class FriendsTab extends React.Component {
     render() {
-        console.log(this.props.friends);
-
         return (
-            <View style={{ height: 700 }}>
-                <ScrollView>
-                    {this.props.friends.map(friend => (
-                        <View key={friend.key} style={styles.mainViewStyle}>
-                            <View style={styles.imageViewSource}>
-                                <Image
-                                    style={styles.image}
-                                    source={require("../../assets/ironman.png")}
-                                />
-                            </View>
-                            <View style={styles.textViewStyle}>
-                                <Text style={{ color: "white", marginTop: 5 }}>
-                                    Name : {friend.id}
-                                </Text>
-                                <Text style={{ color: "white", marginTop: 5 }}>
-                                    {" "}
-                                    Friend Since : {friend.time}
-                                </Text>
-                            </View>
-                            <View>
-                                <TouchableOpacity style={styles.button}>
-                                    <Text
-                                        style={{ color: "white", marginTop: 5 }}
-                                    >
-                                        Remove
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    ))}
-                </ScrollView>
+            <View style={styles.mainViewStyle}>
+                <View style={styles.imageViewSource}>
+                    <Image
+                        style={styles.image}
+                        source={require("../../assets/ironman.png")}
+                    />
+                </View>
+                <View style={styles.textViewStyle}>
+                    <Text style={{ color: "white", marginTop: 5 }}>
+                        Name : {this.props.addedFriends.gitusername_2}
+                    </Text>
+                </View>
+                <View>
+                    <TouchableOpacity style={styles.button}>
+                        <Text style={{ color: "white", marginTop: 5 }}>
+                            Remove
+                        </Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         );
     }

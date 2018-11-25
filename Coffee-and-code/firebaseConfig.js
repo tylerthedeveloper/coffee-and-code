@@ -11,8 +11,7 @@ import {
     MESSAGINGSENDERID
 }  from 'react-native-dotenv';
 
-console.log('APIKEY' + APIKEY);
-
+// console.log('APIKEY' + APIKEY);
 
 const firebaseConfig = {
     apiKey: APIKEY,

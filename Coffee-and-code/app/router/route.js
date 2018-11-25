@@ -1,26 +1,19 @@
 import React from "react";
-import { Platform, StatusBar, Text } from "react-native";
+import { Text } from "react-native";
 import {
-    StackNavigator,
-    TabNavigator,
-    SwitchNavigator,
     createStackNavigator,
-    createBottomTabNavigator,
     createSwitchNavigator,
     createDrawerNavigator,
-    createTabNavigator,
     createMaterialTopTabNavigator
 } from "react-navigation";
-
-import { FontAwesome } from "react-native-vector-icons";
 
 import LogIn from "../screens/LogIn";
 import Home from "../screens/Home";
 import List from "../screens/List";
 import Menu from "../screens/Menu";
 import Profile from "../screens/Profile";
-import FriendRequests from "../screens/FriendRequests";
 import FriendsPage from "../screens/FriendsPage";
+import FriendRequests from "../screens/FriendRequests";
 import ChatThreads from "../screens/ChatThreads";
 import ChatMessages from "../screens/ChatMessages";
 
@@ -42,16 +35,16 @@ const ProfileTabNavigator = createMaterialTopTabNavigator({
             title: "Profile"
         }
     },
+    Friends: {
+        screen: FriendsPage,
+        navigationOptions: {
+            title: "Friends"
+        }
+    },
     Pending_Friend_Requests: {
         screen: FriendRequests,
         navigationOptions: {
             title: "Pending Friend Requests"
-        }
-    },
-    Friends: {
-        screen: FriendRequests,
-        navigationOptions: {
-            title: "Friends"
         }
     }
 });
@@ -124,8 +117,6 @@ const drawerButton = navigation => (
     <Text
         style={{ padding: 5, color: "white" }}
         onPress={() => {
-            console.log("open drawer");
-            console.log(navigation.state);
             navigation.toggleDrawer();
         }}
     >
@@ -141,8 +132,8 @@ export const DrawerNavigation = createStackNavigator(
     {
         headerMode: "none",
         navigationOptions: ({ navigation }) => {
-            console.log("navigation2");
-            console.log(navigation.getParam("git_username"));
+            // console.log("navigation2");
+            // console.log(navigation.getParam("git_username"));
             return navigation;
         }
     }
@@ -166,8 +157,8 @@ export const createRootNavigator = (signedIn = false) =>
             initialRouteName: signedIn ? "SignedIn" : "SignedOut",
             headerMode: "none",
             navigationOptions: ({ navigation }) => {
-                console.log("navigation1");
-                console.log(navigation.getParam("git_username"));
+                // console.log("navigation1");
+                // console.log(navigation.getParam("git_username"));
                 return navigation;
             }
         }

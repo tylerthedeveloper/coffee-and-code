@@ -1,63 +1,73 @@
 import React, { Component } from "react";
-import {
-    ScrollView,
-    Text,
-    Linking,
-    View,
-    Alert,
-    Platform,
-    StyleSheet,
-    Dimensions,
-    TouchableOpacity
-} from "react-native";
-import { Card, Button } from "react-native-elements";
-import { Constants, Location, Permissions } from "expo";
+import { ScrollView, View, StyleSheet, AsyncStorage } from "react-native";
 import FriendsTab from "../component/FriendsTab";
 
-const data = [];
-
-export default class FriendRequests extends Component<Props> {
-    constructor(props) {
+export default class FriendsPage extends Component<Props> {
+    constructor() {
         super();
         this.state = {
-            friends_data: [
-                {
-                    key: "1",
-                    id: "Nishchaya",
-                    photo: "../assets/Nishchay.jpg",
-                    time: "11:00"
-                },
-                {
-                    key: "2",
-                    id: "Arpit",
-                    photo: "../assets/Arpit.png",
-                    time: "11:30"
-                },
-                {
-                    key: "3",
-                    id: "Abhishek",
-                    photo: "../assets/Abhishek.jpg",
-                    time: "11:40"
-                },
-                {
-                    key: "4",
-                    id: "Tyler",
-                    photo: "../assets/Tyler.png",
-                    time: "11:50"
-                }
-            ]
+            friends: []
         };
     }
 
-    componentWillMount() {}
+    async _init() {
+        await AsyncStorage.getItem("git_username").then(git_username => {
+            // let _username = git_username || "nishchaya";
+            console.log("friends mounting " + git_username);
+            this.setState({ git_username });
+            this.fetchDataFromUserbase(git_username);
+        });
+    }
+
+    componentDidMount() {
+        console.log("friends: fetchDataFromUserbase");
+        this._init();
+    }
+
+    fetchDataFromUserbase(username) {
+        console.log("friends: fetchDataFromUserbase");
+
+        // TODO: get username
+        const body = {
+            data: {
+                gitusername_1: {
+                    currentOp: "=",
+                    value: username, // "kanikeabhishek",
+                    nextOp: null
+                }
+            }
+        };
+        fetch("https://code-and-coffee2.azurewebsites.net/friends/query", {
+            method: "POST",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+        })
+            .then(res => res.json())
+            .then(resData => {
+                console.log("resData");
+                console.log(resData);
+                this.setState({
+                    friends: resData.rows
+                });
+            });
+    }
 
     render() {
         const {} = this.props;
-        console.log(this.props);
         return (
-            // <View style={styles.container}>
-            <FriendsTab friends={this.state.friends_data} />
-            // </View>
+            <View style={styles.container}>
+                <ScrollView>
+                    {this.state.friends.map(friend => (
+                        <FriendsTab
+                            addedFriends={friend}
+                            key={friend.gitusername_2}
+                        />
+                    ))}
+                </ScrollView>
+            </View>
         );
     }
 }

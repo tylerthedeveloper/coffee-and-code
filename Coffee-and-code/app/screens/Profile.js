@@ -5,10 +5,30 @@ import {
     View,
     Image,
     TouchableOpacity,
-    ScrollView
+    ScrollView,
+    AsyncStorage
 } from "react-native";
 
-export default class Profile extends Component<Props> {
+//const apiurl = 'https://code-and-coffee2.azurewebsites.net';
+import { getUserByID } from "../services/user-service";
+import { username } from "../screens/LogIn";
+// TODO: import firebase
+
+export default class Profile extends Component {
+    constructor() {
+        super();
+        this.state = {
+            git_username: ""
+        };
+    }
+
+    componentDidMount() {
+        AsyncStorage.getItem("git_username").then(git_username => {
+            this.setState({ git_username });
+            getUserByID(git_username).then(res => console.log(res));
+        });
+    }
+
     render() {
         return (
             <ScrollView>
@@ -25,11 +45,14 @@ export default class Profile extends Component<Props> {
                         <View style={styles.bodyContent}>
                             <Text style={styles.name}>Arpit Bhatnagar</Text>
                             <Text style={styles.info}>Mobile developer</Text>
+                            <Text style={styles.info}>Bloomington, IN</Text>
                             <Text style={styles.description}>
                                 Skills Set:React Native
                             </Text>
-
-                            <TouchableOpacity style={styles.buttonContainer}>
+                            <TouchableOpacity
+                                style={styles.buttonContainer}
+                                onPress={this.getAllUsers}
+                            >
                                 <Text>Edit Profile</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.buttonContainer}>

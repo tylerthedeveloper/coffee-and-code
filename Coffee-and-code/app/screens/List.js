@@ -25,7 +25,7 @@ export default class List extends Component<Props> {
 
     render() {
         const {} = this.props;
-        console.log(this.props);
+
         return <View style={styles.container} />;
     }
 }

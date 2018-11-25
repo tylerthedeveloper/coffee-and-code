@@ -25,7 +25,7 @@ export default class Repo extends Component<Props> {
 
     render() {
         const {} = this.props;
-        console.log(this.props);
+
         return (
             <ScrollView>
                 {this.props.repoData.map(repo => (

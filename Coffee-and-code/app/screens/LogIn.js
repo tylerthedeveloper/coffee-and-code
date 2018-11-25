@@ -9,7 +9,9 @@ import { FontAwesome as Icon } from "@expo/vector-icons";
 // import Constants from '../constants';
 // get GithubStorageKey from cosntants
 const GithubStorageKey = "@Expo:GithubToken";
+export let username = "";
 
+// TODO: Change
 export default class Profile extends Component<Props> {
     async signInAsync() {
         try {
@@ -25,7 +27,8 @@ export default class Profile extends Component<Props> {
 
             token = await getGithubTokenAsync();
             if (token) {
-                await AsyncStorage.setItem(GithubStorageKey, token); // TODO: TTL? : MINOR
+                // TODO: Arpit: do we need await?
+                AsyncStorage.setItem(GithubStorageKey, token); // TODO: TTL? : MINOR
                 const credential = firebase.auth.GithubAuthProvider.credential(
                     token
                 );
@@ -35,6 +38,7 @@ export default class Profile extends Component<Props> {
                     .then(user => {
                         console.log(user);
                         const git_username = user.additionalUserInfo.username.toString();
+                        // TODO:
                         // fetchGitData(username);
                         AsyncStorage.setItem("git_username", git_username);
                         return git_username;
@@ -118,6 +122,7 @@ const styles = StyleSheet.create({
     }
 });
 
+// TODO: Arpit
 function fetchGitData(username) {
     const urls = [
         `https://api.github.com/users/${username}/repos`,
@@ -125,6 +130,35 @@ function fetchGitData(username) {
     ];
     Promise.all(urls.map(url => fetch(url).then(res => res.json()))).then(
         res => {
+            console.log(res[0]);
+            const repos = res[0].map(repo => {
+                // (repos : IRepo) , repos => repo as IRepo
+                const {
+                    id,
+                    name,
+                    language,
+                    description,
+                    html_url,
+                    created_at,
+                    forks_count,
+                    stargazers_count,
+                    owner
+                } = repo;
+                const slimRepo = {
+                    repoID: id,
+                    user_name: owner.login,
+                    repo_name: name,
+                    language: language || "Not specified",
+                    description: description || "",
+                    repo_url: html_url,
+                    creation_date: created_at,
+                    forks_count: forks_count,
+                    stargazers_count: stargazers_count
+                };
+                console.log(slimRepo);
+
+                return slimRepo;
+            });
             console.log(res[1]);
             const {
                 id,

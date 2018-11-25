@@ -1,63 +1,70 @@
 import React, { Component } from "react";
-import {
-    ScrollView,
-    Text,
-    Linking,
-    View,
-    Alert,
-    Platform,
-    StyleSheet,
-    Dimensions,
-    TouchableOpacity
-} from "react-native";
-import { Card, Button } from "react-native-elements";
-import { Constants, Location, Permissions } from "expo";
+import { ScrollView, View, StyleSheet, AsyncStorage } from "react-native";
 import FriendRequestsTab from "../component/FriendRequestsTab";
 
-const data = [];
-
 export default class FriendRequests extends Component<Props> {
-    constructor(props) {
+    constructor() {
         super();
         this.state = {
-            friends_data: [
-                {
-                    key: "1",
-                    id: "Nishchaya",
-                    photo: "../assets/Nishchay.jpg",
-                    time: "11:00"
-                },
-                {
-                    key: "2",
-                    id: "Arpit",
-                    photo: "../assets/Arpit.png",
-                    time: "11:30"
-                },
-                {
-                    key: "3",
-                    id: "Abhishek",
-                    photo: "../assets/Abhishek.jpg",
-                    time: "11:40"
-                },
-                {
-                    key: "4",
-                    id: "Tyler",
-                    photo: "../assets/Tyler.png",
-                    time: "11:50"
-                }
-            ]
+            git_username: "",
+            friendRequests: []
         };
     }
 
-    componentWillMount() {}
+    async _init() {
+        await AsyncStorage.getItem("git_username").then(git_username => {
+            // let _username = git_username || "nishchaya";
+            console.log("xrequests mounting " + git_username);
+            this.setState({ git_username });
+            this.fetchDataFromUserbase(git_username);
+        });
+    }
+
+    componentDidMount() {
+        this._init();
+    }
+
+    fetchDataFromUserbase(git_username) {
+        fetch(
+            `https://code-and-coffee2.azurewebsites.net/friend-requests/${git_username}/received`,
+            {
+                method: "GET",
+                headers: {
+                    "Content-type": "application/json"
+                    // TODO: Credentials / accesstoken
+                }
+            }
+        )
+            .then(res => res.json())
+            .then(resData => {
+                console.log("requests resData");
+                console.log(resData);
+                const friendCards = resData.result.map(friend => {
+                    const splitStringArr = friend.split(/:(.+)/);
+                    return {
+                        username: splitStringArr[0],
+                        photoUrl: splitStringArr[1]
+                    };
+                });
+                this.setState({
+                    friendRequests: friendCards
+                });
+            });
+    }
 
     render() {
         const {} = this.props;
-        console.log(this.props);
         return (
-            // <View style={styles.container}>
-            <FriendRequestsTab friends={this.state.friends_data} />
-            // </View>
+            <View style={styles.container}>
+                <ScrollView>
+                    {this.state.friendRequests.map(friendRequest => (
+                        <FriendRequestsTab
+                            friends={friendRequest}
+                            key={friendRequest}
+                        />
+                    ))}
+                </ScrollView>
+            </View>
         );
     }
 }

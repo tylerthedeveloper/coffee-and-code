@@ -33,7 +33,7 @@ export default class App extends React.Component {
       return firebase.initializeApp(firebaseConfig);
 
     }
-    console.log('tyler: initializeFirebase');
+    
 
     // firebase.auth().onAuthStateChanged(async auth => {
     //     console.log('in auth state changed');
