@@ -106,8 +106,6 @@ export default class ChatThreads extends Component<Props> {
     }
 
     componentDidMount() {
-        // TODO: REMOVE
-        AsyncStorage.setItem("git_username", "akanai");
         this._loadInitialState().done();
     }
 

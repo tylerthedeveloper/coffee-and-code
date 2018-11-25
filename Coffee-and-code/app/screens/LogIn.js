@@ -13,27 +13,34 @@ const GithubStorageKey = "@Expo:GithubToken";
 export default class Profile extends Component<Props> {
     async signInAsync() {
         try {
-            // TODO:  double await execution logic : MINOR
-            const token =
-                (await AsyncStorage.getItem(GithubStorageKey)) ||
-                (await getGithubTokenAsync());
+            let token = await AsyncStorage.getItem(GithubStorageKey);
+            if (token) {
+                return await AsyncStorage.getItem("git_username").then(
+                    git_username => {
+                        console.log("git_username", git_username);
+                        return git_username;
+                    }
+                );
+            }
+
+            token = await getGithubTokenAsync();
             if (token) {
                 await AsyncStorage.setItem(GithubStorageKey, token); // TODO: TTL? : MINOR
                 const credential = firebase.auth.GithubAuthProvider.credential(
                     token
                 );
-                const user = firebase
+                return firebase
                     .auth()
                     .signInAndRetrieveDataWithCredential(credential)
                     .then(user => {
-                        console.log("Arpit");
-                        const username = user.additionalUserInfo.username.toString();
-                        //const phone = user.user.phoneNumber.toString();
-
-                        fetchGitData(username);
+                        console.log(user);
+                        const git_username = user.additionalUserInfo.username.toString();
+                        // fetchGitData(username);
+                        AsyncStorage.setItem("git_username", git_username);
+                        return git_username;
                     });
-                return user;
             } else {
+                console.log("login error");
                 return;
             }
         } catch ({ message }) {
@@ -44,7 +51,13 @@ export default class Profile extends Component<Props> {
     signIn(navigation) {
         this.signInAsync()
             // TODO: createRootNavigator( true )
-            .then(() => navigation.navigate("SignedIn"));
+            .then(git_username => {
+                console.log("sign in");
+                console.log(git_username);
+                navigation.navigate("SignedIn", {
+                    git_username: git_username
+                });
+            });
     }
 
     render() {

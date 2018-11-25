@@ -139,7 +139,12 @@ export const DrawerNavigation = createStackNavigator(
         DrawerStack: { screen: DrawerStack }
     },
     {
-        headerMode: "none"
+        headerMode: "none",
+        navigationOptions: ({ navigation }) => {
+            console.log("navigation2");
+            console.log(navigation.getParam("git_username"));
+            return navigation;
+        }
     }
 );
 
@@ -159,6 +164,11 @@ export const createRootNavigator = (signedIn = false) =>
         },
         {
             initialRouteName: signedIn ? "SignedIn" : "SignedOut",
-            headerMode: "none"
+            headerMode: "none",
+            navigationOptions: ({ navigation }) => {
+                console.log("navigation1");
+                console.log(navigation.getParam("git_username"));
+                return navigation;
+            }
         }
     );

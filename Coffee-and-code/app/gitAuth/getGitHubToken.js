@@ -58,12 +58,14 @@ async function getGitHubTokenAsync() {
             authUrl: authUrlWithId(github.id, githubFields)
         });
         if (type !== "success") {
+            console.log("unsuccess");
             // type === 'cancel' = if you cancel out of the modal
             // type === 'error' = if you click "no" on the redirect page
             return null;
         }
         // this is different to `type === 'error'`
         if (params.error) {
+            console.log("params.error");
             const { error, error_description } = params;
             /*
               If you didn't set the URI to match `REDIRECT_URL` in `https://github.com/settings/applications/...`
