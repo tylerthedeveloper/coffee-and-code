@@ -26,11 +26,10 @@ export default class Profile extends Component<Props> {
                     }
                 );
             }
-
             token = await getGithubTokenAsync();
             if (token) {
-                // TODO: Arpit: do we need await?
-                AsyncStorage.setItem(GithubStorageKey, token); // TODO: TTL? : MINOR
+                // TODO: TTL? : MINOR
+                AsyncStorage.setItem(GithubStorageKey, token);
                 const credential = firebase.auth.GithubAuthProvider.credential(
                     token
                 );
@@ -53,7 +52,7 @@ export default class Profile extends Component<Props> {
 
                             // AsyncStorage.setItem("repos", repos);
                             return addNewUser(profile).then(res => {
-                                console.log(res);
+                                console.log("new user", res);
                                 return git_username;
                             });
                             // TODO: add repos:
@@ -172,7 +171,6 @@ export function fetchGitData(username) {
                 forks_count: forks_count,
                 stargazers_count: stargazers_count
             };
-
             return slimRepo;
         });
 
@@ -189,12 +187,16 @@ export function fetchGitData(username) {
         const slimProfile = {
             user_id: id,
             git_username: login,
-            image_url: avatar_url,
-            followers: followers,
-            following: following,
-            //public_repos: public_repos,
+            name: name || "",
             bio: bio || "",
-            name: name || ""
+            picture_url: avatar_url,
+            // TODO: update db
+            // followers: followers,
+            // following: following,`
+            // TODO: pull ..
+            current_latitude: 39.1653,
+            current_longitude: 86.5264,
+            current_location: null
         };
         console.log("Profile:", slimProfile);
         return {

@@ -35,9 +35,9 @@ export function getUserByID(git_username) {
 }
 
 export function addNewUser(profile) {
-    //  const body = {
-    //     data: profile
-    //     }
+    const body = {
+        data: profile
+    };
     return fetch(`${apiurl}/users`, {
         method: "POST",
         body: JSON.stringify(body),
