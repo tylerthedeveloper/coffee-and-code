@@ -10,18 +10,16 @@ import {
 } from "react-native";
 
 export default class FriendRequestsTab extends React.Component {
-    navigateProfile(username) {
-        console.log("Friends", username);
-        AsyncStorage.setItem("pendingFriend", username);
-    }
-
     render() {
+        const { friendRequestsNavigation } = this.props;
         return (
             <View style={styles.mainViewStyle}>
                 <View style={styles.imageViewSource}>
                     <TouchableOpacity
                         onPress={() =>
-                            this.navigateProfile(this.props.friends.username)
+                            this.friendRequestsNav.navigate(
+                                "PendingFriendProfile"
+                            )
                         }
                     >
                         <Image

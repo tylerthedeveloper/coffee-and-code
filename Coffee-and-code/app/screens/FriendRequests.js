@@ -50,7 +50,8 @@ export default class FriendRequests extends Component<Props> {
     }
 
     render() {
-        const {} = this.props;
+        const { navigation } = this.props;
+        console.log("Navigation is :", navigation);
         return (
             <View style={styles.container}>
                 <ScrollView>
@@ -58,6 +59,7 @@ export default class FriendRequests extends Component<Props> {
                         <FriendRequestsTab
                             friends={friendRequest}
                             key={friendRequest}
+                            friendRequestsNav={navigation}
                         />
                     ))}
                 </ScrollView>

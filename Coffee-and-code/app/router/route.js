@@ -16,6 +16,8 @@ import FriendsPage from "../screens/FriendsPage";
 import FriendRequests from "../screens/FriendRequests";
 import ChatThreads from "../screens/ChatThreads";
 import ChatMessages from "../screens/ChatMessages";
+import PendingFriendProfile from "../screens/PendingFriendProfile";
+import ExistingFriendProfile from "../screens/ExistingFriendProfile";
 
 // TODO: Separate files
 
@@ -45,6 +47,22 @@ const ProfileTabNavigator = createMaterialTopTabNavigator({
         screen: FriendRequests,
         navigationOptions: {
             title: "Pending Friend Requests"
+        }
+    }
+});
+
+//TODO: Correct the navigation for different profile page
+const FriendProfileStackNavigator = createStackNavigator({
+    PendingFriendProfile: {
+        screen: PendingFriendProfile,
+        navigationOptions: {
+            title: "PendingFriendProfile"
+        }
+    },
+    ExistingFriendProfile: {
+        screen: ExistingFriendProfile,
+        navigationOptions: {
+            title: "ExistingFriendProfile"
         }
     }
 });
@@ -90,6 +108,12 @@ const ScreenStackNavigator = createStackNavigator(
             screen: ProfileTabNavigator,
             navigationOptions: {
                 title: "Me"
+            }
+        },
+        Pending_Friend_Profile: {
+            screen: FriendProfileStackNavigator,
+            navigationOptions: {
+                title: "PendingFriendProfile"
             }
         }
     },

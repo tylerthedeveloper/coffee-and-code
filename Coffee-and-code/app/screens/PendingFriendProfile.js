@@ -16,7 +16,7 @@ import { fetchGitData } from "./LogIn";
 import firebase from "firebase";
 // TODO: import firebase
 
-export default class Profile extends Component {
+export default class PendingFriendProfile extends Component {
     constructor() {
         super();
         this.state = {
@@ -34,6 +34,17 @@ export default class Profile extends Component {
     }
 
     render() {
+        const acceptReq = (
+            <TouchableOpacity style={styles.buttonContainer}>
+                <Text>Accept Friend Request </Text>
+            </TouchableOpacity>
+        );
+        const deleteReq = (
+            <TouchableOpacity style={styles.buttonContainer}>
+                <Text>Delete Friend Request </Text>
+            </TouchableOpacity>
+        );
+
         return (
             <ScrollView>
                 <View style={styles.container}>
@@ -54,10 +65,10 @@ export default class Profile extends Component {
                             </Text>
 
                             <TouchableOpacity style={styles.buttonContainer}>
-                                <Text>Edit Profile</Text>
+                                <Text>Accept Friend Request</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.buttonContainer}>
-                                <Text>Logout</Text>
+                                <Text>Delete Friend Request</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

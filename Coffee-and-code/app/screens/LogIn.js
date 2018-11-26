@@ -82,6 +82,7 @@ export default class Profile extends Component<Props> {
 
     render() {
         const { navigation } = this.props;
+
         return (
             <View style={styles.container}>
                 <Image

@@ -10,13 +10,22 @@ import {
 
 export default class FriendsTab extends React.Component {
     render() {
+        const { existingFriends } = this.props;
         return (
             <View style={styles.mainViewStyle}>
                 <View style={styles.imageViewSource}>
-                    <Image
-                        style={styles.image}
-                        source={require("../../assets/ironman.png")}
-                    />
+                    <TouchableOpacity
+                        onPress={() =>
+                            this.existingFriendsNav.navigate(
+                                "ExistingFriendProfile"
+                            )
+                        }
+                    >
+                        <Image
+                            style={styles.image}
+                            source={require("../../assets/ironman.png")}
+                        />
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.textViewStyle}>
                     <Text style={{ color: "white", marginTop: 5 }}>

@@ -16,7 +16,7 @@ import { fetchGitData } from "./LogIn";
 import firebase from "firebase";
 // TODO: import firebase
 
-export default class Profile extends Component {
+export default class ExistingFriendProfile extends Component {
     constructor() {
         super();
         this.state = {
@@ -52,12 +52,11 @@ export default class Profile extends Component {
                             <Text style={styles.description}>
                                 Skills Set:React Native
                             </Text>
-
                             <TouchableOpacity style={styles.buttonContainer}>
-                                <Text>Edit Profile</Text>
+                                <Text>Send Message</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.buttonContainer}>
-                                <Text>Logout</Text>
+                                <Text>Delete Friend</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

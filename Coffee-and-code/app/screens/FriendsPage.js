@@ -52,6 +52,7 @@ export default class FriendsPage extends Component<Props> {
 
     render() {
         const {} = this.props;
+        const { navigation } = this.props;
         return (
             <View style={styles.container}>
                 <ScrollView>
@@ -59,6 +60,7 @@ export default class FriendsPage extends Component<Props> {
                         <FriendsTab
                             addedFriends={friend}
                             key={friend.gitusername_2}
+                            existingFriends={navigation}
                         />
                     ))}
                 </ScrollView>
