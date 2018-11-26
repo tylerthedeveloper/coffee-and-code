@@ -69,10 +69,11 @@ router.post("/query", function(req, res, next) {
  */
 router.post("/", function(req, res, next) {
     const objectDict = req.body.data;
-    const str = Object.keys(objectDict).map(key => {
+    const str = Object.keys(objectDict).sort().map(key => {
         return objectDict[key];
     });
-    const sql = format("insert into users VALUES (%L)", str);
+    const sql = format("insert into users (bio, current_latitude, current_location, current_longitude, \
+        git_username, name, picture_url, user_id) VALUES (%L)", str);
     return pool.query(sql, (err, result) => {
         if (err) {
             return console.error("Error executing query", err.stack);
