@@ -26,21 +26,24 @@ export default class Menu extends React.Component {
 
     render() {
         const { navigation } = this.props;
+        // console.log('navigation', navigation.state);
         // TODO: STYLE AND Name each screen
         return (
             <View style={styles.container}>
                 <TouchableHighlight
-                    onPress={() => navigation.navigate("Profile")}
+                    onPress={() =>
+                        navigation.navigate("Profile", { current_user: "true" })
+                    }
                 >
                     <Image
                         // source={{ uri: "https://facebook.github.io/react-native/docs/assets/favicon.png" }}
                         source={require("../../assets/react.png")}
                         style={styles.profileImage}
                     />
-                </TouchableHighlight>
-                <Text onPress={() => navigation.navigate("Profile")}>
+                    {/* <Text onPress={() => navigation.navigate("Profile", { git_username: "tylerthedeveloper"})}>
                     Profile
-                </Text>
+                </Text> */}
+                </TouchableHighlight>
                 <Text
                     onPress={() => navigation.navigate("Home")}
                     style={styles.uglyDrawerItem}

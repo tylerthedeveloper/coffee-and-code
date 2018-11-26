@@ -14,26 +14,56 @@ import { getUserByID } from "../services/user-service";
 import { username } from "../screens/LogIn";
 import { fetchGitData } from "./LogIn";
 import firebase from "firebase";
-// TODO: import firebase
 
-export default class Profile extends Component {
-    constructor() {
-        super();
+export default class Profile extends Component<Props> {
+    constructor(props) {
+        super(props);
+        const current_user = props.navigation.getParam("current_user");
+        const git_username = props.navigation.getParam("git_username") || "";
+        // console.log(current_user, git_username);
+        // console.log(props);
         this.state = {
-            git_username: ""
+            current_user: current_user || "",
+            git_username: git_username,
+            user: {}
         };
     }
+
     async init() {
-        await AsyncStorage.getItem("git_username").then(git_username => {
-            this.setState({ git_username });
-            getUserByID(git_username).then(res => console.log(res));
-        });
+        // console.log(this.state);
+        if (this.state.current_user && this.state.git_username === "") {
+            await AsyncStorage.getItem("profile")
+                .then(profile => JSON.parse(profile))
+                .then(user => {
+                    console.log("user1", user);
+                    this.setState({ user });
+                });
+        } else {
+            getUserByID(this.state.git_username)
+                .then(users => users[0])
+                .then(user => {
+                    console.log("user2", user);
+                    this.setState({ user });
+                });
+        }
     }
+
     componentDidMount() {
         this.init();
     }
 
     render() {
+        const {
+            current_latitude,
+            current_location,
+            current_longitude,
+            git_username,
+            name,
+            picture_url,
+            user_id
+        } = this.state.user;
+        // followers: followers,
+        // following: following,`
         return (
             <ScrollView>
                 <View style={styles.container}>
@@ -41,18 +71,18 @@ export default class Profile extends Component {
                     <Image
                         style={styles.avatar}
                         source={{
-                            uri:
-                                "https://avatars3.githubusercontent.com/u/1481628?v=4"
+                            uri: picture_url
                         }}
                     />
                     <View style={styles.body}>
                         <View style={styles.bodyContent}>
-                            <Text style={styles.name}>Arpit Bhatnagar A</Text>
+                            <Text style={styles.name}> {git_username} </Text>
+                            <Text style={styles.name}> {name} </Text>
+                            {/* <Text style={styles.name}> { bio } </Text> */}
                             <Text style={styles.info}>Bloomington, IN</Text>
                             <Text style={styles.description}>
                                 Skills Set:React Native
                             </Text>
-
                             <TouchableOpacity style={styles.buttonContainer}>
                                 <Text>Edit Profile</Text>
                             </TouchableOpacity>

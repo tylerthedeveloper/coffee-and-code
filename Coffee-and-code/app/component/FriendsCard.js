@@ -8,17 +8,18 @@ import {
     ScrollView
 } from "react-native";
 
-export default class FriendsTab extends React.Component {
+export default class FriendsCard extends React.Component {
     render() {
-        const { existingFriends } = this.props;
+        const { friend, navigation } = this.props;
+        const { gitusername_2 } = friend;
         return (
             <View style={styles.mainViewStyle}>
                 <View style={styles.imageViewSource}>
                     <TouchableOpacity
                         onPress={() =>
-                            this.existingFriendsNav.navigate(
-                                "ExistingFriendProfile"
-                            )
+                            navigation.push("Profile", {
+                                git_username: gitusername_2
+                            })
                         }
                     >
                         <Image
@@ -29,7 +30,7 @@ export default class FriendsTab extends React.Component {
                 </View>
                 <View style={styles.textViewStyle}>
                     <Text style={{ color: "white", marginTop: 5 }}>
-                        Name : {this.props.addedFriends.gitusername_2}
+                        Name : {gitusername_2}
                     </Text>
                 </View>
                 <View>

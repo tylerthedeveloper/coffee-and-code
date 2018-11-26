@@ -31,7 +31,6 @@ export function getUserByID(git_username) {
     })
         .then(res => res.json())
         .then(res => res.rows);
-    // .then(rows => console.log(rows));
 }
 
 export function addNewUser(profile) {

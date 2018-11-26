@@ -9,15 +9,16 @@ import {
     AsyncStorage
 } from "react-native";
 
-export default class FriendRequestsTab extends React.Component {
+export default class FriendRequestCard extends React.Component {
     render() {
-        const { friendRequestsNavigation } = this.props;
+        const { navigation, friend } = this.props;
+        const { username } = friend;
         return (
             <View style={styles.mainViewStyle}>
                 <View style={styles.imageViewSource}>
                     <TouchableOpacity
                         onPress={() =>
-                            this.friendRequestsNav.navigate(
+                            this.friendRequestsNavigation.navigate(
                                 "PendingFriendProfile"
                             )
                         }
@@ -30,7 +31,7 @@ export default class FriendRequestsTab extends React.Component {
                 </View>
                 <View style={styles.textViewStyle}>
                     <Text style={{ color: "white", marginTop: 5 }}>
-                        Name : {this.props.friends.username}
+                        Name : {username}
                     </Text>
                 </View>
                 <View>

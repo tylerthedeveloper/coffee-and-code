@@ -4,7 +4,8 @@ import {
     createStackNavigator,
     createSwitchNavigator,
     createDrawerNavigator,
-    createMaterialTopTabNavigator
+    createMaterialTopTabNavigator,
+    Tabnav
 } from "react-navigation";
 
 import LogIn from "../screens/LogIn";
@@ -13,7 +14,7 @@ import List from "../screens/List";
 import Menu from "../screens/Menu";
 import Profile from "../screens/Profile";
 import FriendsPage from "../screens/FriendsPage";
-import FriendRequests from "../screens/FriendRequests";
+// import FriendRequests from "../screens/FriendRequests";
 import ChatThreads from "../screens/ChatThreads";
 import ChatMessages from "../screens/ChatMessages";
 import PendingFriendProfile from "../screens/PendingFriendProfile";
@@ -21,12 +22,18 @@ import ExistingFriendProfile from "../screens/ExistingFriendProfile";
 
 // TODO: Separate files
 
-export const SignedOut = createStackNavigator({
+const SignedOut = createStackNavigator({
     LogIn: {
         screen: LogIn,
         navigationOptions: {
             title: "Log In"
         }
+    }
+});
+
+const FriendStackNavigator = createStackNavigator({
+    Friends: {
+        screen: FriendsPage
     }
 });
 
@@ -42,30 +49,30 @@ const ProfileTabNavigator = createMaterialTopTabNavigator({
         navigationOptions: {
             title: "Friends"
         }
-    },
-    Pending_Friend_Requests: {
-        screen: FriendRequests,
-        navigationOptions: {
-            title: "Pending Friend Requests"
-        }
     }
+    // Pending_Friend_Requests: {
+    //     screen: FriendRequests,
+    //     navigationOptions: {
+    //         title: "Pending Friend Requests"
+    //     }
+    // }
 });
 
 //TODO: Correct the navigation for different profile page
-const FriendProfileStackNavigator = createStackNavigator({
-    PendingFriendProfile: {
-        screen: PendingFriendProfile,
-        navigationOptions: {
-            title: "PendingFriendProfile"
-        }
-    },
-    ExistingFriendProfile: {
-        screen: ExistingFriendProfile,
-        navigationOptions: {
-            title: "ExistingFriendProfile"
-        }
-    }
-});
+// const FriendProfileStackNavigator = createStackNavigator({
+//     PendingFriendProfile: {
+//         screen: PendingFriendProfile,
+//         navigationOptions: {
+//             title: "PendingFriendProfile"
+//         }
+//     },
+//     ExistingFriendProfile: {
+//         screen: ExistingFriendProfile,
+//         navigationOptions: {
+//             title: "ExistingFriendProfile"
+//         }
+//     }
+// });
 
 const ChatStackNavigator = createStackNavigator({
     Chat: {
@@ -106,16 +113,21 @@ const ScreenStackNavigator = createStackNavigator(
         },
         Profile: {
             screen: ProfileTabNavigator,
-            navigationOptions: {
-                title: "Me"
-            }
-        },
-        Pending_Friend_Profile: {
-            screen: FriendProfileStackNavigator,
-            navigationOptions: {
-                title: "PendingFriendProfile"
+            navigationOptions: ({ navigation }) => {
+                const git_username = navigation.getParam("git_username");
+                const current_user = navigation.getParam("current_user");
+                return {
+                    title: git_username || "Me",
+                    current_user: current_user || ""
+                };
             }
         }
+        // Pending_Friend_Profile: {
+        //     screen: FriendProfileStackNavigator,
+        //     navigationOptions: {
+        //         title: "PendingFriendProfile"
+        //     }
+        // }
     },
     {
         headerMode: "float",
@@ -125,6 +137,8 @@ const ScreenStackNavigator = createStackNavigator(
             headerTintColor: "white",
             gesturesEnabled: false,
             headerLeft: drawerButton(navigation)
+            // git_username: git_username || "",
+            // current_user: current_user || ""
         })
     }
 );
@@ -151,39 +165,81 @@ const drawerButton = navigation => (
 
 export const DrawerNavigation = createStackNavigator(
     {
-        DrawerStack: { screen: DrawerStack }
+        DrawerStack: {
+            screen: DrawerStack,
+            navigationOptions: ({ navigation }) => {
+                // console.log(navigation.getParam("git_username"));
+                const git_username = navigation.getParam("git_username");
+                // console.log("navigation4", git_username);
+                return {
+                    git_username: git_username || "Me"
+                };
+            }
+        }
     },
     {
         headerMode: "none",
         navigationOptions: ({ navigation }) => {
-            // console.log("navigation2");
             // console.log(navigation.getParam("git_username"));
-            return navigation;
+            const git_username = navigation.getParam("git_username");
+            // console.log("navigation4", git_username);
+            return {
+                git_username: git_username || "Me"
+            };
         }
     }
 );
 
-export const SignedIn = createStackNavigator({
-    DrawerStack: { screen: DrawerNavigation }
-});
+export const SignedIn = createStackNavigator(
+    {
+        DrawerStack: {
+            screen: DrawerNavigation,
+            navigationOptions: ({ navigation }) => {
+                const git_username = navigation.getParam("git_username");
+                // console.log("navigation3", git_username);
+                return {
+                    git_username: git_username || "Me"
+                };
+            }
+        }
+    },
+    {
+        navigationOptions: ({ navigation }) => {
+            const git_username = navigation.getParam("git_username");
+            // console.log("navigation3", git_username);
+            return {
+                git_username: git_username || "Me"
+            };
+        }
+    }
+);
 
 export const createRootNavigator = (signedIn = false) =>
     createSwitchNavigator(
         {
-            SignedIn: {
-                screen: DrawerNavigation
-            },
             SignedOut: {
                 screen: SignedOut
+            },
+            SignedIn: {
+                screen: DrawerNavigation,
+                navigationOptions: ({ navigation }) => {
+                    const git_username = navigation.getParam("git_username");
+                    // console.log("navigation2", git_username);
+                    return {
+                        git_username: git_username || "Me"
+                    };
+                }
             }
         },
         {
             initialRouteName: signedIn ? "SignedIn" : "SignedOut",
             headerMode: "none",
             navigationOptions: ({ navigation }) => {
-                // console.log("navigation1");
-                // console.log(navigation.getParam("git_username"));
-                return navigation;
+                const git_username = navigation.getParam("git_username");
+                // console.log("navigation1", git_username);
+                return {
+                    git_username: git_username || "Me"
+                };
             }
         }
     );

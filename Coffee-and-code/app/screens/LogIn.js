@@ -48,8 +48,9 @@ export default class Profile extends Component<Props> {
                             );
                             // AsyncStorage.setItem("repos", repos);
                             // TODO: add repos:
+                            // TODO: Dont always add to database ... create if not exists
                             return addNewUser(profile).then(res => {
-                                console.log("new user", res);
+                                // console.log("new user", res);
                                 return git_username;
                             });
                         });
@@ -67,8 +68,7 @@ export default class Profile extends Component<Props> {
         this.signInAsync()
             // TODO: createRootNavigator( true )
             .then(git_username => {
-                console.log("sign in");
-                console.log(git_username);
+                console.log("sign in", git_username);
                 navigation.navigate("SignedIn", {
                     git_username: git_username
                 });
@@ -194,7 +194,7 @@ export function fetchGitData(username) {
             // following: following,`
             // TODO: pull ..
         };
-        console.log("Profile:", slimProfile);
+        // console.log("Profile:", slimProfile);
         return {
             profile: slimProfile,
             repos: repos

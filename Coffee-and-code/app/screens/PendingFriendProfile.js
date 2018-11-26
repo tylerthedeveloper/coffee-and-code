@@ -14,7 +14,6 @@ import { getUserByID } from "../services/user-service";
 import { username } from "../screens/LogIn";
 import { fetchGitData } from "./LogIn";
 import firebase from "firebase";
-// TODO: import firebase
 
 export default class PendingFriendProfile extends Component {
     constructor() {
@@ -29,6 +28,7 @@ export default class PendingFriendProfile extends Component {
             getUserByID(git_username).then(res => console.log(res));
         });
     }
+
     componentDidMount() {
         this.init();
     }
