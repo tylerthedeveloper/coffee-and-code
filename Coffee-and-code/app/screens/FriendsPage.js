@@ -13,20 +13,17 @@ export default class FriendsPage extends Component<Props> {
     async _init() {
         await AsyncStorage.getItem("git_username").then(git_username => {
             // let _username = git_username || "nishchaya";
-            console.log("friends mounting " + git_username);
+
             this.setState({ git_username });
             this.fetchDataFromUserbase(git_username);
         });
     }
 
     componentDidMount() {
-        console.log("friends: fetchDataFromUserbase");
         this._init();
     }
 
     fetchDataFromUserbase(username) {
-        console.log("friends: fetchDataFromUserbase");
-
         // TODO: get username
         const body = {
             data: {
@@ -47,8 +44,6 @@ export default class FriendsPage extends Component<Props> {
         })
             .then(res => res.json())
             .then(resData => {
-                console.log("resData");
-                console.log(resData);
                 this.setState({
                     friends: resData.rows
                 });

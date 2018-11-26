@@ -5,18 +5,30 @@ import {
     StyleSheet,
     Image,
     TouchableOpacity,
-    ScrollView
+    ScrollView,
+    AsyncStorage
 } from "react-native";
 
 export default class FriendRequestsTab extends React.Component {
+    navigateProfile(username) {
+        console.log("Friends", username);
+        AsyncStorage.setItem("pendingFriend", username);
+    }
+
     render() {
         return (
             <View style={styles.mainViewStyle}>
                 <View style={styles.imageViewSource}>
-                    <Image
-                        style={styles.image}
-                        source={require("../../assets/ironman.png")}
-                    />
+                    <TouchableOpacity
+                        onPress={() =>
+                            this.navigateProfile(this.props.friends.username)
+                        }
+                    >
+                        <Image
+                            style={styles.image}
+                            source={require("../../assets/ironman.png")}
+                        />
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.textViewStyle}>
                     <Text style={{ color: "white", marginTop: 5 }}>

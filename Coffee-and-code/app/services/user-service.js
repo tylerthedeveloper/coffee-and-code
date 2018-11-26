@@ -20,6 +20,7 @@ export function getUserByID(git_username) {
             }
         }
     };
+
     return fetch(`${apiurl}/users/query`, {
         method: "POST",
         body: JSON.stringify(body),
@@ -33,4 +34,17 @@ export function getUserByID(git_username) {
     // .then(rows => console.log(rows));
 }
 
+export function addNewUser(profile) {
+    //  const body = {
+    //     data: profile
+    //     }
+    return fetch(`${apiurl}/users`, {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: {
+            "Content-type": "application/json"
+            // TODO: Credentials / accesstoken
+        }
+    }).then(res => res);
+}
 // TODO: export as class, object, etc.

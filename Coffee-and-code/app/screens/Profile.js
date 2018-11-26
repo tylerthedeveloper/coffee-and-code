@@ -12,6 +12,8 @@ import {
 //const apiurl = 'https://code-and-coffee2.azurewebsites.net';
 import { getUserByID } from "../services/user-service";
 import { username } from "../screens/LogIn";
+import { fetchGitData } from "./LogIn";
+import firebase from "firebase";
 // TODO: import firebase
 
 export default class Profile extends Component {
@@ -21,15 +23,76 @@ export default class Profile extends Component {
             git_username: ""
         };
     }
-
-    componentDidMount() {
-        AsyncStorage.getItem("git_username").then(git_username => {
+    async init() {
+        await AsyncStorage.getItem("git_username").then(git_username => {
             this.setState({ git_username });
             getUserByID(git_username).then(res => console.log(res));
         });
     }
+    componentDidMount() {
+        this.init();
+    }
 
     render() {
+        const pendingFriend = null;
+
+        const viewFriend = null;
+        const existingFriend = null;
+        const acceptReq = (
+            <TouchableOpacity style={styles.buttonContainer}>
+                <Text>Accept Friend Request </Text>
+            </TouchableOpacity>
+        );
+        const deleteReq = (
+            <TouchableOpacity style={styles.buttonContainer}>
+                <Text>Delete Friend Request </Text>
+            </TouchableOpacity>
+        );
+        const sendMsg = (
+            <TouchableOpacity style={styles.buttonContainer}>
+                <Text>Send Message </Text>
+            </TouchableOpacity>
+        );
+        const addFriend = (
+            <TouchableOpacity style={styles.buttonContainer}>
+                <Text>Add Friend </Text>
+            </TouchableOpacity>
+        );
+        const deleteFriend = (
+            <TouchableOpacity style={styles.buttonContainer}>
+                <Text>Remove Friend </Text>
+            </TouchableOpacity>
+        );
+        const editProfile = (
+            <TouchableOpacity style={styles.buttonContainer}>
+                <Text>Edit Profile </Text>
+            </TouchableOpacity>
+        );
+        const logout = (
+            <TouchableOpacity style={styles.buttonContainer}>
+                <Text> Logout </Text>
+            </TouchableOpacity>
+        );
+
+        let friendAcceptReq;
+        let friendDeleteReq;
+        let sendMsgReq;
+        let addFriendReq;
+        let deleteFriendReq;
+        let editProfileReq;
+        let logoutReq;
+        if (pendingFriend != null) {
+            friendAcceptReq = acceptReq;
+            friendDeleteReq = deleteReq;
+        } else if (viewFriend != null) {
+            sendMsgReq = sendMsg;
+            addFriendReq = addFriend;
+        } else if (existingFriend != null) {
+            deleteFriendReq = deleteFriend;
+        } else {
+            editProfileReq = editProfile;
+            logoutReq = logout;
+        }
         return (
             <ScrollView>
                 <View style={styles.container}>
@@ -43,8 +106,7 @@ export default class Profile extends Component {
                     />
                     <View style={styles.body}>
                         <View style={styles.bodyContent}>
-                            <Text style={styles.name}>Arpit Bhatnagar</Text>
-                            <Text style={styles.info}>Mobile developer</Text>
+                            <Text style={styles.name}>Arpit Bhatnagar A</Text>
                             <Text style={styles.info}>Bloomington, IN</Text>
                             <Text style={styles.description}>
                                 Skills Set:React Native
@@ -59,6 +121,11 @@ export default class Profile extends Component {
                                 <Text>Logout</Text>
                             </TouchableOpacity>
                         </View>
+                        <View>{friendAcceptReq}</View>
+                        <View>{friendDeleteReq}</View>
+                        <View>{sendMsgReq}</View>
+                        <View>{addFriendReq}</View>
+                        <View>{deleteFriendReq}</View>
                     </View>
                 </View>
             </ScrollView>

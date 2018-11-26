@@ -14,7 +14,6 @@ export default class FriendRequests extends Component<Props> {
     async _init() {
         await AsyncStorage.getItem("git_username").then(git_username => {
             // let _username = git_username || "nishchaya";
-            console.log("xrequests mounting " + git_username);
             this.setState({ git_username });
             this.fetchDataFromUserbase(git_username);
         });
@@ -37,8 +36,6 @@ export default class FriendRequests extends Component<Props> {
         )
             .then(res => res.json())
             .then(resData => {
-                console.log("requests resData");
-                console.log(resData);
                 const friendCards = resData.result.map(friend => {
                     const splitStringArr = friend.split(/:(.+)/);
                     return {
