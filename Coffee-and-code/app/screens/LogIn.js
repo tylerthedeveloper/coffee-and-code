@@ -39,23 +39,19 @@ export default class Profile extends Component<Props> {
                     .then(user => {
                         const git_username = user.additionalUserInfo.username.toString();
                         // TODO:
-                        console.log("Set username");
                         AsyncStorage.setItem("git_username", git_username);
                         return fetchGitData(git_username).then(res => {
                             const { profile, repos } = res;
-                            console.log("Set Profile before");
                             AsyncStorage.setItem(
                                 "profile",
                                 JSON.stringify(profile)
                             );
-                            console.log("Set Profile after");
-
                             // AsyncStorage.setItem("repos", repos);
+                            // TODO: add repos:
                             return addNewUser(profile).then(res => {
                                 console.log("new user", res);
                                 return git_username;
                             });
-                            // TODO: add repos:
                         });
                     });
             } else {
@@ -185,18 +181,18 @@ export function fetchGitData(username) {
             name
         } = res[1];
         const slimProfile = {
-            user_id: id,
+            bio: bio || "",
+            current_latitude: 39.1653,
+            current_location: null,
+            current_longitude: 86.5264,
             git_username: login,
             name: name || "",
-            bio: bio || "",
             picture_url: avatar_url,
+            user_id: id
             // TODO: update db
             // followers: followers,
             // following: following,`
             // TODO: pull ..
-            current_latitude: 39.1653,
-            current_longitude: 86.5264,
-            current_location: null
         };
         console.log("Profile:", slimProfile);
         return {
