@@ -13,6 +13,7 @@ import List from "../screens/List";
 import Menu from "../screens/Menu";
 import Profile from "../screens/Profile";
 import FriendsPage from "../screens/FriendsPage";
+import RepoPage from "../screens/RepoPage";
 import ChatThreads from "../screens/ChatThreads";
 import ChatMessages from "../screens/ChatMessages";
 
@@ -44,6 +45,12 @@ const ProfileTabNavigator = createMaterialTopTabNavigator({
         screen: FriendsPage,
         navigationOptions: {
             title: "Friends"
+        }
+    },
+    Repos: {
+        screen: RepoPage,
+        navigationOptions: {
+            title: "Repositories"
         }
     }
 });
