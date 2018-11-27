@@ -4,7 +4,6 @@ import * as firebase from "firebase";
 import getGithubTokenAsync from "../gitAuth/getGitHubToken";
 import { AsyncStorage } from "react-native";
 import { FontAwesome as Icon } from "@expo/vector-icons";
-
 import { addNewUser } from "../services/user-service";
 
 // TODO: MINOR

@@ -9,11 +9,18 @@ import {
     AsyncStorage
 } from "react-native";
 
-//const apiurl = 'https://code-and-coffee2.azurewebsites.net';
 import { getUserByID } from "../services/user-service";
 import { username } from "../screens/LogIn";
 import { fetchGitData } from "./LogIn";
 import firebase from "firebase";
+import { createChatThread } from "../services/chat-service";
+import { logout, sendMessage } from "../services/profile-utils";
+import {
+    acceptFriendRequest,
+    deleteFriendRequest
+} from "../services/friend-requests-service";
+
+const apiurl = "https://code-and-coffee2.azurewebsites.net";
 
 export default class Profile extends Component<Props> {
     constructor(props) {
@@ -86,7 +93,24 @@ export default class Profile extends Component<Props> {
             }
         };
         console.log(body);
-        // TODO: post to deleteFriendRequest
+        return (
+            fetch(`192.168.65.94:3000/friend-requests/accept`, {
+                method: "POST",
+                body: JSON.stringify(body),
+                headers: {
+                    "Content-type": "application/json"
+                    // TODO: Credentials / accesstoken
+                }
+            })
+                // TODO: post to deleteFriendRequest
+                .then(res => res.json())
+                .then(res => {
+                    // TODO: then create new chat thread
+                    createChatThread(current_user, git_username).then(res =>
+                        console.log("create chat thread")
+                    );
+                })
+        );
     }
 
     deleteFriendRequest() {
@@ -99,7 +123,9 @@ export default class Profile extends Component<Props> {
             data: {
                 fromUser: {
                     git_username_from: git_username,
-                    picture_url_from: picture_url
+                    // picture_url
+                    picture_url_from:
+                        "https://avatars0.githubusercontent.com/u/1957707?s=400&v=4"
                 },
                 toUser: {
                     git_username_to: current_user,
@@ -111,10 +137,6 @@ export default class Profile extends Component<Props> {
         // TODO: post to acceptFriendRequest
     }
 
-    sendMessage() {
-        // TODO: navigate to chat with this user id
-    }
-
     deleteFriend() {
         // TODO: navigate to your profile and make delete friend
     }
@@ -123,9 +145,10 @@ export default class Profile extends Component<Props> {
         // TODO: wtf
     }
 
-    logout() {
-        // TODO: idk
-    }
+    // logout() {
+    //     AsyncStorage.multiRemove(["profile", "git_username", "current_user_picture_url", "@Expo:GithubToken"])
+    //         .then(() => this.props.navigation.navigate("SignedOut"));
+    // }
 
     createButtonView() {
         if (
@@ -136,7 +159,9 @@ export default class Profile extends Component<Props> {
                 <View>
                     <TouchableOpacity
                         style={styles.buttonContainer}
-                        onPress={() => this.sendMessage()}
+                        onPress={() =>
+                            sendMessage(this.state.user.git_username)
+                        }
                     >
                         <Text>Send Message</Text>
                     </TouchableOpacity>

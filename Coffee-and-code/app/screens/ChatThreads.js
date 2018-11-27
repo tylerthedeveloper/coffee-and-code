@@ -1,18 +1,18 @@
-// import { parse } from "react-docgen";
 import React, { Component } from "react";
 import { AsyncStorage, StyleSheet, Text, View } from "react-native";
 import ChatThread from "../component/ChatThread";
 import { ChatService } from "../../services/ChatService";
 import * as firebase from "firebase";
 
-// const componentDocs = parse(Component);
-
 export default class ChatThreads extends Component<Props> {
     constructor(props) {
         super();
         console.ignoredYellowBox = ["Setting a timer"];
+        const onSendMessageTo = props.navigation.getParam("onSendMessageTo");
+        console.log("onSendMessageTo", onSendMessageTo);
         this.state = {
             git_username: "",
+            onSendMessageTo: onSendMessageTo,
             chatThreads: [
                 {
                     chatThreadID: 1,
@@ -39,9 +39,22 @@ export default class ChatThreads extends Component<Props> {
             .onSnapshot(snapshot => {
                 const chatThreads = [];
                 snapshot.docs.map(doc => chatThreads.push(doc.data()));
-                this.setState({
-                    chatThreads: chatThreads
-                });
+                const onSendMessageTo = this.state.onSendMessageTo;
+                if (onSendMessageTo) {
+                    const chatThread = chatThreads.find(
+                        chatThread =>
+                            chatThread.git_username === onSendMessageTo
+                    );
+                    this.props.navigation.push("Messages", {
+                        id: chatThread.chatThreadID,
+                        git_username: git_username,
+                        title: onSendMessageTo
+                    });
+                } else {
+                    this.setState({
+                        chatThreads: chatThreads
+                    });
+                }
             });
     }
 
@@ -58,11 +71,6 @@ export default class ChatThreads extends Component<Props> {
             git_username: git_username
         };
         const batch = this.firestore.batch();
-        // TODO: Remove after more testing
-        // batch.set(this.chatThreadsCollection
-        //     .doc(git_username), { git_username: git_username });
-        // batch.set(this.chatThreadsCollection
-        //     .doc(git_recipient), { git_username: git_recipient });
         batch.set(
             this.chatThreadsCollection
                 .doc(git_username)
@@ -78,15 +86,6 @@ export default class ChatThreads extends Component<Props> {
             secondObj
         );
         batch.commit();
-    }
-
-    // TODO: remove
-    async storeUsernameLocally(username) {
-        try {
-            await AsyncStorage.setItem("git_username", username);
-        } catch (error) {
-            // Error saving data
-        }
     }
 
     // TODO: general UTILS / service separate file

@@ -2,6 +2,10 @@ import React, { Component } from "react";
 import { ScrollView, View, StyleSheet, AsyncStorage } from "react-native";
 import FriendsCard from "../component/FriendsCard";
 import FriendRequestCard from "../component/FriendRequestCard";
+import {
+    acceptFriendRequest,
+    deleteFriendRequest
+} from "../services/friend-requests-service";
 
 export default class FriendsPage extends Component<Props> {
     constructor(props) {
@@ -20,10 +24,15 @@ export default class FriendsPage extends Component<Props> {
 
     async _init() {
         if (this.state.current_user && this.state.git_username === "") {
-            await AsyncStorage.getItem("git_username").then(git_username => {
-                this.setState({ git_username });
-                this.fetchFriendsData(git_username);
-            });
+            await AsyncStorage.getItem("profile")
+                .then(profile => JSON.parse(profile))
+                .then(profile => {
+                    this.setState({
+                        current_user: profile.git_username,
+                        current_user_picture_url: profile.picture_url
+                    });
+                    this.fetchFriendsData(git_username);
+                });
         } else {
             this.fetchFriendsData(this.state.git_username);
         }
@@ -33,6 +42,7 @@ export default class FriendsPage extends Component<Props> {
         this._init();
     }
 
+    // TODO: GET FROM FRIENDS SERVICE
     fetchFriendsData(git_username) {
         const friendBody = {
             data: {
@@ -81,9 +91,19 @@ export default class FriendsPage extends Component<Props> {
                 friends: friends,
                 friendRequests: friendCards
             });
-            // console.log(friends);
-            // console.log(friendCards);
         });
+    }
+
+    _acceptFriendRequest(friendRequest) {
+        const state = {
+            current_user: this.state.current_user,
+            current_user_picture_url: this.state.current_user_picture_url,
+            user: {
+                git_username: friendRequest.username,
+                picture_url: friendRequest.photoUrl
+            }
+        };
+        acceptFriendRequest(state);
     }
 
     render() {
@@ -98,6 +118,9 @@ export default class FriendsPage extends Component<Props> {
                             friend={friendRequest}
                             key={friendRequest.username}
                             navigation={navigation}
+                            accept={() =>
+                                this._acceptFriendRequest(friendRequest)
+                            }
                         />
                     ))}
                     {/* TODO: ADD friends text */}

@@ -7,6 +7,7 @@ import {
     TouchableHighlight
 } from "react-native";
 import { NavigationActions } from "react-navigation";
+import { logout } from "../services/profile-utils";
 
 export default class Menu extends React.Component {
     // TODO: RESET STACK
@@ -66,7 +67,7 @@ export default class Menu extends React.Component {
                     Chat
                 </Text>
                 {/* ADD LINE DIVIDER HERE */}
-                <Text onPress={this.logout} style={styles.uglyDrawerItem}>
+                <Text onPress={() => logout()} style={styles.uglyDrawerItem}>
                     Log Out
                 </Text>
             </View>
