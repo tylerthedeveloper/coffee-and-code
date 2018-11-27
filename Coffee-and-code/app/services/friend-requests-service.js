@@ -74,10 +74,9 @@ export const acceptFriendRequest = state => {
             }
         }
     };
-    // const apiurl = "https://www.code-and-coffee2.azurewebsites.net/friend-requests";
     console.log(body);
     return fetch(
-        `https://www.code-and-coffee2.azurewebsites.net/friend-requests/accept`,
+        `https://code-and-coffee2.azurewebsites.net/friend-requests/accept`,
         {
             method: "POST",
             body: JSON.stringify(body),
@@ -89,9 +88,12 @@ export const acceptFriendRequest = state => {
         .then(res => res.json())
         .then(res => {
             console.log("cferthe ihrighroeg ");
-            createChatThread(current_user, git_username).then(res =>
-                console.log("create chat thread")
-            );
+            console.log(current_user, git_username);
+            return createChatThread(current_user, git_username).then(res => ({
+                current_user: false,
+                git_username: git_username,
+                isCurrentFriend: true
+            }));
         });
 };
 

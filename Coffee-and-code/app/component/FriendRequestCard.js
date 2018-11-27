@@ -12,14 +12,14 @@ import {
 export default class FriendRequestCard extends React.Component {
     render() {
         const { navigation, friend } = this.props;
-        const { username } = friend;
+        const { git_username } = friend;
         return (
             <View style={styles.mainViewStyle}>
                 <View style={styles.imageViewSource}>
                     <TouchableOpacity
                         onPress={() =>
                             navigation.push("Profile", {
-                                git_username: username,
+                                git_username: git_username,
                                 isFriendRequest: true
                             })
                         }
@@ -32,11 +32,18 @@ export default class FriendRequestCard extends React.Component {
                 </View>
                 <View style={styles.textViewStyle}>
                     <Text style={{ color: "white", marginTop: 5 }}>
-                        Name : {username}
+                        Name : {git_username}
                     </Text>
                 </View>
                 <View>
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() =>
+                            this.props.accept({
+                                friend
+                            })
+                        }
+                    >
                         <Text style={{ color: "white", marginTop: 5 }}>
                             Accept
                         </Text>

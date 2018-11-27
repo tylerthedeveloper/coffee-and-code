@@ -28,38 +28,8 @@ export default class ChatThreads extends Component<Props> {
         this.onSelect = this.onSelect.bind(this);
         this.firestore = firebase.firestore();
         this.chatThreadsCollection = this.firestore.collection("chat-threads");
-        // createChatThread('r2', 'd2').then(res => console.log(res))
     }
 
-    // TODO: Export this from chat service
-    // getAllChatThreadsByUserID(git_username) {
-    //     this.chatThreadsCollection
-    //         .doc(git_username)
-    //         .collection("chatThreads")
-    //         // split here and this is the thenable
-    //         .onSnapshot(snapshot => {
-    //             const chatThreads = [];
-    //             snapshot.docs.map(doc => chatThreads.push(doc.data()));
-    //             const onSendMessageTo = this.state.onSendMessageTo;
-    //             if (onSendMessageTo) {
-    //                 const chatThread = chatThreads.find(
-    //                     chatThread =>
-    //                         chatThread.git_username === onSendMessageTo
-    //                 );
-    //                 this.props.navigation.push("Messages", {
-    //                     id: chatThread.chatThreadID,
-    //                     git_username: git_username,
-    //                     title: onSendMessageTo
-    //                 });
-    //             } else {
-    // this.setState({
-    //     chatThreads: chatThreads
-    // });
-    //             }
-    //         });
-    // }
-
-    // TODO: general UTILS / service separate file
     async _loadInitialState() {
         try {
             const git_username = await AsyncStorage.getItem("git_username");

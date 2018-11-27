@@ -10,18 +10,13 @@ import {
 } from "react-native";
 
 import { getUserByID } from "../services/user-service";
-import { username } from "../screens/LogIn";
-import { fetchGitData } from "./LogIn";
+// import { fetchGitData } from "./LogIn";
 import firebase from "firebase";
 import { createChatThread } from "../services/chat-service";
 import { logout, sendMessage } from "../services/profile-utils";
-import {
-    acceptFriendRequest,
-    deleteFriendRequest,
-    sendFriendRequest
-} from "../services/friend-requests-service";
+import { acceptFriendRequest } from "../services/friend-requests-service";
 
-const apiurl = "https://code-and-coffee2.azurewebsites.net";
+// const apiurl = "https://code-and-coffee2.azurewebsites.net";
 
 export default class Profile extends Component<Props> {
     constructor(props) {
@@ -72,45 +67,6 @@ export default class Profile extends Component<Props> {
 
     componentDidMount() {
         this.init();
-    }
-
-    // TODO: MOVE TO FRIEND SERVICE
-    acceptFriendRequest(state) {
-        const {
-            current_user,
-            current_user_picture_url,
-            user: { git_username, picture_url }
-        } = state;
-        const body = {
-            data: {
-                fromUser: {
-                    git_username_from: git_username,
-                    picture_url_from: picture_url
-                },
-                toUser: {
-                    git_username_to: current_user,
-                    picture_url_to: current_user_picture_url
-                }
-            }
-        };
-        // const apiurl = "https://www.code-and-coffee2.azurewebsites.net/friend-requests";
-        console.log(body);
-        fetch(
-            "https://www.code-and-coffee2.azurewebsites.net/friend-requests/accept",
-            {
-                method: "POST",
-                body: JSON.stringify(body),
-                headers: {
-                    "Content-type": "application/json"
-                    // TODO: Credentials / accesstoken
-                }
-            }
-        ).then(res => res.json());
-        // .then(res => {
-        //     console.log('cferthe ihrighroeg ');
-        //     createChatThread(current_user, git_username)
-        //         .then(res => console.log("create chat thread"))
-        // });
     }
 
     deleteFriendRequest() {
@@ -178,7 +134,11 @@ export default class Profile extends Component<Props> {
                 <View>
                     <TouchableOpacity
                         style={styles.buttonContainer}
-                        onPress={() => this.acceptFriendRequest(this.state)}
+                        onPress={() =>
+                            acceptFriendRequest(this.state).then(
+                                this.setState({ isCurrentFriend: true })
+                            )
+                        }
                     >
                         <Text>Accept Friend Request</Text>
                     </TouchableOpacity>

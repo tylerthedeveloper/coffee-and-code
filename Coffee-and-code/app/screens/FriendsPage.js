@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { ScrollView, View, StyleSheet, AsyncStorage } from "react-native";
+import { ScrollView, View, StyleSheet, AsyncStorage, Text } from "react-native";
 import FriendsCard from "../component/FriendsCard";
 import FriendRequestCard from "../component/FriendRequestCard";
 import {
@@ -22,6 +22,7 @@ export default class FriendsPage extends Component<Props> {
             friends: [],
             friendRequests: []
         };
+        this._acceptFriendRequest = this._acceptFriendRequest.bind(this);
     }
 
     async _init() {
@@ -54,8 +55,8 @@ export default class FriendsPage extends Component<Props> {
             const friendCards = friendRequests.result.map(friend => {
                 const splitStringArr = friend.split(/:(.+)/);
                 return {
-                    username: splitStringArr[0],
-                    photoUrl: splitStringArr[1]
+                    git_username: splitStringArr[0],
+                    picture_url: splitStringArr[1]
                 };
             });
             this.setState({
@@ -66,15 +67,21 @@ export default class FriendsPage extends Component<Props> {
     }
 
     _acceptFriendRequest(friendRequest) {
+        const {
+            friend: { picture_url, git_username }
+        } = friendRequest;
         const state = {
             current_user: this.state.current_user,
             current_user_picture_url: this.state.current_user_picture_url,
             user: {
-                git_username: friendRequest.username,
-                picture_url: friendRequest.photoUrl
+                git_username,
+                picture_url
             }
         };
-        acceptFriendRequest(state);
+        acceptFriendRequest(state).then(res => {
+            console.log(res);
+            this.props.navigation.navigate("Profile", { res });
+        });
     }
 
     render() {
@@ -82,22 +89,16 @@ export default class FriendsPage extends Component<Props> {
         return (
             <View style={styles.container}>
                 <ScrollView>
-                    {/* TODO: ADD friend requests text */}
-                    {/* <Text> Friend Requests <Text> */}
-                    {/* ADD friend requests # */}
+                    <Text> Friend Requests </Text>
                     {this.state.friendRequests.map(friendRequest => (
                         <FriendRequestCard
                             friend={friendRequest}
-                            key={friendRequest.username}
+                            key={friendRequest.git_username}
                             navigation={navigation}
-                            accept={() =>
-                                this._acceptFriendRequest(friendRequest)
-                            }
+                            accept={this._acceptFriendRequest}
                         />
                     ))}
-                    {/* TODO: ADD friends text */}
-                    {/* <Text> Friend Requests <Text> */}
-                    {/* ADD friends # */}
+                    <Text> My Friends </Text>
                     {this.state.friends.map(friend => (
                         <FriendsCard
                             friend={friend}
