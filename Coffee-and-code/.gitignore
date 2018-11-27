@@ -1,7 +1,8 @@
 node_modules/**/*
 .expo/*
 npm-debug.*
+../.idea/
+./.idea
 .idea/
 .env
-.vscode/
-/node_modules
+../.vscode/
