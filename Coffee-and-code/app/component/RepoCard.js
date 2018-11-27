@@ -15,8 +15,8 @@ export default class AssetExample extends React.Component {
 
         this.icons = {
             //Step 2
-            up: require("../assets/arrow-up-01-512.png"),
-            down: require("../assets/arrow-down-01-512.png")
+            up: require("../../assets/arrow-up-01-512.png"),
+            down: require("../../assets/arrow-down-01-512.png")
         };
 
         this.state = {

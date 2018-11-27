@@ -82,9 +82,6 @@ export default class FriendsPage extends Component<Props> {
         return (
             <View style={styles.container}>
                 <ScrollView>
-                    {/* TODO: ADD friend requests text */}
-                    {/* <Text> Friend Requests <Text> */}
-                    {/* ADD friend requests # */}
                     {this.state.friendRequests.map(friendRequest => (
                         <FriendRequestCard
                             friend={friendRequest}
@@ -95,9 +92,6 @@ export default class FriendsPage extends Component<Props> {
                             }
                         />
                     ))}
-                    {/* TODO: ADD friends text */}
-                    {/* <Text> Friend Requests <Text> */}
-                    {/* ADD friends # */}
                     {this.state.friends.map(friend => (
                         <FriendsCard
                             friend={friend}
