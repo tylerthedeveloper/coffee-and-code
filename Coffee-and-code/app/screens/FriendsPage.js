@@ -4,8 +4,10 @@ import FriendsCard from "../component/FriendsCard";
 import FriendRequestCard from "../component/FriendRequestCard";
 import {
     acceptFriendRequest,
-    deleteFriendRequest
+    deleteFriendRequest,
+    getFriendRequestsReceived
 } from "../services/friend-requests-service";
+import { getFriends } from "../services/friends-service";
 
 export default class FriendsPage extends Component<Props> {
     constructor(props) {
@@ -27,8 +29,9 @@ export default class FriendsPage extends Component<Props> {
             await AsyncStorage.getItem("profile")
                 .then(profile => JSON.parse(profile))
                 .then(profile => {
+                    const git_username = profile.git_username;
                     this.setState({
-                        current_user: profile.git_username,
+                        current_user: git_username,
                         current_user_picture_url: profile.picture_url
                     });
                     this.fetchFriendsData(git_username);
@@ -42,41 +45,9 @@ export default class FriendsPage extends Component<Props> {
         this._init();
     }
 
-    // TODO: GET FROM FRIENDS SERVICE
     fetchFriendsData(git_username) {
-        const friendBody = {
-            data: {
-                gitusername_1: {
-                    currentOp: "=",
-                    value: git_username,
-                    nextOp: null
-                }
-            }
-        };
-        const friendsPromise = fetch(
-            "https://code-and-coffee2.azurewebsites.net/friends/query",
-            {
-                method: "POST",
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(friendBody)
-            }
-        )
-            .then(res => res.json())
-            .then(res => res.rows);
-
-        const friendRequestsPromise = fetch(
-            `https://code-and-coffee2.azurewebsites.net/friend-requests/${git_username}/received`,
-            {
-                method: "GET",
-                headers: {
-                    "Content-type": "application/json"
-                    // TODO: Credentials / accesstoken
-                }
-            }
-        ).then(res => res.json());
+        const friendsPromise = getFriends(git_username);
+        const friendRequestsPromise = getFriendRequestsReceived(git_username);
         Promise.all([friendsPromise, friendRequestsPromise]).then(res => {
             const friends = res[0];
             const friendRequests = res[1];
@@ -112,6 +83,7 @@ export default class FriendsPage extends Component<Props> {
             <View style={styles.container}>
                 <ScrollView>
                     {/* TODO: ADD friend requests text */}
+                    {/* <Text> Friend Requests <Text> */}
                     {/* ADD friend requests # */}
                     {this.state.friendRequests.map(friendRequest => (
                         <FriendRequestCard
@@ -124,6 +96,7 @@ export default class FriendsPage extends Component<Props> {
                         />
                     ))}
                     {/* TODO: ADD friends text */}
+                    {/* <Text> Friend Requests <Text> */}
                     {/* ADD friends # */}
                     {this.state.friends.map(friend => (
                         <FriendsCard

@@ -17,7 +17,8 @@ import { createChatThread } from "../services/chat-service";
 import { logout, sendMessage } from "../services/profile-utils";
 import {
     acceptFriendRequest,
-    deleteFriendRequest
+    deleteFriendRequest,
+    sendFriendRequest
 } from "../services/friend-requests-service";
 
 const apiurl = "https://code-and-coffee2.azurewebsites.net";
@@ -187,6 +188,22 @@ export default class Profile extends Component<Props> {
                         onPress={() => this.deleteFriendRequest()}
                     >
                         <Text>Delete Friend Request</Text>
+                    </TouchableOpacity>
+                </View>
+            );
+        } else if (
+            !this.state.isCurrentFriend &&
+            !this.state.isFriendRequest &&
+            this.state.git_username
+        ) {
+            // TODO: Test this
+            return (
+                <View>
+                    <TouchableOpacity
+                        style={styles.buttonContainer}
+                        onPress={() => sendFriendRequest()}
+                    >
+                        <Text>Send Friend Request</Text>
                     </TouchableOpacity>
                 </View>
             );

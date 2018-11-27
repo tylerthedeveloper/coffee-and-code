@@ -1,11 +1,11 @@
-export function postUserFriendRequest(
+const apiurl = "https://www.code-and-coffee2.azurewebsites.net/friend-requests";
+
+export function sendFriendRequest(
     usernameFrom,
     fromPhotoURL,
     usernameTo,
     toPhotoURL
 ) {
-    const apiurl =
-        "https://www.coffee-and-code.azurewebsites.net/friend-requests";
     const body = {
         data: {
             fromUser: {
@@ -18,8 +18,7 @@ export function postUserFriendRequest(
             }
         }
     };
-
-    return fetch(`${apiurl}/users/query`, {
+    return fetch(`${apiurl}`, {
         method: "POST",
         body: JSON.stringify(body),
         headers: {
@@ -27,14 +26,9 @@ export function postUserFriendRequest(
             // TODO: Credentials / accesstoken
         }
     }).then(res => res.json());
-    // .then(res => res.rows)
-    // .then(rows => console.log(rows));
 }
 
-export function getSentRequests(username) {
-    const apiurl =
-        "https://www.coffee-and-code.azurewebsites.net/friend-requests";
-
+export function getSentFriendRequests(username) {
     return fetch(`${apiurl}/${username}/sent`, {
         method: "GET",
         headers: {
@@ -46,23 +40,20 @@ export function getSentRequests(username) {
         .then(res => res.rows);
 }
 
-export function getReceivedRequests(username) {
-    const apiurl =
-        "https://www.coffee-and-code.azurewebsites.net/friend-requests";
-
-    return fetch(`${apiurl}/${username}/received`, {
-        method: "GET",
-        headers: {
-            "Content-type": "application/json"
-            // TODO: Credentials / accesstoken
+export const getFriendRequestsReceived = username => {
+    return fetch(
+        `https://code-and-coffee2.azurewebsites.net/friend-requests/${username}/received`,
+        {
+            method: "GET",
+            headers: {
+                "Content-type": "application/json"
+                // TODO: Credentials / accesstoken
+            }
         }
-    })
-        .then(res => res.json())
-        .then(res => res.rows)
-        .then(rows => console.log(rows));
-}
+    ).then(res => res.json());
+};
 
-export function acceptFriendRequest(state) {
+export const acceptFriendRequest = state => {
     const {
         current_user,
         current_user_picture_url,
@@ -81,7 +72,7 @@ export function acceptFriendRequest(state) {
         }
     };
     console.log(body);
-    return fetch(`${apiurl}/friend-requests/accept`, {
+    const promise = fetch(`${apiurl}/friend-requests/accept`, {
         method: "POST",
         body: JSON.stringify(body),
         headers: {
@@ -89,33 +80,34 @@ export function acceptFriendRequest(state) {
             // TODO: Credentials / accesstoken
         }
     }).then(res => res.json());
-}
+    return promise;
+};
 
-export function deleteFriendRequest(state) {
-    const {
-        current_user,
-        current_user_picture_url,
-        user: { git_username, picture_url }
-    } = state;
-    const body = {
-        data: {
-            fromUser: {
-                git_username_from: git_username,
-                picture_url_from: picture_url
-            },
-            toUser: {
-                git_username_to: current_user,
-                picture_url_to: current_user_picture_url
-            }
-        }
-    };
-    console.log(body);
-    return fetch(`${apiurl}/friend-requests/delete`, {
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: {
-            "Content-type": "application/json"
-            // TODO: Credentials / accesstoken
-        }
-    }).then(res => res.json());
-}
+//export function deleteFriendRequest(state) {
+// const {
+//     current_user,
+//     current_user_picture_url,
+//     user: { git_username, picture_url }
+// } = state;
+// const body = {
+//     data: {
+//         fromUser: {
+//             git_username_from: git_username,
+//             picture_url_from: picture_url
+//         },
+//         toUser: {
+//             git_username_to: current_user,
+//             picture_url_to: current_user_picture_url
+//         }
+//     }
+// };
+// console.log(body);
+// return fetch(`${apiurl}/friend-requests/delete`, {
+//     method: "POST",
+//     body: JSON.stringify(body),
+//     headers: {
+//         "Content-type": "application/json"
+//         // TODO: Credentials / accesstoken
+//     }
+// }).then(res => res.json());
+//}
