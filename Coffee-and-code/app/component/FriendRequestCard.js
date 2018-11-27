@@ -18,9 +18,10 @@ export default class FriendRequestCard extends React.Component {
                 <View style={styles.imageViewSource}>
                     <TouchableOpacity
                         onPress={() =>
-                            this.friendRequestsNavigation.navigate(
-                                "PendingFriendProfile"
-                            )
+                            navigation.push("Profile", {
+                                git_username: username,
+                                isFriendRequest: true
+                            })
                         }
                     >
                         <Image

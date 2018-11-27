@@ -8,7 +8,7 @@ export default class FriendsPage extends Component<Props> {
         super(props);
         const current_user = props.navigation.getParam("current_user");
         const git_username = props.navigation.getParam("git_username") || "";
-        // console.log(current_user, git_username);
+        console.log("current_user", current_user);
         // console.log(props);
         this.state = {
             git_username: git_username,

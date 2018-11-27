@@ -18,7 +18,8 @@ export default class FriendsCard extends React.Component {
                     <TouchableOpacity
                         onPress={() =>
                             navigation.push("Profile", {
-                                git_username: gitusername_2
+                                git_username: gitusername_2,
+                                isCurrentFriend: true
                             })
                         }
                     >

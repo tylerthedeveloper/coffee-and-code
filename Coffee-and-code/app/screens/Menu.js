@@ -26,7 +26,10 @@ export default class Menu extends React.Component {
 
     render() {
         const { navigation } = this.props;
-        // console.log('navigation', navigation.state);
+        console.log(
+            "navigation",
+            this.props.navigation.getParam("git_username")
+        );
         // TODO: STYLE AND Name each screen
         return (
             <View style={styles.container}>

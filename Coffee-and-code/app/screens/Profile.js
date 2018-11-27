@@ -20,17 +20,25 @@ export default class Profile extends Component<Props> {
         super(props);
         const current_user = props.navigation.getParam("current_user");
         const git_username = props.navigation.getParam("git_username") || "";
-        // console.log(current_user, git_username);
-        // console.log(props);
+        const isFriendRequest =
+            props.navigation.getParam("isFriendRequest") || false;
+        const isCurrentFriend =
+            props.navigation.getParam("isCurrentFriend") || false;
+        console.log("current_user", current_user);
         this.state = {
             current_user: current_user || "",
             git_username: git_username,
-            user: {}
+            user: {},
+            isFriendRequest: isFriendRequest,
+            isCurrentFriend: isCurrentFriend
         };
     }
 
     async init() {
-        // console.log(this.state);
+        await AsyncStorage.getItem("git_username").then(git_username =>
+            this.setState({ current_user: git_username })
+        );
+        console.log(this.state);
         if (this.state.current_user && this.state.git_username === "") {
             await AsyncStorage.getItem("profile")
                 .then(profile => JSON.parse(profile))
@@ -52,6 +60,46 @@ export default class Profile extends Component<Props> {
         this.init();
     }
 
+    createButtonView() {
+        if (
+            this.state.isCurrentFriend &&
+            this.state.current_user !== this.state.git_username
+        ) {
+            return (
+                <View>
+                    <TouchableOpacity style={styles.buttonContainer}>
+                        <Text>Send Message</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.buttonContainer}>
+                        <Text>Delete Friend</Text>
+                    </TouchableOpacity>
+                </View>
+            );
+        } else if (this.state.isFriendRequest) {
+            return (
+                <View>
+                    <TouchableOpacity style={styles.buttonContainer}>
+                        <Text>Accept Friend Request</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.buttonContainer}>
+                        <Text>Delete Friend Request</Text>
+                    </TouchableOpacity>
+                </View>
+            );
+        } else {
+            return (
+                <View>
+                    <TouchableOpacity style={styles.buttonContainer}>
+                        <Text>Edit Profile</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.buttonContainer}>
+                        <Text>Logout</Text>
+                    </TouchableOpacity>
+                </View>
+            );
+        }
+    }
+
     render() {
         const {
             current_latitude,
@@ -64,6 +112,7 @@ export default class Profile extends Component<Props> {
         } = this.state.user;
         // followers: followers,
         // following: following,`
+        console.log(this.state);
         return (
             <ScrollView>
                 <View style={styles.container}>
@@ -83,12 +132,7 @@ export default class Profile extends Component<Props> {
                             <Text style={styles.description}>
                                 Skills Set:React Native
                             </Text>
-                            <TouchableOpacity style={styles.buttonContainer}>
-                                <Text>Edit Profile</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.buttonContainer}>
-                                <Text>Logout</Text>
-                            </TouchableOpacity>
+                            <View>{this.createButtonView()}</View>
                         </View>
                     </View>
                 </View>

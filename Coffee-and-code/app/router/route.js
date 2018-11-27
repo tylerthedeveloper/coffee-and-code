@@ -50,29 +50,7 @@ const ProfileTabNavigator = createMaterialTopTabNavigator({
             title: "Friends"
         }
     }
-    // Pending_Friend_Requests: {
-    //     screen: FriendRequests,
-    //     navigationOptions: {
-    //         title: "Pending Friend Requests"
-    //     }
-    // }
 });
-
-//TODO: Correct the navigation for different profile page
-// const FriendProfileStackNavigator = createStackNavigator({
-//     PendingFriendProfile: {
-//         screen: PendingFriendProfile,
-//         navigationOptions: {
-//             title: "PendingFriendProfile"
-//         }
-//     },
-//     ExistingFriendProfile: {
-//         screen: ExistingFriendProfile,
-//         navigationOptions: {
-//             title: "ExistingFriendProfile"
-//         }
-//     }
-// });
 
 const ChatStackNavigator = createStackNavigator({
     Chat: {
@@ -122,12 +100,6 @@ const ScreenStackNavigator = createStackNavigator(
                 };
             }
         }
-        // Pending_Friend_Profile: {
-        //     screen: FriendProfileStackNavigator,
-        //     navigationOptions: {
-        //         title: "PendingFriendProfile"
-        //     }
-        // }
     },
     {
         headerMode: "float",
@@ -136,8 +108,8 @@ const ScreenStackNavigator = createStackNavigator(
             title: navigation.routeName || "Coffee-and-Code",
             headerTintColor: "white",
             gesturesEnabled: false,
-            headerLeft: drawerButton(navigation)
-            // git_username: git_username || "",
+            headerLeft: drawerButton(navigation),
+            git_username: navigation.getParam("git_username") || ""
             // current_user: current_user || ""
         })
     }
@@ -147,7 +119,16 @@ const DrawerStack = createDrawerNavigator(
     { ScreenStackNavigator },
     {
         gesturesEnabled: false,
-        contentComponent: Menu
+        contentComponent: Menu,
+        navigationOptions: ({ navigation }) => {
+            const git_username = navigation.getParam("git_username");
+            const current_user = navigation.getParam("current_user");
+            // console.log("navigation1", git_username);
+            return {
+                git_username: git_username || "Me",
+                current_user: current_user || ""
+            };
+        }
     }
 );
 
@@ -168,11 +149,12 @@ export const DrawerNavigation = createStackNavigator(
         DrawerStack: {
             screen: DrawerStack,
             navigationOptions: ({ navigation }) => {
-                // console.log(navigation.getParam("git_username"));
                 const git_username = navigation.getParam("git_username");
-                // console.log("navigation4", git_username);
+                const current_user = navigation.getParam("current_user");
+                // console.log("navigation1", git_username);
                 return {
-                    git_username: git_username || "Me"
+                    git_username: git_username || "Me",
+                    current_user: current_user || ""
                 };
             }
         }
@@ -180,11 +162,12 @@ export const DrawerNavigation = createStackNavigator(
     {
         headerMode: "none",
         navigationOptions: ({ navigation }) => {
-            // console.log(navigation.getParam("git_username"));
             const git_username = navigation.getParam("git_username");
-            // console.log("navigation4", git_username);
+            const current_user = navigation.getParam("current_user");
+            // console.log("navigation1", git_username);
             return {
-                git_username: git_username || "Me"
+                git_username: git_username || "Me",
+                current_user: current_user || ""
             };
         }
     }
@@ -196,9 +179,11 @@ export const SignedIn = createStackNavigator(
             screen: DrawerNavigation,
             navigationOptions: ({ navigation }) => {
                 const git_username = navigation.getParam("git_username");
-                // console.log("navigation3", git_username);
+                const current_user = navigation.getParam("current_user");
+                // console.log("navigation1", git_username);
                 return {
-                    git_username: git_username || "Me"
+                    git_username: git_username || "Me",
+                    current_user: current_user || ""
                 };
             }
         }
@@ -206,9 +191,11 @@ export const SignedIn = createStackNavigator(
     {
         navigationOptions: ({ navigation }) => {
             const git_username = navigation.getParam("git_username");
-            // console.log("navigation3", git_username);
+            const current_user = navigation.getParam("current_user");
+            // console.log("navigation1", git_username);
             return {
-                git_username: git_username || "Me"
+                git_username: git_username || "Me",
+                current_user: current_user || ""
             };
         }
     }
@@ -224,9 +211,11 @@ export const createRootNavigator = (signedIn = false) =>
                 screen: DrawerNavigation,
                 navigationOptions: ({ navigation }) => {
                     const git_username = navigation.getParam("git_username");
-                    // console.log("navigation2", git_username);
+                    const current_user = navigation.getParam("current_user");
+                    // console.log("navigation1", git_username);
                     return {
-                        git_username: git_username || "Me"
+                        git_username: git_username || "Me",
+                        current_user: current_user || ""
                     };
                 }
             }
@@ -236,9 +225,11 @@ export const createRootNavigator = (signedIn = false) =>
             headerMode: "none",
             navigationOptions: ({ navigation }) => {
                 const git_username = navigation.getParam("git_username");
+                const current_user = navigation.getParam("current_user");
                 // console.log("navigation1", git_username);
                 return {
-                    git_username: git_username || "Me"
+                    git_username: git_username || "Me",
+                    current_user: current_user || ""
                 };
             }
         }
