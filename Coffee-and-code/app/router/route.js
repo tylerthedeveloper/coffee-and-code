@@ -45,6 +45,12 @@ const ProfileTabNavigator = createMaterialTopTabNavigator({
         navigationOptions: {
             title: "Friends"
         }
+    },
+    Repos: {
+        screen: RepoPage,
+        navigationOptions: {
+            title: "Repositories"
+        }
     }
 });
 
