@@ -4,8 +4,7 @@ import {
     createStackNavigator,
     createSwitchNavigator,
     createDrawerNavigator,
-    createMaterialTopTabNavigator,
-    Tabnav
+    createMaterialTopTabNavigator
 } from "react-navigation";
 
 import LogIn from "../screens/LogIn";
@@ -14,11 +13,8 @@ import List from "../screens/List";
 import Menu from "../screens/Menu";
 import Profile from "../screens/Profile";
 import FriendsPage from "../screens/FriendsPage";
-// import FriendRequests from "../screens/FriendRequests";
 import ChatThreads from "../screens/ChatThreads";
 import ChatMessages from "../screens/ChatMessages";
-import PendingFriendProfile from "../screens/PendingFriendProfile";
-import ExistingFriendProfile from "../screens/ExistingFriendProfile";
 
 // TODO: Separate files
 

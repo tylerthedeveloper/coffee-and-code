@@ -27,6 +27,7 @@ export default class Profile extends Component<Props> {
         console.log("current_user", current_user);
         this.state = {
             current_user: current_user || "",
+            current_user_picture_url: "",
             git_username: git_username,
             user: {},
             isFriendRequest: isFriendRequest,
@@ -35,9 +36,14 @@ export default class Profile extends Component<Props> {
     }
 
     async init() {
-        await AsyncStorage.getItem("git_username").then(git_username =>
-            this.setState({ current_user: git_username })
-        );
+        await AsyncStorage.getItem("profile")
+            .then(profile => JSON.parse(profile))
+            .then(profile =>
+                this.setState({
+                    current_user: profile.git_username,
+                    current_user_picture_url: profile.picture_url
+                })
+            );
         console.log(this.state);
         if (this.state.current_user && this.state.git_username === "") {
             await AsyncStorage.getItem("profile")
@@ -60,6 +66,67 @@ export default class Profile extends Component<Props> {
         this.init();
     }
 
+    // TODO: MOVE TO FRIEND SERVICE
+    acceptFriendRequest() {
+        const {
+            current_user,
+            current_user_picture_url,
+            user: { git_username, picture_url }
+        } = this.state;
+        const body = {
+            data: {
+                fromUser: {
+                    git_username_from: git_username,
+                    picture_url_from: picture_url
+                },
+                toUser: {
+                    git_username_to: current_user,
+                    picture_url_to: current_user_picture_url
+                }
+            }
+        };
+        console.log(body);
+        // TODO: post to deleteFriendRequest
+    }
+
+    deleteFriendRequest() {
+        const {
+            current_user,
+            current_user_picture_url,
+            user: { git_username, picture_url }
+        } = this.state;
+        const body = {
+            data: {
+                fromUser: {
+                    git_username_from: git_username,
+                    picture_url_from: picture_url
+                },
+                toUser: {
+                    git_username_to: current_user,
+                    picture_url_to: current_user_picture_url
+                }
+            }
+        };
+        console.log(body);
+        // TODO: post to acceptFriendRequest
+    }
+
+    sendMessage() {
+        // TODO: navigate to chat with this user id
+    }
+
+    deleteFriend() {
+        // TODO: navigate to your profile and make delete friend
+    }
+
+    editProfile() {
+        // TODO: wtf
+    }
+
+    logout() {
+        // TODO: idk
+    }
+
     createButtonView() {
         if (
             this.state.isCurrentFriend &&
@@ -67,10 +134,16 @@ export default class Profile extends Component<Props> {
         ) {
             return (
                 <View>
-                    <TouchableOpacity style={styles.buttonContainer}>
+                    <TouchableOpacity
+                        style={styles.buttonContainer}
+                        onPress={() => this.sendMessage()}
+                    >
                         <Text>Send Message</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.buttonContainer}>
+                    <TouchableOpacity
+                        style={styles.buttonContainer}
+                        onPress={() => this.deleteFriend()}
+                    >
                         <Text>Delete Friend</Text>
                     </TouchableOpacity>
                 </View>
@@ -78,10 +151,16 @@ export default class Profile extends Component<Props> {
         } else if (this.state.isFriendRequest) {
             return (
                 <View>
-                    <TouchableOpacity style={styles.buttonContainer}>
+                    <TouchableOpacity
+                        style={styles.buttonContainer}
+                        onPress={() => this.acceptFriendRequest()}
+                    >
                         <Text>Accept Friend Request</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.buttonContainer}>
+                    <TouchableOpacity
+                        style={styles.buttonContainer}
+                        onPress={() => this.deleteFriendRequest()}
+                    >
                         <Text>Delete Friend Request</Text>
                     </TouchableOpacity>
                 </View>
@@ -89,10 +168,16 @@ export default class Profile extends Component<Props> {
         } else {
             return (
                 <View>
-                    <TouchableOpacity style={styles.buttonContainer}>
+                    <TouchableOpacity
+                        style={styles.buttonContainer}
+                        onPress={() => this.editProfile()}
+                    >
                         <Text>Edit Profile</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.buttonContainer}>
+                    <TouchableOpacity
+                        style={styles.buttonContainer}
+                        onPress={() => this.logout()}
+                    >
                         <Text>Logout</Text>
                     </TouchableOpacity>
                 </View>

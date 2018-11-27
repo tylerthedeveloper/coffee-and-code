@@ -43,6 +43,10 @@ export default class Profile extends Component<Props> {
                         return fetchGitData(git_username).then(res => {
                             const { profile, repos } = res;
                             AsyncStorage.setItem(
+                                "current_user_picture_url",
+                                profile.picture_url
+                            );
+                            AsyncStorage.setItem(
                                 "profile",
                                 JSON.stringify(profile)
                             );
