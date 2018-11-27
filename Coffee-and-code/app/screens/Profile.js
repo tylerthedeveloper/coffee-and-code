@@ -75,12 +75,12 @@ export default class Profile extends Component<Props> {
     }
 
     // TODO: MOVE TO FRIEND SERVICE
-    acceptFriendRequest() {
+    acceptFriendRequest(state) {
         const {
             current_user,
             current_user_picture_url,
             user: { git_username, picture_url }
-        } = this.state;
+        } = state;
         const body = {
             data: {
                 fromUser: {
@@ -93,25 +93,24 @@ export default class Profile extends Component<Props> {
                 }
             }
         };
+        // const apiurl = "https://www.code-and-coffee2.azurewebsites.net/friend-requests";
         console.log(body);
-        return (
-            fetch(`192.168.65.94:3000/friend-requests/accept`, {
+        fetch(
+            "https://www.code-and-coffee2.azurewebsites.net/friend-requests/accept",
+            {
                 method: "POST",
                 body: JSON.stringify(body),
                 headers: {
                     "Content-type": "application/json"
                     // TODO: Credentials / accesstoken
                 }
-            })
-                // TODO: post to deleteFriendRequest
-                .then(res => res.json())
-                .then(res => {
-                    // TODO: then create new chat thread
-                    createChatThread(current_user, git_username).then(res =>
-                        console.log("create chat thread")
-                    );
-                })
-        );
+            }
+        ).then(res => res.json());
+        // .then(res => {
+        //     console.log('cferthe ihrighroeg ');
+        //     createChatThread(current_user, git_username)
+        //         .then(res => console.log("create chat thread"))
+        // });
     }
 
     deleteFriendRequest() {
@@ -179,7 +178,7 @@ export default class Profile extends Component<Props> {
                 <View>
                     <TouchableOpacity
                         style={styles.buttonContainer}
-                        onPress={() => this.acceptFriendRequest()}
+                        onPress={() => this.acceptFriendRequest(this.state)}
                     >
                         <Text>Accept Friend Request</Text>
                     </TouchableOpacity>

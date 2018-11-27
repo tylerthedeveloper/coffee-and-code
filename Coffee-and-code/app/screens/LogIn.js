@@ -49,9 +49,13 @@ export default class Profile extends Component<Props> {
                                 "profile",
                                 JSON.stringify(profile)
                             );
-                            // AsyncStorage.setItem("repos", repos);
+                            console.log(repos);
                             // TODO: add repos:
                             // TODO: Dont always add to database ... create if not exists
+                            AsyncStorage.setItem(
+                                "repos",
+                                JSON.stringify(repos)
+                            );
                             return addNewUser(profile).then(res => {
                                 // console.log("new user", res);
                                 return git_username;

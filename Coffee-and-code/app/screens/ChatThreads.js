@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { AsyncStorage, StyleSheet, Text, View } from "react-native";
 import ChatThread from "../component/ChatThread";
-import { ChatService } from "../../services/ChatService";
+import { getAllChatThreadsByUserID } from "../services/chat-service";
 import * as firebase from "firebase";
 
 export default class ChatThreads extends Component<Props> {
@@ -28,65 +28,36 @@ export default class ChatThreads extends Component<Props> {
         this.onSelect = this.onSelect.bind(this);
         this.firestore = firebase.firestore();
         this.chatThreadsCollection = this.firestore.collection("chat-threads");
+        // createChatThread('r2', 'd2').then(res => console.log(res))
     }
 
     // TODO: Export this from chat service
-    getAllChatThreadsByUserID(git_username) {
-        this.chatThreadsCollection
-            .doc(git_username)
-            .collection("chatThreads")
-            // split here and this is the thenable
-            .onSnapshot(snapshot => {
-                const chatThreads = [];
-                snapshot.docs.map(doc => chatThreads.push(doc.data()));
-                const onSendMessageTo = this.state.onSendMessageTo;
-                if (onSendMessageTo) {
-                    const chatThread = chatThreads.find(
-                        chatThread =>
-                            chatThread.git_username === onSendMessageTo
-                    );
-                    this.props.navigation.push("Messages", {
-                        id: chatThread.chatThreadID,
-                        git_username: git_username,
-                        title: onSendMessageTo
-                    });
-                } else {
-                    this.setState({
-                        chatThreads: chatThreads
-                    });
-                }
-            });
-    }
-
-    // TODO: where oes this go??? ... chat service
-    createChatThread(git_recipient) {
-        const git_username = this.state.git_username;
-        const chatRoomKey = this.firestore.collection("messages").doc().id;
-        const firstObj = {
-            chatThreadID: chatRoomKey,
-            git_username: git_recipient
-        };
-        const secondObj = {
-            chatThreadID: chatRoomKey,
-            git_username: git_username
-        };
-        const batch = this.firestore.batch();
-        batch.set(
-            this.chatThreadsCollection
-                .doc(git_username)
-                .collection("chatThreads")
-                .doc(chatRoomKey),
-            firstObj
-        );
-        batch.set(
-            this.chatThreadsCollection
-                .doc(git_recipient)
-                .collection("chatThreads")
-                .doc(chatRoomKey),
-            secondObj
-        );
-        batch.commit();
-    }
+    // getAllChatThreadsByUserID(git_username) {
+    //     this.chatThreadsCollection
+    //         .doc(git_username)
+    //         .collection("chatThreads")
+    //         // split here and this is the thenable
+    //         .onSnapshot(snapshot => {
+    //             const chatThreads = [];
+    //             snapshot.docs.map(doc => chatThreads.push(doc.data()));
+    //             const onSendMessageTo = this.state.onSendMessageTo;
+    //             if (onSendMessageTo) {
+    //                 const chatThread = chatThreads.find(
+    //                     chatThread =>
+    //                         chatThread.git_username === onSendMessageTo
+    //                 );
+    //                 this.props.navigation.push("Messages", {
+    //                     id: chatThread.chatThreadID,
+    //                     git_username: git_username,
+    //                     title: onSendMessageTo
+    //                 });
+    //             } else {
+    // this.setState({
+    //     chatThreads: chatThreads
+    // });
+    //             }
+    //         });
+    // }
 
     // TODO: general UTILS / service separate file
     async _loadInitialState() {
@@ -95,7 +66,18 @@ export default class ChatThreads extends Component<Props> {
             if (git_username !== null) {
                 console.log(git_username);
                 this.setState({ git_username: git_username });
-                this.getAllChatThreadsByUserID(git_username);
+                getAllChatThreadsByUserID(
+                    git_username,
+                    this.state.onSendMessageTo
+                ).then(chatThreadResponse => {
+                    if (chatThreadResponse.length >= 0) {
+                        this.setState({
+                            chatThreads: chatThreadResponse
+                        });
+                    } else {
+                        navigation.push("Messages", chatThreadResponse);
+                    }
+                });
             }
         } catch (error) {
             // TODO:

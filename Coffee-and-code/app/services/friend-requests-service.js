@@ -1,4 +1,7 @@
-const apiurl = "https://www.code-and-coffee2.azurewebsites.net/friend-requests";
+import { createChatThread } from "../services/chat-service";
+
+export const apiurl =
+    "https://www.code-and-coffee2.azurewebsites.net/friend-requests";
 
 export function sendFriendRequest(
     usernameFrom,
@@ -71,16 +74,25 @@ export const acceptFriendRequest = state => {
             }
         }
     };
+    // const apiurl = "https://www.code-and-coffee2.azurewebsites.net/friend-requests";
     console.log(body);
-    const promise = fetch(`${apiurl}/friend-requests/accept`, {
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: {
-            "Content-type": "application/json"
-            // TODO: Credentials / accesstoken
+    return fetch(
+        `https://www.code-and-coffee2.azurewebsites.net/friend-requests/accept`,
+        {
+            method: "POST",
+            body: JSON.stringify(body),
+            headers: {
+                "Content-type": "application/json"
+            }
         }
-    }).then(res => res.json());
-    return promise;
+    )
+        .then(res => res.json())
+        .then(res => {
+            console.log("cferthe ihrighroeg ");
+            createChatThread(current_user, git_username).then(res =>
+                console.log("create chat thread")
+            );
+        });
 };
 
 //export function deleteFriendRequest(state) {
