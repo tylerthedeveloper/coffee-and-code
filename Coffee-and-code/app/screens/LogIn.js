@@ -13,7 +13,7 @@ import { addRepos } from "../services/git-service";
 const GithubStorageKey = "@Expo:GithubToken";
 
 // TODO: Change
-export default class Profile extends Component<Props> {
+export default class Login extends Component<Props> {
     async signInAsync() {
         try {
             let token = await AsyncStorage.getItem(GithubStorageKey);
@@ -27,17 +27,22 @@ export default class Profile extends Component<Props> {
             }
             token = await getGithubTokenAsync();
             if (token) {
-                // TODO: TTL? : MINOR
                 AsyncStorage.setItem(GithubStorageKey, token);
                 const credential = firebase.auth.GithubAuthProvider.credential(
                     token
                 );
+                const git_username_fromStorage = await AsyncStorage.getItem(
+                    "git_username"
+                );
+                if (git_username_fromStorage) {
+                    return git_username_fromStorage;
+                }
+                // • • • • • FIRST TIME LOGIN
                 return firebase
                     .auth()
                     .signInAndRetrieveDataWithCredential(credential)
                     .then(user => {
                         const git_username = user.additionalUserInfo.username.toString();
-                        // TODO:
                         AsyncStorage.setItem("git_username", git_username);
                         return fetchGitData(git_username).then(res => {
                             const { profile, repos } = res;
@@ -49,21 +54,14 @@ export default class Profile extends Component<Props> {
                                 "profile",
                                 JSON.stringify(profile)
                             );
-                            // console.log(repos);
-                            // TODO: add repos:
-                            // TODO: Dont always add to database ... create if not exists
                             AsyncStorage.setItem(
                                 "repos",
                                 JSON.stringify(repos)
                             );
-                            // return addNewUser(profile).then(res => {
-                            //     // console.log("new user", res);
-                            //     return git_username;
-                            // });
-                            // return Promise.all([
-                            //     addNewUser(profile),
-                            //     addRepos(repos)])
-                            addRepos(repos)
+                            return Promise.all([
+                                addNewUser(profile),
+                                addRepos(repos)
+                            ])
                                 .then(res => {
                                     console.log(res);
                                     return git_username;
@@ -81,14 +79,12 @@ export default class Profile extends Component<Props> {
     }
 
     signIn(navigation) {
-        this.signInAsync()
-            // TODO: createRootNavigator( true )
-            .then(git_username => {
-                console.log("sign in", git_username);
-                navigation.navigate("SignedIn", {
-                    git_username: git_username
-                });
+        this.signInAsync().then(git_username => {
+            console.log("sign in", git_username);
+            navigation.navigate("SignedIn", {
+                git_username: git_username
             });
+        });
     }
 
     render() {

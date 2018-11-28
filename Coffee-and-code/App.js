@@ -37,7 +37,7 @@ export default class App extends React.Component {
   async componentDidMount() {
     this.setupFirebaseAsync();
     // firestore.settings(settings);
-    await AsyncStorage.getItem("git_username")
+    await AsyncStorage.getItem("@Expo:GithubToken")
       .then(res => {
         // const signedIN = (res !== undefined);
           if (res) {

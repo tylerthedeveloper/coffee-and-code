@@ -2,12 +2,15 @@ import { AsyncStorage } from "react-native";
 
 // TODO: send nav
 export function logout(navigation) {
-    AsyncStorage.multiRemove([
-        "profile",
-        "git_username",
-        "current_user_picture_url",
-        "@Expo:GithubToken"
-    ]).then(() => navigation.navigate("SignedOut"));
+    // AsyncStorage.multiRemove([
+    // "profile",
+    // "git_username",
+    // "current_user_picture_url",
+    // "@Expo:GithubToken"
+    // ]).then(() => navigation.navigate("SignedOut"));
+    AsyncStorage.removeItem("@Expo:GithubToken").then(() =>
+        navigation.navigate("SignedOut")
+    );
 }
 
 // TODO: send nav

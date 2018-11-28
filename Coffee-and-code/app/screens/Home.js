@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Text, View, StyleSheet, Dimensions } from "react-native";
 import { Card } from "react-native-elements";
-import CustomCallout from "./CustomCallout";
+import CustomCallout from "../component/CustomCallout";
 import MapView, { Marker, ProviderPropType, Callout } from "react-native-maps";
 import { Location, Permissions } from "expo";
 import PersonList from "../component/PersonList";
@@ -57,6 +57,8 @@ export default class Home extends Component<Props> {
         } else {
             const location = await Location.getCurrentPositionAsync({}); // {enableHighAccuracy: true}
             const { latitude, longitude } = location.coords;
+            // TODO: add to db
+            // QUERY POST GIS FOR THIS
             const markers = [];
             this.setState({
                 region: {
@@ -153,8 +155,6 @@ export default class Home extends Component<Props> {
                         ))}
                     </MapView>
                 </View>
-
-                {/* TODO: EXTRACT OUT INTO PersonList COMPONENT */}
 
                 <View style={styles.cards}>
                     <PersonList markers={this.state.markers} />

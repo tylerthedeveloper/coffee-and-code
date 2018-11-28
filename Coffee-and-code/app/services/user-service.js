@@ -50,3 +50,18 @@ export function addNewUser(profile) {
         }
     }).then(res => res);
 }
+
+export function sendLocation(user_location) {
+    const { git_username, location } = user_location;
+    const body = {
+        data: location
+    };
+    return fetch(`${apiurl}/users/`, {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: {
+            "Content-type": "application/json"
+            // TODO: Credentials / accesstoken
+        }
+    }).then(res => res);
+}
