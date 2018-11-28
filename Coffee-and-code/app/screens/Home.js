@@ -107,8 +107,8 @@ export default class Home extends Component<Props> {
             userInfoJson.map(user =>
                 markers.push({
                     coordinate: {
-                        latitude: user.current_latitude,
-                        longitude: user.current_longitude
+                        latitude: user.latitude,
+                        longitude: user.longitude
                     },
                     key: id++,
                     color: this.randomColor(),
@@ -137,6 +137,7 @@ export default class Home extends Component<Props> {
                         initialRegion={this.state.region}
                         region={this.state.region}
                     >
+                        {console.log("Markers are:", this.state.markers)}
                         {this.state.markers.map(marker => (
                             <Marker
                                 key={marker.key}

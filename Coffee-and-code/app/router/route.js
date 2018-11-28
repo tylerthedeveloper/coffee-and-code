@@ -4,7 +4,8 @@ import {
     createStackNavigator,
     createSwitchNavigator,
     createDrawerNavigator,
-    createMaterialTopTabNavigator
+    createMaterialTopTabNavigator,
+    createAppContainer
 } from "react-navigation";
 
 import LogIn from "../screens/LogIn";
@@ -16,6 +17,7 @@ import FriendsPage from "../screens/FriendsPage";
 import RepoPage from "../screens/RepoPage";
 import ChatThreads from "../screens/ChatThreads";
 import ChatMessages from "../screens/ChatMessages";
+import Preference from "../screens/Preference";
 
 // TODO: Separate files
 
@@ -112,6 +114,7 @@ const ScreenStackNavigator = createStackNavigator(
             headerTintColor: "white",
             gesturesEnabled: false,
             headerLeft: drawerButton(navigation),
+            headerRight: prefButton(navigation),
             git_username: navigation.getParam("git_username") || ""
             // current_user: current_user || ""
         })
@@ -144,6 +147,26 @@ const drawerButton = navigation => (
     >
         {/* TODO: Change to hamburger font awesome */}
         Menu
+    </Text>
+);
+
+const PrefStackNavigator = createStackNavigator({
+    Preference: {
+        screen: Preference,
+        navigationOptions: {
+            title: "Preference"
+        }
+    }
+});
+const prefButton = navigation => (
+    <Text
+        style={{ padding: 5, color: "white", textAlign: "right" }}
+        // onPress={() => {
+        //     navigation.navigate("Screen1");
+        // }}
+    >
+        {/* TODO: Change to hamburger font awesome */}
+        Preference
     </Text>
 );
 
