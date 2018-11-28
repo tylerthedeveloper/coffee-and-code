@@ -5,7 +5,10 @@ import CustomCallout from "../component/CustomCallout";
 import MapView, { Marker, ProviderPropType, Callout } from "react-native-maps";
 import { Location, Permissions } from "expo";
 import PersonList from "../component/PersonList";
-import { getLoggedinUserName, sendLocation } from "../services/user-service";
+import {
+    getLoggedinUserName,
+    updateLocationAndGetLocalUsers
+} from "../services/user-service";
 
 // import { SERVER_API } from "app/constants";
 
@@ -61,22 +64,14 @@ export default class Home extends Component<Props> {
             // location.then(res => console.log(res))
             const location = {
                 coords: {
-                    latitude: 39.1834026,
-                    longitude: -106.523
+                    latitude: 55.1834026,
+                    longitude: 55.523
                 }
             };
             await getLoggedinUserName().then(git_username =>
                 this.setState({ git_username })
             );
-            console.log(this.state);
             const { latitude, longitude } = location.coords;
-            sendLocation({
-                git_username: this.state.git_username,
-                location: location.coords
-            });
-            // TODO: add to db
-            // QUERY POST GIS FOR THIS
-            const markers = [];
             this.setState({
                 region: {
                     latitude: latitude,
@@ -85,14 +80,26 @@ export default class Home extends Component<Props> {
                     longitudeDelta: LONGITUDE_DELTA
                 }
             });
-
-            const response = await fetch(
-                // TODO: CONST API SITE
-                // TODO: Shouldnt this be query or is it already ???
-                "https://code-and-coffee2.azurewebsites.net/users"
+            // TODO: first chcek async storage... if differnet, uupdate
+            const markers = [];
+            await updateLocationAndGetLocalUsers({
+                git_username: this.state.git_username,
+                location: location.coords
+            }).then(localUsers =>
+                localUsers.map(localUser =>
+                    markers.push({
+                        coordinate: {
+                            latitude: localUser.current_latitude,
+                            longitude: localUser.current_longitude
+                        },
+                        key: id++,
+                        color: this.randomColor(),
+                        name: localUser.name,
+                        git_username: localUser.git_username,
+                        bio: localUser.bio
+                    })
+                )
             );
-            let responseJson = await response.json();
-            let userInfoJson = responseJson.rows;
 
             // TODO: Push logged in user
             markers.push({
@@ -104,22 +111,23 @@ export default class Home extends Component<Props> {
                 bio: "Ironman - Mechanic"
             });
 
-            userInfoJson.map(user =>
-                markers.push({
-                    coordinate: {
-                        latitude: user.current_latitude,
-                        longitude: user.current_longitude
-                    },
-                    key: id++,
-                    color: this.randomColor(),
-                    name: user.name,
-                    git_username: user.git_username,
-                    bio: user.bio
-                })
-            );
+            // userInfoJson.map(user =>
+            //     markers.push({
+            //         coordinate: {
+            //             latitude: user.current_latitude,
+            //             longitude: user.current_longitude
+            //         },
+            //         key: id++,
+            //         color: this.randomColor(),
+            //         name: user.name,
+            //         git_username: user.git_username,
+            //         bio: user.bio
+            //     })
+            // );
             this.setState({
                 markers
             });
+            console.log(this.state.markers);
         }
     }
 

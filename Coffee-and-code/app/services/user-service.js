@@ -58,7 +58,7 @@ export function addNewUser(profile) {
     }).then(res => res);
 }
 
-export function sendLocation(user_location) {
+export async function updateLocationAndGetLocalUsers(user_location) {
     const {
         git_username,
         location: { latitude, longitude }
@@ -69,13 +69,13 @@ export function sendLocation(user_location) {
             current_longitude: longitude
         }
     };
-    console.log(body);
-    // return fetch(`${apiurl}/users/`, {
-    //     method: "POST",
-    //     body: JSON.stringify(body),
-    //     headers: {
-    //         "Content-type": "application/json"
-    //         // TODO: Credentials / accesstoken
-    //     }
-    // }).then(res => res);
+    return fetch(`http://192.168.64.17:3001/users/${git_username}`, {
+        method: "PUT",
+        body: JSON.stringify(body),
+        headers: {
+            "Content-type": "application/json"
+        }
+    })
+        .then(res => res.json())
+        .then(res => res.rows);
 }
