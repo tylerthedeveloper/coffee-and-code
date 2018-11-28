@@ -12,16 +12,6 @@ const redisClient = require("../redis-client").redisClient;
  */
 router.get("/", function(req, res, next) {
     const sql = format("SELECT * FROM users");
-    console.log("Querying sql: " + sql);
-    console.log("Users endpoint");
-    // redisClient.get('my test key', function (error, result) {
-    //     if (error) {
-    //         console.log(error);
-    //         throw error;
-    //     }
-    //     console.log('GET result -> ' + result);
-    // });
-
     return pool.query(sql, (err, result) => {
         if (err) {
             return console.error("Error executing query", err.stack);
@@ -102,23 +92,62 @@ router.delete("/:userID", function(req, res, next) {
 });
 
 /**
- * update one user by ID
+ * update one user by git_username
  */
-router.put("/:userID", function(req, res, next) {
-    const userID = req.params["userID"];
+router.put("/:git_username", function(req, res, next) {
+    const git_username = req.params["git_username"];
     const objectDict = req.body.data;
+    const { current_latitude, current_longitude } = objectDict;
     const query =
         "SET " +
         Object.keys(objectDict).map(key => {
             const value = objectDict[key];
             return key + " = " + `'${value}'`;
         });
-    const sql = "UPDATE users " + query + " WHERE user_ID = " + userID;
-    return pool.query(sql, (err, result) => {
-        if (err) {
-            return console.error("Error executing query", err.stack);
-        }
-        res.send({ rows: result.rows });
+    const sql = "UPDATE users " + query + " WHERE git_username = '" + git_username + "'";
+    const sql2 = `UPDATE users SET current_location = ST_POINT(${current_latitude},${current_longitude}) \
+        where git_username = '${git_username}'`;
+    console.log(sql2);
+    const sql3 = `select * from users where git_username <> '${git_username}' \
+        and ST_DWithin(current_location, ST_POINT(${current_latitude},${current_longitude}), 1000000)`;
+    console.log(sql3);
+    return pool.connect((err, client, done) => {
+        const shouldAbort = err => {
+            if (err) {
+                console.error("Error in transaction", err.stack);
+                client.query("ROLLBACK", err => {
+                    if (err) {
+                        console.error("Error rolling back client", err.stack);
+                    }
+                    // release the client back to the pool
+                    done();
+                });
+            }
+            return !!err;
+        };
+
+        client.query("BEGIN", err => {
+            if (shouldAbort(err)) return;
+            client.query(sql);
+            if (shouldAbort(err)) return;
+            client.query(sql2);
+            if (shouldAbort(err)) return;
+            return client.query(sql3)
+                .then(res => res.rows)
+                .then(rows => {
+                    return client.query("COMMIT", 
+                        err => {
+                            if (err) {
+                                console.error("Error committing transaction", err.stack);
+                            }
+                        },
+                        result => {
+                            done();
+                            console.log(rows);
+                            res.send({ rows: rows });
+                        });
+                });
+            });
     });
 });
 
