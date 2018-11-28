@@ -1,0 +1,9 @@
+{
+    "data" : {
+        "gitusername_1": {
+            "currentOp": "=", 
+            "value": "tylerthedeveloper",
+            "nextOp": null
+        }   
+    }
+}

@@ -86,4 +86,74 @@ router.delete("/", function(req, res, next) {
     });
 });
 
+
+/**
+ * accept friend request
+ */
+router.post("/accept", function(req, res, next) {
+    const data = req.body.data;
+    const { git_username_from, picture_url_from } = data.fromUser;
+    const { git_username_to, picture_url_to } = data.toUser;
+    const fromLookup = `${git_username_from}-sent`;
+    const toLookup = `${git_username_to}-received`;
+    const multiClient = redisClient.multi();
+    multiClient.lrem(fromLookup, 1, `${git_username_to}:${picture_url_to}`);
+    multiClient.lrem(toLookup, 1, `${git_username_from}:${picture_url_from}`);
+
+    multiClient.exec(function(error, result) {
+        if (error) {
+            console.log(error);
+            throw error;
+        }
+        console.log("SET result -> " + result);
+        // res.send({ result: "res" });
+    });
+
+    const sql1 = format(
+        "insert into friends VALUES (%L,%L)",
+        git_username_from,
+        git_username_to
+    );
+    const sql2 = format(
+        "insert into friends VALUES (%L,%L)",
+        git_username_to,
+        git_username_from
+    );
+
+    console.log("sql1: " + sql1);
+    console.log("sql2: " + sql2);
+    return pool.connect((err, client, done) => {
+        // TODO: PUT INTO PSQL HELPER FILE
+        const shouldAbort = err => {
+            if (err) {
+                console.error("Error in transaction", err.stack);
+                client.query("ROLLBACK", err => {
+                    if (err) {
+                        console.error("Error rolling back client", err.stack);
+                    }
+                    // release the client back to the pool
+                    done();
+                });
+            }
+            return !!err;
+        };
+
+        client.query("BEGIN", err => {
+            if (shouldAbort(err)) return;
+            client.query(sql1);
+            client.query(sql2);
+        });
+
+        return client.query("COMMIT", err => {
+            if (err) {
+                console.error("Error committing transaction", err.stack);
+            }
+            done();
+            res.send({ message: "success" });
+        });
+    });
+
+});
+
+
 module.exports = router;

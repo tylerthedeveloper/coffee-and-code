@@ -78,7 +78,6 @@ router.post("/", function(req, res, next) {
 
             repos.map(repo => {
                 const objectDict = repo;
-                // TODO: changed
                 const str = Object.keys(objectDict)
                     .sort()
                     .map(key => {

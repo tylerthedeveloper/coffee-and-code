@@ -47,7 +47,7 @@ jobs:
       #     docker_layer_caching: true
 
       # - run: docker login --username $DOCKER_USER_NAME --password $DOCKER_PASSWORD loadingdock.azurecr.io/express-server
-      - run: echo $DOCKER_PASSWORD | docker login --username $DOCKER_USER_NAME --password-stdin loadingdock.azurecr.io/express-server
+      - run: echo $DOCKER_PASSWORD2 | docker login --username $DOCKER_USER_NAME2 --password-stdin codeandcoffee.azurecr.io/express-server
 
       # ======================= PRODUCTION-BUILD =========================================
 
@@ -57,7 +57,7 @@ jobs:
       - run: cd server && docker-compose build
 
       # Pushing Azure container to the registry
-      - run: docker push loadingdock.azurecr.io/express-server:latest
+      - run: docker push codeandcoffee.azurecr.io/express-server:latest
 
       # - run: docker push loadingdock.azurecr.io/redis:latest
       
