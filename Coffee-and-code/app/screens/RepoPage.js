@@ -26,7 +26,7 @@ export default class RepoPage extends Component<Props> {
         const repoData = AsyncStorage.getItem("repos")
             .then(repos => JSON.parse(repos))
             .then(repoData => this.setState({ repoData: repoData }));
-        console.log(this.state.repoData);
+        // console.log(this.state.repoData);
     }
 
     componentWillMount() {

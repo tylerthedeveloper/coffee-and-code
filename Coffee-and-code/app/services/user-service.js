@@ -1,6 +1,13 @@
 // import { apiurl } from '../constants';
+import { AsyncStorage } from "react-native";
 
 const apiurl = "https://code-and-coffee2.azurewebsites.net";
+
+export async function getLoggedinUserName() {
+    return await AsyncStorage.getItem("git_username").then(
+        git_username => git_username
+    );
+}
 
 // TODO: postgis?
 export function getAllUsers() {
@@ -52,16 +59,23 @@ export function addNewUser(profile) {
 }
 
 export function sendLocation(user_location) {
-    const { git_username, location } = user_location;
+    const {
+        git_username,
+        location: { latitude, longitude }
+    } = user_location;
     const body = {
-        data: location
-    };
-    return fetch(`${apiurl}/users/`, {
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: {
-            "Content-type": "application/json"
-            // TODO: Credentials / accesstoken
+        data: {
+            current_latitude: latitude,
+            current_longitude: longitude
         }
-    }).then(res => res);
+    };
+    console.log(body);
+    // return fetch(`${apiurl}/users/`, {
+    //     method: "POST",
+    //     body: JSON.stringify(body),
+    //     headers: {
+    //         "Content-type": "application/json"
+    //         // TODO: Credentials / accesstoken
+    //     }
+    // }).then(res => res);
 }

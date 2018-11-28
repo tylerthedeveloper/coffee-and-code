@@ -5,6 +5,7 @@ import CustomCallout from "../component/CustomCallout";
 import MapView, { Marker, ProviderPropType, Callout } from "react-native-maps";
 import { Location, Permissions } from "expo";
 import PersonList from "../component/PersonList";
+import { getLoggedinUserName, sendLocation } from "../services/user-service";
 
 // import { SERVER_API } from "app/constants";
 
@@ -32,6 +33,7 @@ export default class Home extends Component<Props> {
     constructor(props) {
         super(props);
         this.state = {
+            git_username: "",
             region: {
                 latitude: LATITUDE,
                 longitude: LONGITUDE,
@@ -49,14 +51,29 @@ export default class Home extends Component<Props> {
         this._initMap();
     }
 
-    _initMap = async () => {
+    async _initMap() {
         const { status } = await Permissions.askAsync(Permissions.LOCATION);
         if (status !== "granted") {
             // TODO: re-request for location permission
             throw new Error("Location permission not granted");
         } else {
-            const location = await Location.getCurrentPositionAsync({}); // {enableHighAccuracy: true}
+            // const location = await Location.getCurrentPositionAsync({enableHighAccuracy: true }); // {enableHighAccuracy: true}
+            // location.then(res => console.log(res))
+            const location = {
+                coords: {
+                    latitude: 39.1834026,
+                    longitude: -106.523
+                }
+            };
+            await getLoggedinUserName().then(git_username =>
+                this.setState({ git_username })
+            );
+            console.log(this.state);
             const { latitude, longitude } = location.coords;
+            sendLocation({
+                git_username: this.state.git_username,
+                location: location.coords
+            });
             // TODO: add to db
             // QUERY POST GIS FOR THIS
             const markers = [];
@@ -69,13 +86,11 @@ export default class Home extends Component<Props> {
                 }
             });
 
-            console.log("");
             const response = await fetch(
                 // TODO: CONST API SITE
                 // TODO: Shouldnt this be query or is it already ???
                 "https://code-and-coffee2.azurewebsites.net/users"
             );
-            // TODO: test need for double await
             let responseJson = await response.json();
             let userInfoJson = responseJson.rows;
 
@@ -106,7 +121,7 @@ export default class Home extends Component<Props> {
                 markers
             });
         }
-    };
+    }
 
     popup() {
         console.log("Printed");
