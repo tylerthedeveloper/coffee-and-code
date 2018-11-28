@@ -188,6 +188,7 @@ export default class Profile extends Component<Props> {
 
     render() {
         const {
+            bio,
             current_latitude,
             current_location,
             current_longitude,
@@ -213,7 +214,7 @@ export default class Profile extends Component<Props> {
                         <View style={styles.bodyContent}>
                             <Text style={styles.name}> {git_username} </Text>
                             <Text style={styles.name}> {name} </Text>
-                            {/* <Text style={styles.name}> { bio } </Text> */}
+                            <Text style={styles.name}> {bio} </Text>
                             <Text style={styles.info}>Bloomington, IN</Text>
                             <Text style={styles.description}>
                                 Skills Set:React Native
@@ -282,5 +283,6 @@ const styles = StyleSheet.create({
         width: 200,
         borderRadius: 30,
         backgroundColor: "#00BFFF"
-    }
+    },
+    bio: {}
 });

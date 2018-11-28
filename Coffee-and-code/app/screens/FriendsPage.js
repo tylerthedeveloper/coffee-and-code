@@ -89,7 +89,14 @@ export default class FriendsPage extends Component<Props> {
         return (
             <View style={styles.container}>
                 <ScrollView>
-                    <Text> Friend Requests </Text>
+                    {this.state.friendRequests.length > 0 && (
+                        <Text>
+                            {" "}
+                            Friend Requests {
+                                this.state.friendRequests.length
+                            }{" "}
+                        </Text>
+                    )}
                     {this.state.friendRequests.map(friendRequest => (
                         <FriendRequestCard
                             friend={friendRequest}
@@ -98,7 +105,9 @@ export default class FriendsPage extends Component<Props> {
                             accept={this._acceptFriendRequest}
                         />
                     ))}
-                    <Text> My Friends </Text>
+                    {this.state.friends.length > 0 && (
+                        <Text> My Friends {this.state.friends.length} </Text>
+                    )}
                     {this.state.friends.map(friend => (
                         <FriendsCard
                             friend={friend}

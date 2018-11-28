@@ -183,7 +183,7 @@ export function fetchGitData(username) {
             avatar_url,
             followers,
             following,
-            public_repos,
+            // public_repos,
             bio,
             name
         } = res[1];
