@@ -46,7 +46,6 @@ export function addNewUser(profile) {
         }
     }).then(res => res);
 }
-// // TODO: export as class, object, etc.
 
 // const userService = {
 

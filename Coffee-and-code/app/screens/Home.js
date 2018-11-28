@@ -45,6 +45,7 @@ export default class Home extends Component<Props> {
 
     // TODO: verify exuction order
     componentWillMount() {
+        // fetch('172.19.27.49:3001').then(res => console.log(res));
         this._initMap();
     }
 

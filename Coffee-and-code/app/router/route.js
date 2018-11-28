@@ -1,5 +1,5 @@
 import React from "react";
-import { Text } from "react-native";
+import { Text, AsyncStorage } from "react-native";
 import {
     createStackNavigator,
     createSwitchNavigator,
@@ -225,6 +225,13 @@ export const createRootNavigator = (signedIn = false) =>
         },
         {
             initialRouteName: signedIn ? "SignedIn" : "SignedOut",
+            // initialRouteName: async () => {
+            //     return await AsyncStorage.getItem("git_username")
+            //         .then(res => {
+            //             if (signedIn && res) return "SignedIn";
+            //             return "SignedOut";
+            //         });
+            // },
             headerMode: "none",
             navigationOptions: ({ navigation }) => {
                 const git_username = navigation.getParam("git_username");

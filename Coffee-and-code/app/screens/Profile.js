@@ -116,7 +116,10 @@ export default class Profile extends Component<Props> {
                     <TouchableOpacity
                         style={styles.buttonContainer}
                         onPress={() =>
-                            sendMessage(this.state.user.git_username)
+                            sendMessage(
+                                this.state.user.git_username,
+                                this.props.navigation
+                            )
                         }
                     >
                         <Text>Send Message</Text>
@@ -177,7 +180,7 @@ export default class Profile extends Component<Props> {
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.buttonContainer}
-                        onPress={() => this.logout()}
+                        onPress={() => logout(this.props.navigation)}
                     >
                         <Text>Logout</Text>
                     </TouchableOpacity>

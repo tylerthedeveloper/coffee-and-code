@@ -5,6 +5,7 @@ import initializeFirebase from './app/screens/LogIn';
 // import attemptToRestoreAuthAsync from './app/screens/LogIn';
 // import firebaseConfig from './firebaseConfig'
 import firestore from 'firebase/firestore';
+import { Text, AsyncStorage } from "react-native";
 
 // TODO: environment
   const firebaseConfig = {
@@ -29,26 +30,26 @@ export default class App extends React.Component {
   setupFirebaseAsync = async () => {
     // Prevent reinitializing the app in snack.
     if (!firebase.apps.length) {
-
       return firebase.initializeApp(firebaseConfig);
-
     }
+  }
     
-
-    // firebase.auth().onAuthStateChanged(async auth => {
-    //     console.log('in auth state changed');
-
-    //     const isSignedIn = !!auth;
-    //     this.setState({ isSignedIn });
-    //     if (!isSignedIn) {
-    //         attemptToRestoreAuthAsync();
-    //     }
-    // });
-  };
-
-  componentDidMount() {
+  async componentDidMount() {
     this.setupFirebaseAsync();
     // firestore.settings(settings);
+    await AsyncStorage.getItem("git_username")
+      .then(res => {
+        // const signedIN = (res !== undefined);
+          if (res) {
+            this.setState({
+              signedIn: true
+            });
+          } else {
+            this.setState({
+              signedIn: false
+            });
+          }
+      });
   }
 
   render() {

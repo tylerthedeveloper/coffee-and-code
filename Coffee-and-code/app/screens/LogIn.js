@@ -5,12 +5,12 @@ import getGithubTokenAsync from "../gitAuth/getGitHubToken";
 import { AsyncStorage } from "react-native";
 import { FontAwesome as Icon } from "@expo/vector-icons";
 import { addNewUser } from "../services/user-service";
+import { addRepos } from "../services/git-service";
 
 // TODO: MINOR
 // import Constants from '../constants';
 // get GithubStorageKey from cosntants
 const GithubStorageKey = "@Expo:GithubToken";
-export let username = "";
 
 // TODO: Change
 export default class Profile extends Component<Props> {
@@ -49,17 +49,26 @@ export default class Profile extends Component<Props> {
                                 "profile",
                                 JSON.stringify(profile)
                             );
-                            console.log(repos);
+                            // console.log(repos);
                             // TODO: add repos:
                             // TODO: Dont always add to database ... create if not exists
                             AsyncStorage.setItem(
                                 "repos",
                                 JSON.stringify(repos)
                             );
-                            return addNewUser(profile).then(res => {
-                                // console.log("new user", res);
-                                return git_username;
-                            });
+                            // return addNewUser(profile).then(res => {
+                            //     // console.log("new user", res);
+                            //     return git_username;
+                            // });
+                            // return Promise.all([
+                            //     addNewUser(profile),
+                            //     addRepos(repos)])
+                            addRepos(repos)
+                                .then(res => {
+                                    console.log(res);
+                                    return git_username;
+                                })
+                                .catch(err => console.log(err));
                         });
                     });
             } else {
@@ -151,7 +160,6 @@ export function fetchGitData(username) {
         urls.map(url => fetch(url).then(res => res.json()))
     ).then(res => {
         const repos = res[0].map(repo => {
-            // (repos : IRepo) , repos => repo as IRepo
             const {
                 id,
                 name,
