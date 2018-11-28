@@ -3,6 +3,7 @@ import { createChatThread } from "../services/chat-service";
 export const apiurl =
     "https://www.code-and-coffee2.azurewebsites.net/friend-requests";
 
+// TODO: Test??
 export function sendFriendRequest(
     usernameFrom,
     fromPhotoURL,
@@ -26,7 +27,6 @@ export function sendFriendRequest(
         body: JSON.stringify(body),
         headers: {
             "Content-type": "application/json"
-            // TODO: Credentials / accesstoken
         }
     }).then(res => res.json());
 }
@@ -36,11 +36,8 @@ export function getSentFriendRequests(username) {
         method: "GET",
         headers: {
             "Content-type": "application/json"
-            // TODO: Credentials / accesstoken
         }
-    })
-        .then(res => res.json())
-        .then(res => res.rows);
+    }).then(res => res.json());
 }
 
 export const getFriendRequestsReceived = username => {
@@ -50,7 +47,6 @@ export const getFriendRequestsReceived = username => {
             method: "GET",
             headers: {
                 "Content-type": "application/json"
-                // TODO: Credentials / accesstoken
             }
         }
     ).then(res => res.json());
@@ -121,7 +117,6 @@ export const acceptFriendRequest = state => {
 //     body: JSON.stringify(body),
 //     headers: {
 //         "Content-type": "application/json"
-//         // TODO: Credentials / accesstoken
 //     }
 // }).then(res => res.json());
 //}

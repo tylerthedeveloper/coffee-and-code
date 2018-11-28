@@ -1,5 +1,8 @@
+// import { apiurl } from '../constants';
+
 const apiurl = "https://code-and-coffee2.azurewebsites.net";
 
+// TODO: postgis?
 export function getAllUsers() {
     return fetch(`${apiurl}/users`, {
         method: "GET"
@@ -7,7 +10,8 @@ export function getAllUsers() {
         //}
     })
         .then(res => res.json())
-        .then(res => console.log(res.rows));
+        .then(res => res.rows)
+        .then(res => console.log(res));
 }
 
 export function getUserByID(git_username) {
@@ -46,56 +50,3 @@ export function addNewUser(profile) {
         }
     }).then(res => res);
 }
-
-// const userService = {
-
-//     getAllUsers: function() {
-//         return fetch(`${apiurl}/users`, {
-//             method: "GET"
-//             //headers: {
-//             //}
-//         })
-//             .then(res => res.json())
-//             .then(res => console.log(res.rows));
-//     },
-
-//     getUserByID: function(git_username) {
-//         const body = {
-//             data: {
-//                 git_username: {
-//                     currentOp: "=",
-//                     value: git_username,
-//                     nextOp: null
-//                 }
-//             }
-//         };
-
-//         return fetch(`${apiurl}/users/query`, {
-//             method: "POST",
-//             body: JSON.stringify(body),
-//             headers: {
-//                 "Content-type": "application/json"
-//                 // TODO: Credentials / accesstoken
-//             }
-//         })
-//             .then(res => res.json())
-//             .then(res => res.rows);
-//     },
-
-//     addNewUser: function(profile) {
-//         const body = {
-//             data: profile
-//         };
-//         return fetch(`${apiurl}/users`, {
-//             method: "POST",
-//             body: JSON.stringify(body),
-//             headers: {
-//                 "Content-type": "application/json"
-//                 // TODO: Credentials / accesstoken
-//             }
-//         }).then(res => res);
-//     }
-//     // TODO: export as class, object, etc.
-// }
-
-// export default userService;

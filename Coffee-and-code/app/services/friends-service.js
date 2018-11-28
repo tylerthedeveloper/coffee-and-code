@@ -21,5 +21,6 @@ export const getFriends = git_username => {
     )
         .then(res => res.json())
         .then(res => res.rows);
+    // TODO: Do we need to store it ?
     return friendsPromise;
 };

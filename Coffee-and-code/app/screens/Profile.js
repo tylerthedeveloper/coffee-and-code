@@ -69,29 +69,29 @@ export default class Profile extends Component<Props> {
         this.init();
     }
 
-    deleteFriendRequest() {
-        const {
-            current_user,
-            current_user_picture_url,
-            user: { git_username, picture_url }
-        } = this.state;
-        const body = {
-            data: {
-                fromUser: {
-                    git_username_from: git_username,
-                    // picture_url
-                    picture_url_from:
-                        "https://avatars0.githubusercontent.com/u/1957707?s=400&v=4"
-                },
-                toUser: {
-                    git_username_to: current_user,
-                    picture_url_to: current_user_picture_url
-                }
-            }
-        };
-        console.log(body);
-        // TODO: post to acceptFriendRequest
-    }
+    // deleteFriendRequest() {
+    //     const {
+    //         current_user,
+    //         current_user_picture_url,
+    //         user: { git_username, picture_url }
+    //     } = this.state;
+    //     const body = {
+    //         data: {
+    //             fromUser: {
+    //                 git_username_from: git_username,
+    //                 // picture_url
+    //                 picture_url_from:
+    //                     "https://avatars0.githubusercontent.com/u/1957707?s=400&v=4"
+    //             },
+    //             toUser: {
+    //                 git_username_to: current_user,
+    //                 picture_url_to: current_user_picture_url
+    //             }
+    //         }
+    //     };
+    //     console.log(body);
+    //     // TODO: post to acceptFriendRequest
+    // }
 
     deleteFriend() {
         // TODO: navigate to your profile and make delete friend
@@ -100,11 +100,6 @@ export default class Profile extends Component<Props> {
     editProfile() {
         // TODO: wtf
     }
-
-    // logout() {
-    //     AsyncStorage.multiRemove(["profile", "git_username", "current_user_picture_url", "@Expo:GithubToken"])
-    //         .then(() => this.props.navigation.navigate("SignedOut"));
-    // }
 
     createButtonView() {
         if (
@@ -200,6 +195,7 @@ export default class Profile extends Component<Props> {
             picture_url,
             user_id
         } = this.state.user;
+        // TODO:
         // followers: followers,
         // following: following,`
         console.log(this.state);
