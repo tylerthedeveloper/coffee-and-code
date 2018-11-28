@@ -78,13 +78,15 @@ router.post("/", function(req, res, next) {
 
             repos.map(repo => {
                 const objectDict = repo;
-                const str = Object.keys(objectDict).map(key => {
+                // TODO: changed
+                const str = Object.keys(objectDict).sort().map(key => {
                     return objectDict[key];
                 });
+                console.log(str);
                 const sql = format(
                     "insert into repos (creation_date, description, forks_count, language, \
-           repoID, repo_name, repo_url, stargazers_count, user_name ) \
-           VALUES (%L)",
+                    repoID, repo_name, repo_url, stargazers_count, user_name ) \
+                    VALUES (%L)",
                     str
                 );
                 client.query(sql);
@@ -100,6 +102,7 @@ router.post("/", function(req, res, next) {
         });
     });
 });
+
 /**
  * delete repo by ID
  */
