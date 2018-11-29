@@ -59,11 +59,16 @@ router.post("/query", function(req, res, next) {
  */
 router.post("/", function(req, res, next) {
     const objectDict = req.body.data;
-    const str = Object.keys(objectDict).sort().map(key => {
-        return objectDict[key];
-    });
-    const sql = format("insert into users (bio, current_latitude, current_location, current_longitude, \
-        git_username, name, picture_url, user_id) VALUES (%L)", str);
+    const str = Object.keys(objectDict)
+        .sort()
+        .map(key => {
+            return objectDict[key];
+        });
+    const sql = format(
+        "insert into users (bio, current_location, git_username, latitude, \
+        longitude, name, picture_url, user_id) VALUES (%L)",
+        str
+    );
     return pool.query(sql, (err, result) => {
         if (err) {
             return console.error("Error executing query", err.stack);
@@ -92,7 +97,8 @@ router.delete("/:userID", function(req, res, next) {
 router.put("/:git_username", function(req, res, next) {
     const git_username = req.params["git_username"];
     const objectDict = req.body.data;
-    const { current_latitude, current_longitude } = objectDict;
+    const { latitude, longitude } = objectDict;
+    console.log(latitude, longitude, objectDict);
     const query =
         "SET " +
         Object.keys(objectDict).map(key => {
@@ -100,11 +106,12 @@ router.put("/:git_username", function(req, res, next) {
             return key + " = " + `'${value}'`;
         });
     const sql = "UPDATE users " + query + " WHERE git_username = '" + git_username + "'";
-    const sql2 = `UPDATE users SET current_location = ST_POINT(${current_latitude},${current_longitude}) \
+    const sql2 = `UPDATE users SET current_location = ST_POINT(${latitude},${longitude}) \
         where git_username = '${git_username}'`;
     console.log(sql2);
+    // TODO: check this number
     const sql3 = `select * from users where git_username <> '${git_username}' \
-        and ST_DWithin(current_location, ST_POINT(${current_latitude},${current_longitude}), 1000000)`;
+        and ST_DWithin(current_location, ST_POINT(${latitude},${longitude}), 10000)`;
     console.log(sql3);
     return pool.connect((err, client, done) => {
         const shouldAbort = err => {
@@ -143,6 +150,26 @@ router.put("/:git_username", function(req, res, next) {
                         });
                 });
             });
+    });
+});
+
+/**
+ * update one user by git_username
+ */
+router.post("/:git_username/near-me", function(req, res, next) {
+    const git_username = req.params["git_username"];
+    const objectDict = req.body.data;
+    const { latitude, longitude } = objectDict;
+    console.log(latitude, longitude, objectDict);
+    // TODO: check this number
+    const sql = `select * from users where git_username <> '${git_username}' \
+        and ST_DWithin(current_location, ST_POINT(${latitude},${longitude}), 10000)`;
+    console.log(sql);
+    return pool.query(sql, (err, result) => {
+        if (err) {
+            return console.error("Error executing query", err.stack);
+        }
+        res.send({ rows: result.rows });
     });
 });
 
