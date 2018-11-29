@@ -1,8 +1,8 @@
 // import { apiurl } from '../constants';
 import { AsyncStorage } from "react-native";
 
-// const apiurl = "https://code-and-coffee2.azurewebsites.net";
-const apiurl = "http://192.168.64.17:3001";
+const apiurl = "https://code-and-coffee2.azurewebsites.net";
+// const apiurl = "http://192.168.64.17:3001";
 
 export async function getLoggedinUserName() {
     return await AsyncStorage.getItem("git_username").then(
@@ -48,8 +48,8 @@ export function addNewUser(profile) {
     const body = {
         data: profile
     };
-    // return fetch(`${apiurl}/users`, {
-    return fetch(`http://192.168.64.17:3001/users`, {
+    // return fetch(`http://192.168.64.17:3001/users`, {
+    return fetch(`${apiurl}/users`, {
         method: "POST",
         body: JSON.stringify(body),
         headers: {

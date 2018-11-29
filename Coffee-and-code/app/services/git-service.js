@@ -19,7 +19,7 @@ export function fetchGitData(username) {
         `https://api.github.com/users/${username}/repos`
     ];
     const promises = urls.map(url => fetch(url).then(res => res.json()));
-    return Promise.all(proimises).then(res => {
+    return Promise.all(promises).then(res => {
         const {
             id,
             login,
@@ -28,6 +28,7 @@ export function fetchGitData(username) {
             following,
             bio,
             name,
+            // TODO:
             company,
             blog,
             email
@@ -43,9 +44,10 @@ export function fetchGitData(username) {
             longitude: 86.5264,
             name: name || "",
             picture_url: avatar_url,
-            skills: {},
+            skills: JSON.stringify({}),
             user_id: id
         };
+        console.log("Profile:", slimProfile);
         const repos = res[1].map(repo => {
             const {
                 id,
@@ -71,6 +73,7 @@ export function fetchGitData(username) {
             };
             return slimRepo;
         });
+        console.log("repos parsed");
         return {
             profile: slimProfile,
             repos: repos

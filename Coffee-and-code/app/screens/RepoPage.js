@@ -13,7 +13,7 @@ export default class RepoPage extends Component<Props> {
         super(props);
         const current_user = props.navigation.getParam("current_user");
         const git_username = props.navigation.getParam("git_username") || "";
-        console.log("current_user", current_user);
+        // console.log("current_user", current_user);
         // console.log(props);
         this.state = {
             git_username: git_username,
@@ -34,7 +34,7 @@ export default class RepoPage extends Component<Props> {
     }
 
     render() {
-        console.log("repoState", this.state.repoData);
+        // console.log("repoState", this.state.repoData);
         const { navigation } = this.props;
         return (
             <View style={styles.container}>

@@ -8,13 +8,11 @@ import {
     ScrollView,
     AsyncStorage
 } from "react-native";
-
-import { getUserByID } from "../services/user-service";
-// import { fetchGitData } from "./LogIn";
 import firebase from "firebase";
 import { createChatThread } from "../services/chat-service";
 import { logout, sendMessage } from "../services/profile-utils";
 import { acceptFriendRequest } from "../services/friend-requests-service";
+import { updateUserSkills, getUserByID } from "../services/user-service";
 
 // const apiurl = "https://code-and-coffee2.azurewebsites.net";
 
@@ -27,7 +25,7 @@ export default class Profile extends Component<Props> {
             props.navigation.getParam("isFriendRequest") || false;
         const isCurrentFriend =
             props.navigation.getParam("isCurrentFriend") || false;
-        console.log("current_user", current_user);
+        // console.log("current_user", current_user);
         this.state = {
             current_user: current_user || "",
             current_user_picture_url: "",
@@ -39,34 +37,43 @@ export default class Profile extends Component<Props> {
     }
 
     async init() {
-        await AsyncStorage.getItem("profile")
+        let profile = await AsyncStorage.getItem("profile")
             .then(profile => JSON.parse(profile))
-            .then(profile =>
+            .then(profile => {
                 this.setState({
                     current_user: profile.git_username,
                     current_user_picture_url: profile.picture_url
-                })
-            );
-        console.log(this.state);
-        if (this.state.current_user && this.state.git_username === "") {
-            await AsyncStorage.getItem("profile")
-                .then(profile => JSON.parse(profile))
-                .then(user => {
-                    console.log("user1", user);
-                    this.setState({ user });
                 });
+                return profile;
+            });
+        profile.skills = JSON.parse(JSON.stringify(profile.skills));
+        console.log("profile", profile);
+        if (this.state.current_user && this.state.git_username === "") {
+            // await AsyncStorage.getItem("profile")
+            //     .then(profile => JSON.parse(profile))
+            //     .then(user => {
+            //         // console.log("user1", user);
+            // this.setState({ user });
+            //     });
+            this.setState({ user: profile });
         } else {
             getUserByID(this.state.git_username)
                 .then(users => users[0])
                 .then(user => {
-                    console.log("user2", user);
+                    // console.log("user2", user);
                     this.setState({ user });
                 });
         }
     }
 
-    componentDidMount() {
-        this.init();
+    refreshProfile() {
+        getUserByID(this.state.git_username)
+            .then(users => users[0])
+            .then(user => {
+                console.log("updated user", user);
+                this.setState({ user });
+                AsyncStorage.setItem("profile", JSON.stringify(user));
+            });
     }
 
     // deleteFriendRequest() {
@@ -99,6 +106,36 @@ export default class Profile extends Component<Props> {
 
     editProfile() {
         // TODO: wtf
+    }
+
+    addSkills(skillsObj) {
+        // TODO: Parse object
+    }
+
+    launchUpdateSkills() {
+        // TODO:
+        // this.props.navigation.push("Skills", {
+
+        // })
+        Promise.resolve({
+            data: {
+                skills: {
+                    C: true,
+                    Java: true,
+                    Python: true
+                }
+            }
+        })
+            .then(newSkills => ({
+                git_username: this.state.git_username,
+                skills: newSkills
+            }))
+            .then(newSkillsObj => updateUserSkills(newSkillsObj))
+            .then(res => this.refreshProfile());
+    }
+
+    componentDidMount() {
+        this.init();
     }
 
     createButtonView() {
@@ -169,6 +206,12 @@ export default class Profile extends Component<Props> {
                 <View>
                     <TouchableOpacity
                         style={styles.buttonContainer}
+                        onPress={() => this.launchUpdateSkills()}
+                    >
+                        <Text>Update Skills</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.buttonContainer}
                         onPress={() => this.editProfile()}
                     >
                         <Text>Edit Profile</Text>
@@ -187,18 +230,19 @@ export default class Profile extends Component<Props> {
     render() {
         const {
             bio,
-            current_latitude,
+            blog,
+            company,
             current_location,
-            current_longitude,
+            email,
+            latitude,
+            longitude,
             git_username,
             name,
             picture_url,
+            skills,
             user_id
         } = this.state.user;
-        // TODO:
-        // followers: followers,
-        // following: following,`
-        console.log(this.state);
+        console.log("skills", skills);
         return (
             <ScrollView>
                 <View style={styles.container}>
@@ -213,10 +257,18 @@ export default class Profile extends Component<Props> {
                         <View style={styles.bodyContent}>
                             <Text style={styles.name}> {git_username} </Text>
                             <Text style={styles.name}> {name} </Text>
-                            <Text style={styles.name}> {bio} </Text>
+                            <Text style={styles.info}> {bio} </Text>
                             <Text style={styles.info}>Bloomington, IN</Text>
-                            <Text style={styles.description}>
+                            {/* <Text style={styles.description}>
                                 Skills Set:React Native
+                            </Text> */}
+                            {/* TODO: Style and commas!!! */}
+                            <Text style={styles.description}>
+                                Skills:{" "}
+                                {skills &&
+                                    Object.keys(skills).map(
+                                        skill => (skills[skill] ? skill : "")
+                                    )}
                             </Text>
                             <View>{this.createButtonView()}</View>
                         </View>

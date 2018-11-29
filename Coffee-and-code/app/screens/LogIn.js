@@ -5,15 +5,15 @@ import getGithubTokenAsync from "../gitAuth/getGitHubToken";
 import { AsyncStorage } from "react-native";
 import { FontAwesome as Icon } from "@expo/vector-icons";
 import { addNewUser } from "../services/user-service";
-import { addRepos } from "../services/git-service";
+import { addRepos } from "../services/git-service"; // TODO: fetchGitData
 
 // TODO: MINOR
 // import Constants from '../constants';
 // get GithubStorageKey from cosntants
 const GithubStorageKey = "@Expo:GithubToken";
 
-// TODO: Change
 export default class Login extends Component<Props> {
+    // TODO: Login service
     async signInAsync() {
         try {
             let token = await AsyncStorage.getItem(GithubStorageKey);
@@ -52,19 +52,20 @@ export default class Login extends Component<Props> {
                         const git_username = user.additionalUserInfo.username.toString();
                         console.log("user", git_username);
                         AsyncStorage.setItem("git_username", git_username);
+                        // TODO: from service
                         return fetchGitData(git_username).then(res => {
-                            console.log("fetchGitData");
+                            // console.log("fetchGitData");
                             const { profile, repos } = res;
                             AsyncStorage.setItem(
                                 "current_user_picture_url",
                                 profile.picture_url
                             );
-                            console.log("picture_url");
+                            // console.log("picture_url");
                             AsyncStorage.setItem(
                                 "profile",
                                 JSON.stringify(profile)
                             );
-                            console.log("profile");
+                            // console.log("profile");
                             AsyncStorage.setItem(
                                 "repos",
                                 JSON.stringify(repos)
@@ -76,7 +77,6 @@ export default class Login extends Component<Props> {
                             ])
                                 .then(res => {
                                     console.log("res");
-                                    // console.log(res);
                                     return git_username;
                                 })
                                 .catch(err => console.log(err));
@@ -136,6 +136,7 @@ export default class Login extends Component<Props> {
                         marginLeft: 110,
                         marginTop: 0
                     }}
+                    onPress={() => this.signIn(navigation)}
                 >
                     <Icon.Button
                         name="github"
@@ -175,7 +176,6 @@ export function fetchGitData(username) {
             following,
             bio,
             name,
-            // TODO:
             company,
             blog,
             email
@@ -191,7 +191,12 @@ export function fetchGitData(username) {
             longitude: 86.5264,
             name: name || "",
             picture_url: avatar_url,
-            skills: {},
+            skills: {
+                C: true,
+                // "C++": true,
+                Java: false,
+                Python: true
+            },
             user_id: id
         };
         console.log("Profile:", slimProfile);

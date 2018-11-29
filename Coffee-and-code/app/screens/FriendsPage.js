@@ -14,7 +14,7 @@ export default class FriendsPage extends Component<Props> {
         super(props);
         const current_user = props.navigation.getParam("current_user");
         const git_username = props.navigation.getParam("git_username") || "";
-        console.log("current_user", current_user);
+        // console.log("current_user", current_user);
         // console.log(props);
         this.state = {
             git_username: git_username,
@@ -79,7 +79,7 @@ export default class FriendsPage extends Component<Props> {
             }
         };
         acceptFriendRequest(state).then(res => {
-            console.log(res);
+            // console.log(res);
             this.props.navigation.navigate("Profile", { res });
         });
     }
