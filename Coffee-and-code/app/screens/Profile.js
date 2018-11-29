@@ -67,7 +67,7 @@ export default class Profile extends Component<Props> {
     }
 
     refreshProfile() {
-        getUserByID(this.state.git_username)
+        getUserByID(this.state.current_user)
             .then(users => users[0])
             .then(user => {
                 console.log("updated user", user);
@@ -117,19 +117,35 @@ export default class Profile extends Component<Props> {
         // this.props.navigation.push("Skills", {
 
         // })
-        Promise.resolve({
-            data: {
-                skills: {
-                    C: true,
-                    Java: true,
-                    Python: true
-                }
-            }
-        })
-            .then(newSkills => ({
-                git_username: this.state.git_username,
-                skills: newSkills
-            }))
+        // Promise.resolve({
+        //     data: {
+        //         skills: {
+        //             C: true,
+        //             Java: true,
+        //             Python: true
+        //         }
+        //     }
+        // })
+        //     .then(newSkills => ({
+        //         git_username: this.state.git_username,
+        //         skills: newSkills
+        //     }))
+        //     .then(newSkillsObj => updateUserSkills(newSkillsObj))
+        //     .then(res => this.refreshProfile());
+        const newSkills = {
+            C: true,
+            Java: true,
+            Python: true
+        };
+        const newSkillsObj = {
+            git_username: this.state.current_user,
+            skills: newSkills
+        };
+        Promise.resolve(newSkillsObj)
+            // .then(newSkills => ({
+            //     git_username: this.state.git_username,
+            //     skills: newSkills
+            // }))
             .then(newSkillsObj => updateUserSkills(newSkillsObj))
             .then(res => this.refreshProfile());
     }

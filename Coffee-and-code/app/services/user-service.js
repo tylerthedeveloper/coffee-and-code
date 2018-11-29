@@ -1,7 +1,7 @@
 // import { apiurl } from '../constants';
 import { AsyncStorage } from "react-native";
 
-const apiurl = "https://code-and-coffee2.azurewebsites.net";
+const apiurl = "https://code-and-coffee2.azurewebsites.net/users";
 // const apiurl = "http://192.168.64.17:3001";
 
 export async function getLoggedinUserName() {
@@ -12,7 +12,7 @@ export async function getLoggedinUserName() {
 
 // TODO: postgis?
 export function getAllUsers() {
-    return fetch(`${apiurl}/users`, {
+    return fetch(`${apiurl}`, {
         method: "GET"
         //headers: {
         //}
@@ -32,7 +32,7 @@ export function getUserByID(git_username) {
             }
         }
     };
-    return fetch(`${apiurl}/users/query`, {
+    return fetch(`${apiurl}/query`, {
         method: "POST",
         body: JSON.stringify(body),
         headers: {
@@ -49,7 +49,7 @@ export function addNewUser(profile) {
         data: profile
     };
     // return fetch(`http://192.168.64.17:3001/users`, {
-    return fetch(`${apiurl}/users`, {
+    return fetch(`${apiurl}`, {
         method: "POST",
         body: JSON.stringify(body),
         headers: {
@@ -72,7 +72,7 @@ export async function updateLocationAndGetLocalUsers(user_location) {
     };
     // return fetch(`http://192.168.64.17:3001/users/${git_username}`, {
     return (
-        fetch(`${apiurl}/users/${git_username}/update_location`, {
+        fetch(`${apiurl}/${git_username}/update_location`, {
             method: "PUT",
             body: JSON.stringify(body),
             headers: {
@@ -112,7 +112,9 @@ export async function getLocalUsers(user_location) {
 }
 
 export async function updateUserSkills(user_skills) {
+    console.log(user_skills);
     const { git_username, skills } = user_skills;
+    console.log(git_username, skills);
     const body = {
         data: {
             skills
