@@ -1,5 +1,12 @@
 import React, { Component } from "react";
-import { Text, View, StyleSheet, Dimensions } from "react-native";
+import {
+    TouchableOpacity,
+    Text,
+    View,
+    StyleSheet,
+    Dimensions,
+    AsyncStorage
+} from "react-native";
 import { Card } from "react-native-elements";
 import CustomCallout from "../component/CustomCallout";
 import MapView, { Marker, ProviderPropType, Callout } from "react-native-maps";
@@ -7,7 +14,8 @@ import { Location, Permissions } from "expo";
 import PersonList from "../component/PersonList";
 import {
     getLoggedinUserName,
-    updateLocationAndGetLocalUsers
+    updateLocationAndGetLocalUsers,
+    getLocalUsers
 } from "../services/user-service";
 
 // import { SERVER_API } from "app/constants";
@@ -20,9 +28,6 @@ const LATITUDE = 39.1834026;
 const LONGITUDE = -106.523;
 const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
-let id = 0;
-
-// TODO: change id to this.state.markers.length
 
 export default class Home extends Component<Props> {
     randomColor() {
@@ -48,10 +53,62 @@ export default class Home extends Component<Props> {
         };
     }
 
-    // TODO: verify exuction order
     componentWillMount() {
-        // fetch('172.19.27.49:3001').then(res => console.log(res));
         this._initMap();
+    }
+
+    // TODO: Calculate difference ... function
+    shouldUpdateLocation(storedLocation, location) {
+        return false;
+    }
+
+    // TODO: Add refresh button
+    async refreshMap() {
+        const storedLocation = JSON.parse(
+            await AsyncStorage.getItem("location")
+        );
+        const location = null; // await Location.getCurrentPositionAsync({enableHighAccuracy: true }); // {enableHighAccuracy: true}
+        if (this.shouldUpdateLocation(storedLocation, location)) {
+            const coords = location.coords;
+            updateLocationAndGetLocalUsers({
+                git_username: this.state.git_username,
+                location: coords
+            }).then(localUsers => this.setMapMarkers(coords, localUsers));
+        } else {
+            console.log("storedLocation: ", storedLocation);
+            // const coords = storedLocation.coords;
+            const coords = storedLocation;
+            getLocalUsers({
+                git_username: this.state.git_username,
+                location: storedLocation
+            }).then(localUsers => this.setMapMarkers(coords, localUsers));
+        }
+    }
+
+    setMapMarkers(coords, localUsers) {
+        const markers = localUsers.map(localUser => ({
+            coordinate: {
+                latitude: localUser.latitude,
+                longitude: localUser.longitude
+            },
+            key: localUser.git_username,
+            color: this.randomColor(),
+            name: localUser.name,
+            git_username: localUser.git_username,
+            bio: localUser.bio
+        }));
+        // TODO: Push logged in user
+        markers.push({
+            coordinate: coords,
+            key: this.state.git_username,
+            color: this.currentLocationColor(),
+            name: "Tony Stark",
+            git_username: "starktony",
+            bio: "Ironman - Mechanic"
+        });
+        this.setState({
+            markers
+        });
     }
 
     async _initMap() {
@@ -60,74 +117,33 @@ export default class Home extends Component<Props> {
             // TODO: re-request for location permission
             throw new Error("Location permission not granted");
         } else {
-            // const location = await Location.getCurrentPositionAsync({enableHighAccuracy: true }); // {enableHighAccuracy: true}
-            // location.then(res => console.log(res))
-            const location = {
+            let location = {
                 coords: {
                     latitude: 55.1834026,
                     longitude: 55.523
                 }
             };
-            await getLoggedinUserName().then(git_username =>
-                this.setState({ git_username })
-            );
+            // const location = await Location.getCurrentPositionAsync({enableHighAccuracy: true }); // {enableHighAccuracy: true}
+            // location.then(res => console.log(res))
+            AsyncStorage.setItem("location", JSON.stringify(location.coords));
+
             const { latitude, longitude } = location.coords;
-            this.setState({
-                region: {
-                    latitude: latitude,
-                    longitude: longitude,
-                    latitudeDelta: LATITUDE_DELTA,
-                    longitudeDelta: LONGITUDE_DELTA
-                }
-            });
-            // TODO: first chcek async storage... if differnet, uupdate
-            const markers = [];
+            await getLoggedinUserName().then(git_username =>
+                this.setState({
+                    git_username,
+                    region: {
+                        latitude: latitude,
+                        longitude: longitude,
+                        latitudeDelta: LATITUDE_DELTA,
+                        longitudeDelta: LONGITUDE_DELTA
+                    }
+                })
+            );
+            const coords = location.coords;
             await updateLocationAndGetLocalUsers({
                 git_username: this.state.git_username,
-                location: location.coords
-            }).then(localUsers =>
-                localUsers.map(localUser =>
-                    markers.push({
-                        coordinate: {
-                            latitude: localUser.current_latitude,
-                            longitude: localUser.current_longitude
-                        },
-                        key: id++,
-                        color: this.randomColor(),
-                        name: localUser.name,
-                        git_username: localUser.git_username,
-                        bio: localUser.bio
-                    })
-                )
-            );
-
-            // TODO: Push logged in user
-            markers.push({
-                coordinate: location.coords,
-                key: id++,
-                color: this.currentLocationColor(),
-                name: "Tony Stark",
-                git_username: "starktony",
-                bio: "Ironman - Mechanic"
-            });
-
-            // userInfoJson.map(user =>
-            //     markers.push({
-            //         coordinate: {
-            //             latitude: user.current_latitude,
-            //             longitude: user.current_longitude
-            //         },
-            //         key: id++,
-            //         color: this.randomColor(),
-            //         name: user.name,
-            //         git_username: user.git_username,
-            //         bio: user.bio
-            //     })
-            // );
-            this.setState({
-                markers
-            });
-            console.log(this.state.markers);
+                location: coords
+            }).then(localUsers => this.setMapMarkers(coords, localUsers));
         }
     }
 
@@ -177,6 +193,11 @@ export default class Home extends Component<Props> {
                             </Marker>
                         ))}
                     </MapView>
+                </View>
+                <View>
+                    <TouchableOpacity onPress={() => this.refreshMap()}>
+                        <Text>RefershLocation</Text>
+                    </TouchableOpacity>
                 </View>
 
                 <View style={styles.cards}>

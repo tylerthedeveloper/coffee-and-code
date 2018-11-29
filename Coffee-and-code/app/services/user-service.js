@@ -65,12 +65,36 @@ export async function updateLocationAndGetLocalUsers(user_location) {
     } = user_location;
     const body = {
         data: {
-            current_latitude: latitude,
-            current_longitude: longitude
+            latitude,
+            longitude
         }
     };
-    return fetch(`http://192.168.64.17:3001/users/${git_username}`, {
+    // return fetch(`http://192.168.64.17:3001/users/${git_username}`, {
+    return fetch(`${apiurl}/users/${git_username}`, {
         method: "PUT",
+        body: JSON.stringify(body),
+        headers: {
+            "Content-type": "application/json"
+        }
+    })
+        .then(res => res.json())
+        .then(res => res.rows);
+}
+
+export async function getLocalUsers(user_location) {
+    const {
+        git_username,
+        location: { latitude, longitude }
+    } = user_location;
+    const body = {
+        data: {
+            latitude,
+            longitude
+        }
+    };
+    // return fetch(`http://192.168.64.17:3001/users/${git_username}/near-me`, {
+    return fetch(`${apiurl}/${git_username}/near-me`, {
+        method: "POST",
         body: JSON.stringify(body),
         headers: {
             "Content-type": "application/json"

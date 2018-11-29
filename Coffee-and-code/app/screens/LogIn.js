@@ -193,10 +193,10 @@ export function fetchGitData(username) {
         } = res[1];
         const slimProfile = {
             bio: bio || "",
-            current_latitude: 39.1653,
             current_location: null,
-            current_longitude: 86.5264,
             git_username: login,
+            latitude: 39.1653,
+            longitude: 86.5264,
             name: name || "",
             picture_url: avatar_url,
             user_id: id
