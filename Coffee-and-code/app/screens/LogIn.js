@@ -18,6 +18,7 @@ export default class Login extends Component<Props> {
         try {
             let token = await AsyncStorage.getItem(GithubStorageKey);
             if (token) {
+                console.log("token", token);
                 return await AsyncStorage.getItem("git_username").then(
                     git_username => {
                         console.log("git_username", git_username);
@@ -27,6 +28,7 @@ export default class Login extends Component<Props> {
             }
             token = await getGithubTokenAsync();
             if (token) {
+                console.log("second token", token);
                 AsyncStorage.setItem(GithubStorageKey, token);
                 const credential = firebase.auth.GithubAuthProvider.credential(
                     token
@@ -35,35 +37,46 @@ export default class Login extends Component<Props> {
                     "git_username"
                 );
                 if (git_username_fromStorage) {
+                    console.log(
+                        "git_username_fromStorage",
+                        git_username_fromStorage
+                    );
                     return git_username_fromStorage;
                 }
                 // • • • • • FIRST TIME LOGIN
+                console.log("FIRST TIME LOGIN");
                 return firebase
                     .auth()
                     .signInAndRetrieveDataWithCredential(credential)
                     .then(user => {
                         const git_username = user.additionalUserInfo.username.toString();
+                        console.log("user", git_username);
                         AsyncStorage.setItem("git_username", git_username);
                         return fetchGitData(git_username).then(res => {
+                            console.log("fetchGitData");
                             const { profile, repos } = res;
                             AsyncStorage.setItem(
                                 "current_user_picture_url",
                                 profile.picture_url
                             );
+                            console.log("picture_url");
                             AsyncStorage.setItem(
                                 "profile",
                                 JSON.stringify(profile)
                             );
+                            console.log("profile");
                             AsyncStorage.setItem(
                                 "repos",
                                 JSON.stringify(repos)
                             );
+                            console.log("repos");
                             return Promise.all([
                                 addNewUser(profile),
                                 addRepos(repos)
                             ])
                                 .then(res => {
-                                    console.log(res);
+                                    console.log("res");
+                                    // console.log(res);
                                     return git_username;
                                 })
                                 .catch(err => console.log(err));
@@ -146,16 +159,43 @@ const styles = StyleSheet.create({
     }
 });
 
-// TODO: Arpit
+// TODO: move to login service
 export function fetchGitData(username) {
     const urls = [
-        `https://api.github.com/users/${username}/repos`,
-        `https://api.github.com/users/${username}`
+        `https://api.github.com/users/${username}`,
+        `https://api.github.com/users/${username}/repos`
     ];
-    return Promise.all(
-        urls.map(url => fetch(url).then(res => res.json()))
-    ).then(res => {
-        const repos = res[0].map(repo => {
+    const promises = urls.map(url => fetch(url).then(res => res.json()));
+    return Promise.all(promises).then(res => {
+        const {
+            id,
+            login,
+            avatar_url,
+            followers,
+            following,
+            bio,
+            name,
+            // TODO:
+            company,
+            blog,
+            email
+        } = res[0];
+        const slimProfile = {
+            bio: bio || "",
+            blog: blog || "",
+            company: company || "",
+            current_location: null,
+            email: email || "",
+            git_username: login,
+            latitude: 39.1653,
+            longitude: 86.5264,
+            name: name || "",
+            picture_url: avatar_url,
+            skills: {},
+            user_id: id
+        };
+        console.log("Profile:", slimProfile);
+        const repos = res[1].map(repo => {
             const {
                 id,
                 name,
@@ -180,32 +220,7 @@ export function fetchGitData(username) {
             };
             return slimRepo;
         });
-
-        const {
-            id,
-            login,
-            avatar_url,
-            followers,
-            following,
-            // public_repos,
-            bio,
-            name
-        } = res[1];
-        const slimProfile = {
-            bio: bio || "",
-            current_location: null,
-            git_username: login,
-            latitude: 39.1653,
-            longitude: 86.5264,
-            name: name || "",
-            picture_url: avatar_url,
-            user_id: id
-            // TODO: update db
-            // followers: followers,
-            // following: following,`
-            // TODO: pull ..
-        };
-        // console.log("Profile:", slimProfile);
+        console.log("repos parsed");
         return {
             profile: slimProfile,
             repos: repos

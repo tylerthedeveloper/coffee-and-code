@@ -9,8 +9,8 @@ import {
 } from "react-native";
 import { Card } from "react-native-elements";
 import CustomCallout from "../component/CustomCallout";
-import MapView, { Marker, ProviderPropType, Callout } from "react-native-maps";
-import { Location, Permissions } from "expo";
+import { Marker, ProviderPropType, Callout } from "react-native-maps";
+import { MapView, Location, Permissions } from "expo";
 import PersonList from "../component/PersonList";
 import {
     getLoggedinUserName,
@@ -98,6 +98,7 @@ export default class Home extends Component<Props> {
             bio: localUser.bio
         }));
         // TODO: Push logged in user
+        console.log("Markers are: ", markers);
         markers.push({
             coordinate: coords,
             key: this.state.git_username,
@@ -126,7 +127,7 @@ export default class Home extends Component<Props> {
             // const location = await Location.getCurrentPositionAsync({enableHighAccuracy: true }); // {enableHighAccuracy: true}
             // location.then(res => console.log(res))
             AsyncStorage.setItem("location", JSON.stringify(location.coords));
-
+            console.log("setlocation ", location);
             const { latitude, longitude } = location.coords;
             await getLoggedinUserName().then(git_username =>
                 this.setState({
@@ -215,7 +216,7 @@ Home.propTypes = {
 const styles = StyleSheet.create({
     container: {
         ...StyleSheet.absoluteFillObject,
-        flex: 1,
+        flex: 4,
         flexDirection: "column",
         alignItems: "stretch"
     },

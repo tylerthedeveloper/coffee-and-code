@@ -15,15 +15,38 @@ export function addRepos(repos) {
 
 export function fetchGitData(username) {
     const urls = [
-        `https://api.github.com/users/${username}/repos`,
-        `https://api.github.com/users/${username}`
+        `https://api.github.com/users/${username}`,
+        `https://api.github.com/users/${username}/repos`
     ];
     const promises = urls.map(url => fetch(url).then(res => res.json()));
-    return Promise.all(
-        promises
-        // urls.map(url => fetch(url).then(res => res.json()))
-    ).then(res => {
-        const repos = res[0].map(repo => {
+    return Promise.all(proimises).then(res => {
+        const {
+            id,
+            login,
+            avatar_url,
+            followers,
+            following,
+            bio,
+            name,
+            company,
+            blog,
+            email
+        } = res[0];
+        const slimProfile = {
+            bio: bio || "",
+            blog: blog || "",
+            company: company || "",
+            current_location: null,
+            email: email || "",
+            git_username: login,
+            latitude: 39.1653,
+            longitude: 86.5264,
+            name: name || "",
+            picture_url: avatar_url,
+            skills: {},
+            user_id: id
+        };
+        const repos = res[1].map(repo => {
             const {
                 id,
                 name,
@@ -48,33 +71,6 @@ export function fetchGitData(username) {
             };
             return slimRepo;
         });
-
-        const {
-            id,
-            login,
-            avatar_url,
-            followers,
-            following,
-            // public_repos,
-            bio,
-            name
-        } = res[1];
-        const slimProfile = {
-            bio: bio || "",
-            // TODO: Location ... ?
-            current_latitude: 39.1653,
-            current_location: null,
-            current_longitude: 86.5264,
-            git_username: login,
-            name: name || "",
-            picture_url: avatar_url,
-            user_id: id
-            // TODO: update db
-            // followers: followers,
-            // following: following,`
-            // TODO: pull ..
-        };
-        // console.log("Profile:", slimProfile);
         return {
             profile: slimProfile,
             repos: repos

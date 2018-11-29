@@ -1,7 +1,8 @@
 // import { apiurl } from '../constants';
 import { AsyncStorage } from "react-native";
 
-const apiurl = "https://code-and-coffee2.azurewebsites.net";
+// const apiurl = "https://code-and-coffee2.azurewebsites.net";
+const apiurl = "http://192.168.64.17:3001";
 
 export async function getLoggedinUserName() {
     return await AsyncStorage.getItem("git_username").then(
@@ -31,7 +32,6 @@ export function getUserByID(git_username) {
             }
         }
     };
-
     return fetch(`${apiurl}/users/query`, {
         method: "POST",
         body: JSON.stringify(body),
@@ -48,7 +48,8 @@ export function addNewUser(profile) {
     const body = {
         data: profile
     };
-    return fetch(`${apiurl}/users`, {
+    // return fetch(`${apiurl}/users`, {
+    return fetch(`http://192.168.64.17:3001/users`, {
         method: "POST",
         body: JSON.stringify(body),
         headers: {
@@ -70,15 +71,18 @@ export async function updateLocationAndGetLocalUsers(user_location) {
         }
     };
     // return fetch(`http://192.168.64.17:3001/users/${git_username}`, {
-    return fetch(`${apiurl}/users/${git_username}`, {
-        method: "PUT",
-        body: JSON.stringify(body),
-        headers: {
-            "Content-type": "application/json"
-        }
-    })
-        .then(res => res.json())
-        .then(res => res.rows);
+    return (
+        fetch(`${apiurl}/users/${git_username}/update_location`, {
+            method: "PUT",
+            body: JSON.stringify(body),
+            headers: {
+                "Content-type": "application/json"
+            }
+        })
+            // .then(res => console.log("update_location", res));
+            .then(res => res.json())
+            .then(res => res.rows)
+    );
 }
 
 export async function getLocalUsers(user_location) {
@@ -93,8 +97,30 @@ export async function getLocalUsers(user_location) {
         }
     };
     // return fetch(`http://192.168.64.17:3001/users/${git_username}/near-me`, {
-    return fetch(`${apiurl}/${git_username}/near-me`, {
-        method: "POST",
+    return (
+        fetch(`${apiurl}/${git_username}/near-me`, {
+            method: "POST",
+            body: JSON.stringify(body),
+            headers: {
+                "Content-type": "application/json"
+            }
+        })
+            // .then(res => console.log("near-me", res));
+            .then(res => res.json())
+            .then(res => res.rows)
+    );
+}
+
+export async function updateUserSkills(user_skills) {
+    const { git_username, skills } = user_skills;
+    const body = {
+        data: {
+            skills
+        }
+    };
+    // return fetch(`http://192.168.64.17:3001/users/${git_username}/near-me`, {
+    return fetch(`${apiurl}/${git_username}/skills`, {
+        method: "PUT",
         body: JSON.stringify(body),
         headers: {
             "Content-type": "application/json"
