@@ -162,7 +162,7 @@ router.post("/:git_username/near-me", function(req, res, next) {
 
 
 /**
- * get users near me by git_username
+ * update skills by git_username
  */
 router.put("/:git_username/skills", function(req, res, next) {
     const git_username = req.params["git_username"];
