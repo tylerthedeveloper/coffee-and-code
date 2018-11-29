@@ -23,20 +23,6 @@ router.get("/", function(req, res, next) {
 /**
  * get one user by ID
  */
-router.get("/:userID", function(req, res, next) {
-    const userID = req.params["userID"];
-    const sql = format("SELECT * FROM users WHERE user_id = %L", userID);
-    return pool.query(sql, (err, result) => {
-        if (err) {
-            return console.error("Error executing query", err.stack);
-        }
-        res.send({ rows: result.rows });
-    });
-});
-
-/**
- * get one user by ID
- */
 router.post("/query", function(req, res, next) {
     const objectDict = req.body.data;
     let query = "";
@@ -59,14 +45,15 @@ router.post("/query", function(req, res, next) {
  */
 router.post("/", function(req, res, next) {
     const objectDict = req.body.data;
+    console.log('newuser', objectDict);
     const str = Object.keys(objectDict)
         .sort()
         .map(key => {
             return objectDict[key];
         });
     const sql = format(
-        "insert into users (bio, current_location, git_username, latitude, \
-        longitude, name, picture_url, user_id) VALUES (%L)",
+        "insert into users (bio, blog, company, current_location, email, git_username,\
+            latitude, longitude, name, picture_url, skills, user_id) VALUES (%L)",
         str
     );
     return pool.query(sql, (err, result) => {
@@ -94,7 +81,7 @@ router.delete("/:userID", function(req, res, next) {
 /**
  * update one user by git_username
  */
-router.put("/:git_username", function(req, res, next) {
+router.put("/:git_username/update_location", function(req, res, next) {
     const git_username = req.params["git_username"];
     const objectDict = req.body.data;
     const { latitude, longitude } = objectDict;
@@ -154,7 +141,7 @@ router.put("/:git_username", function(req, res, next) {
 });
 
 /**
- * update one user by git_username
+ * get users near me by git_username
  */
 router.post("/:git_username/near-me", function(req, res, next) {
     const git_username = req.params["git_username"];
@@ -163,7 +150,27 @@ router.post("/:git_username/near-me", function(req, res, next) {
     console.log(latitude, longitude, objectDict);
     // TODO: check this number
     const sql = `select * from users where git_username <> '${git_username}' \
-        and ST_DWithin(current_location, ST_POINT(${latitude},${longitude}), 10000)`;
+                and ST_DWithin(current_location, ST_POINT(${latitude},${longitude}), 10000)`;
+    console.log(sql);
+    return pool.query(sql, (err, result) => {
+        if (err) {
+            return console.error("Error executing query", err.stack);
+        }
+        res.send({ rows: result.rows });
+    });
+});
+
+
+/**
+ * get users near me by git_username
+ */
+router.put("/:git_username/skills", function(req, res, next) {
+    const git_username = req.params["git_username"];
+    const objectDict = req.body.data;
+    const { skills } = objectDict;
+    console.log(skills, objectDict);
+    const sql = `UPDATE users SET skills = ${skills} \
+                WHERE git_username = '${git_username}'`;
     console.log(sql);
     return pool.query(sql, (err, result) => {
         if (err) {
