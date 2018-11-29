@@ -45,7 +45,7 @@ router.post("/query", function(req, res, next) {
  */
 router.post("/", function(req, res, next) {
     const objectDict = req.body.data;
-    console.log('newuser', objectDict);
+    console.log("newuser", objectDict);
     const str = Object.keys(objectDict)
         .sort()
         .map(key => {
@@ -92,7 +92,12 @@ router.put("/:git_username/update_location", function(req, res, next) {
             const value = objectDict[key];
             return key + " = " + `'${value}'`;
         });
-    const sql = "UPDATE users " + query + " WHERE git_username = '" + git_username + "'";
+    const sql =
+        "UPDATE users " +
+        query +
+        " WHERE git_username = '" +
+        git_username +
+        "'";
     const sql2 = `UPDATE users SET current_location = ST_POINT(${latitude},${longitude}) \
         where git_username = '${git_username}'`;
     console.log(sql2);
@@ -121,22 +126,28 @@ router.put("/:git_username/update_location", function(req, res, next) {
             if (shouldAbort(err)) return;
             client.query(sql2);
             if (shouldAbort(err)) return;
-            return client.query(sql3)
+            return client
+                .query(sql3)
                 .then(res => res.rows)
                 .then(rows => {
-                    return client.query("COMMIT", 
+                    return client.query(
+                        "COMMIT",
                         err => {
                             if (err) {
-                                console.error("Error committing transaction", err.stack);
+                                console.error(
+                                    "Error committing transaction",
+                                    err.stack
+                                );
                             }
                         },
                         result => {
                             done();
                             console.log(rows);
                             res.send({ rows: rows });
-                        });
+                        }
+                    );
                 });
-            });
+        });
     });
 });
 
@@ -160,7 +171,6 @@ router.post("/:git_username/near-me", function(req, res, next) {
     });
 });
 
-
 /**
  * update skills by git_username
  */
@@ -169,10 +179,10 @@ router.put("/:git_username/skills", function(req, res, next) {
     const objectDict = req.body.data;
     const { skills } = objectDict;
     console.log(skills, objectDict);
-    const sql = `UPDATE users SET skills = ${skills} \
+    const sql = `UPDATE users SET skills = $1 \
                 WHERE git_username = '${git_username}'`;
     console.log(sql);
-    return pool.query(sql, (err, result) => {
+    return pool.query(sql, [skills], (err, result) => {
         if (err) {
             return console.error("Error executing query", err.stack);
         }

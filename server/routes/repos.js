@@ -78,9 +78,11 @@ router.post("/", function(req, res, next) {
 
             repos.map(repo => {
                 const objectDict = repo;
-                const str = Object.keys(objectDict).sort().map(key => {
-                    return objectDict[key];
-                });
+                const str = Object.keys(objectDict)
+                    .sort()
+                    .map(key => {
+                        return objectDict[key];
+                    });
                 const sql = format(
                     "insert into repos (creation_date, description, forks_count, language, \
                     repo_id, repo_name, repo_url, stargazers_count, user_name ) \
