@@ -1,37 +1,159 @@
 import React, { Component } from "react";
 import {
-    ScrollView,
-    Text,
-    Linking,
-    View,
-    Alert,
     Platform,
     StyleSheet,
-    Dimensions,
-    TouchableOpacity
+    Text,
+    View,
+    Button,
+    AsyncStorage
 } from "react-native";
-import { Card, Button } from "react-native-elements";
-import { Constants, Location, Permissions } from "expo";
+import PropTypes from "prop-types";
+import { Card } from "react-native-elements";
+import ToggleSwitch from "toggle-switch-react-native";
+import SectionedMultiSelect from "react-native-sectioned-multi-select";
+import MultiSelect from "react-native-multiple-select";
 
-const data = [];
+const items = [
+    {
+        name: "Front End",
+        id: 0,
+        children: [
+            {
+                name: "React Native",
+                id: 10
+            },
+            {
+                name: "HTML",
+                id: 17
+            },
+            {
+                name: "CSS",
+                id: 13
+            }
+        ]
+    },
+    {
+        name: "Back End",
+        id: 1,
+        children: [
+            {
+                name: "Java",
+                id: 20
+            },
+            {
+                name: "PHP",
+                id: 21
+            }
+        ]
+    }
+];
+const currentHelpItem = [];
 
-export default class List extends Component<Props> {
-    constructor(props) {
-        super();
-        this.state = {};
+export default class List extends Component<props> {
+    state = {
+        isOnDefaultToggleSwitch: false,
+        selectedItems: []
+        //currentItems: []
+    };
+
+    onSelectedItemsChange = selectedItems => {
+        this.setState({ selectedItems });
+        console.log("Selected item:", selectedItems);
+    };
+
+    onConfirm = () => {
+        currentHelpItem = this.state.selectedItems;
+        console.log("Current Item:", currentHelpItem);
+        AsyncStorage.setItem("CurrItem", JSON.stringify(currentHelpItem));
+    };
+
+    onToggle(isOn) {
+        console.log("Its on");
+    }
+    componentDidMount() {
+        AsyncStorage.getItem("CurrItem")
+            .then(currentItem => JSON.parse(currentItem))
+            .then(currData => this.setState({ selectedItems: currData }));
+        console.log("Did Mount sele item:", this.state.selectedItems);
     }
 
-    componentWillMount() {}
-
     render() {
-        const {} = this.props;
+        return (
+            <View style={styles.container}>
+                <Card
+                    style={{
+                        padding: 50,
+                        color: "powderblue",
+                        flexDirection: "row"
+                    }}
+                >
+                    <Text style={styles.welcome}>Need Help</Text>
 
-        return <View style={styles.container} />;
+                    <ToggleSwitch
+                        isOn={this.state.isOnDefaultToggleSwitch}
+                        onToggle={isOnDefaultToggleSwitch => {
+                            this.setState({ isOnDefaultToggleSwitch });
+                            this.onToggle(isOnDefaultToggleSwitch);
+                        }}
+                    />
+                    <SectionedMultiSelect
+                        items={items}
+                        uniqueKey="name"
+                        subKey="children"
+                        selectText="Choose any Language"
+                        showDropDowns={true}
+                        readOnlyHeadings={true}
+                        onSelectedItemsChange={this.onSelectedItemsChange}
+                        selectedItems={this.state.selectedItems}
+                        onCancel={this.onCancel}
+                        onConfirm={this.onConfirm}
+                    />
+                    {/* <MultiSelect
+          hideTags
+          items={items}
+          uniqueKey="id"
+          ref={(component) => { this.multiSelect = component }}
+          onSelectedItemsChange={this.onSelectedItemsChange}
+          selectedItems={this.state.selectedItems}
+          selectText="Select Language"
+          searchInputPlaceholderText="Search Items..."
+          onChangeInput={ (text)=> console.log(text)}
+          altFontFamily="Roboto"
+          tagRemoveIconColor="#CCC"
+          tagBorderColor="#CCC"
+          tagTextColor="#CCC"
+          selectedItemTextColor="#CCC"
+          selectedItemIconColor="#CCC"
+          itemTextColor="#000"
+          displayKey="name"
+          searchInputStyle={{ color: '#CCC' }}
+          submitButtonColor="#CCC"
+          submitButtonText="Submit"
+        
+        /> */}
+                </Card>
+            </View>
+        );
     }
 }
 
 const styles = StyleSheet.create({
-    container: {},
-    button: {},
-    buttonContainer: {}
+    container: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "white",
+        flexDirection: "row"
+    },
+    welcome: {
+        fontSize: 20,
+        textAlign: "left",
+        margin: 20,
+        flexDirection: "row"
+    },
+    instructions: {
+        textAlign: "center",
+        color: "#333333",
+        marginBottom: 5
+    }
 });
