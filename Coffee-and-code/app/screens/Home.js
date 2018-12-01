@@ -49,6 +49,7 @@ export default class Home extends Component<Props> {
                 longitudeDelta: LONGITUDE_DELTA
             },
             markers: [],
+            filtered_markers: [],
             popup: true
         };
     }
@@ -67,7 +68,11 @@ export default class Home extends Component<Props> {
         const storedLocation = JSON.parse(
             await AsyncStorage.getItem("location")
         );
-        const location = null; // await Location.getCurrentPositionAsync({enableHighAccuracy: true }); // {enableHighAccuracy: true}
+        const location = null;
+        // await Location.getCurrentPositionAsync({enableHighAccuracy: true });
+                                                 // {enableHighAccuracy: true}
+
+        /*
         if (this.shouldUpdateLocation(storedLocation, location)) {
             const coords = location.coords;
             updateLocationAndGetLocalUsers({
@@ -83,6 +88,24 @@ export default class Home extends Component<Props> {
                 location: storedLocation
             }).then(localUsers => this.setMapMarkers(coords, localUsers));
         }
+        */
+
+        // TODO: MOVE TO FILTER 
+        // console.log('before sklls');
+        // this.state.markers.forEach(marker => console.log(marker.git_username));
+
+        const skillsQuery = ["React-Native"];
+        const filtered_markers = new Set();
+        this.state.markers.map(marker => {
+            skillsQuery.forEach(skill => {
+                const _marker = Object.keys(marker.skills).some(_skill => skill === _skill);
+                if (_marker) { 
+                    filtered_markers.add(marker);
+                    return;
+                }
+            });
+        });
+        this.setState({filtered_markers: [...filtered_markers]});
     }
 
     setMapMarkers(coords, localUsers) {
@@ -95,20 +118,24 @@ export default class Home extends Component<Props> {
             color: this.randomColor(),
             name: localUser.name,
             git_username: localUser.git_username,
-            bio: localUser.bio
+            bio: localUser.bio,
+            // isCurrentFriend: localUser.isCurrentFriend,
+            // isFriendRequest: localUser.isFriendRequest,
+            skills: localUser.skills
         }));
         // TODO: Push logged in user
-        console.log("Markers are: ", markers);
-        markers.push({
-            coordinate: coords,
-            key: this.state.git_username,
-            color: this.currentLocationColor(),
-            name: "Tony Stark",
-            git_username: "starktony",
-            bio: "Ironman - Mechanic"
-        });
+        // console.log("Markers are: ", markers);
+        // markers.push({
+        //     coordinate: coords,
+        //     key: this.state.git_username,
+        //     color: this.currentLocationColor(),
+        //     name: "Tony Stark",
+        //     git_username: "starktony",
+        //     bio: "Ironman - Mechanic",
+        // });
         this.setState({
-            markers
+            markers,
+            filtered_markers: markers
         });
     }
 
@@ -152,6 +179,15 @@ export default class Home extends Component<Props> {
         console.log("Printed");
     }
 
+    navigateToProfile(marker) {
+        console.log("Navigating to profile");
+        this.props.navigation.push("Profile", {
+            git_username: marker.git_username,
+            isCurrentFriend: marker.isCurrentFriend,
+            isFriendRequest: marker.isFriendRequest,
+            current_user: false
+        });
+    }
     render() {
         return (
             <View style={styles.container}>
@@ -162,34 +198,19 @@ export default class Home extends Component<Props> {
                         initialRegion={this.state.region}
                         region={this.state.region}
                     >
-                        {this.state.markers.map(marker => (
+                        {this.state.filtered_markers.map(marker => (
                             <Marker
                                 key={marker.key}
                                 coordinate={marker.coordinate}
                                 description="Information"
                                 pinColor={marker.color}
                             >
-                                <Callout tooltip style={styles.customView}>
-                                    <CustomCallout>
+                                <Callout tooltip>
                                         <Card key={marker.key}>
                                             <Text style={{ marginBottom: 10 }}>
-                                                {" "}
-                                                NAME: {marker.name}{" "}
-                                            </Text>
-                                            <Text style={{ marginBottom: 10 }}>
-                                                {" "}
-                                                USERNAME: {
-                                                    marker.git_username
-                                                }{" "}
-                                            </Text>
-                                            <Text style={{ marginBottom: 10 }}>
-                                                {" "}
-                                                BIO: {marker.bio}{" "}
+                                                NAME: {marker.name}
                                             </Text>
                                         </Card>
-
-                                        {/* {<Text>This is a custom callout bubble view</Text>} */}
-                                    </CustomCallout>
                                 </Callout>
                             </Marker>
                         ))}
@@ -202,7 +223,7 @@ export default class Home extends Component<Props> {
                 </View>
 
                 <View style={styles.cards}>
-                    <PersonList markers={this.state.markers} />
+                    <PersonList markers={this.state.filtered_markers} />
                 </View>
             </View>
         );
