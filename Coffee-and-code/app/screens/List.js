@@ -64,16 +64,18 @@ export default class List extends Component<props> {
     onConfirm = () => {
         currentHelpItem = this.state.selectedItems;
         console.log("Current Item:", currentHelpItem);
-        AsyncStorage.setItem("CurrItem", JSON.stringify(currentHelpItem));
+    };
+
+    onCancel = () => {
+        currentHelpItem = this.state.selectedItems;
+        console.log("On Cancel", currentHelpItem);
     };
 
     onToggle(isOn) {
         console.log("Its on");
     }
     componentDidMount() {
-        AsyncStorage.getItem("CurrItem")
-            .then(currentItem => JSON.parse(currentItem))
-            .then(currData => this.setState({ selectedItems: currData }));
+        this.setState({ selectedItems: currentHelpItem });
         console.log("Did Mount sele item:", this.state.selectedItems);
     }
 
@@ -82,7 +84,7 @@ export default class List extends Component<props> {
             <View style={styles.container}>
                 <Card
                     style={{
-                        padding: 50,
+                        padding: 150,
                         color: "powderblue",
                         flexDirection: "row"
                     }}
@@ -108,29 +110,6 @@ export default class List extends Component<props> {
                         onCancel={this.onCancel}
                         onConfirm={this.onConfirm}
                     />
-                    {/* <MultiSelect
-          hideTags
-          items={items}
-          uniqueKey="id"
-          ref={(component) => { this.multiSelect = component }}
-          onSelectedItemsChange={this.onSelectedItemsChange}
-          selectedItems={this.state.selectedItems}
-          selectText="Select Language"
-          searchInputPlaceholderText="Search Items..."
-          onChangeInput={ (text)=> console.log(text)}
-          altFontFamily="Roboto"
-          tagRemoveIconColor="#CCC"
-          tagBorderColor="#CCC"
-          tagTextColor="#CCC"
-          selectedItemTextColor="#CCC"
-          selectedItemIconColor="#CCC"
-          itemTextColor="#000"
-          displayKey="name"
-          searchInputStyle={{ color: '#CCC' }}
-          submitButtonColor="#CCC"
-          submitButtonText="Submit"
-        
-        /> */}
                 </Card>
             </View>
         );
