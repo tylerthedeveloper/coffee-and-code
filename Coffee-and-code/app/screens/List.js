@@ -64,18 +64,22 @@ export default class List extends Component<props> {
     onConfirm = () => {
         currentHelpItem = this.state.selectedItems;
         console.log("Current Item:", currentHelpItem);
+        AsyncStorage.setItem("CurrItem", JSON.stringify(currentHelpItem));
     };
 
     onCancel = () => {
         currentHelpItem = this.state.selectedItems;
-        console.log("On Cancel", currentHelpItem);
+        console.log("Current Item:", currentHelpItem);
+        AsyncStorage.setItem("CurrItem", JSON.stringify(currentHelpItem));
     };
 
     onToggle(isOn) {
         console.log("Its on");
     }
     componentDidMount() {
-        this.setState({ selectedItems: currentHelpItem });
+        AsyncStorage.getItem("CurrItem")
+            .then(currentItem => JSON.parse(currentItem))
+            .then(currData => this.setState({ selectedItems: currData }));
         console.log("Did Mount sele item:", this.state.selectedItems);
     }
 

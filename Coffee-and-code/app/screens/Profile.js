@@ -193,12 +193,20 @@ export default class Profile extends Component<Props> {
             git_username,
             name,
             picture_url,
-            user_id
+            user_id,
+            status
         } = this.state.user;
         // TODO:
         // followers: followers,
         // following: following,`
-        console.log(this.state);
+
+        AsyncStorage.getItem("CurrItem")
+            .then(currentItem => JSON.parse(currentItem))
+            .then(currData => {
+                this.status = currData.toString();
+            });
+
+        console.log("Status var:", this.status);
         return (
             <ScrollView>
                 <View style={styles.container}>
@@ -215,6 +223,9 @@ export default class Profile extends Component<Props> {
                             <Text style={styles.name}> {name} </Text>
                             <Text style={styles.name}> {bio} </Text>
                             <Text style={styles.info}>Bloomington, IN</Text>
+                            <Text style={styles.info}>
+                                Need Help : {this.status}
+                            </Text>
                             <Text style={styles.description}>
                                 Skills Set:React Native
                             </Text>
