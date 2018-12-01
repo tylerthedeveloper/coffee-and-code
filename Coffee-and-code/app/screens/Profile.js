@@ -17,6 +17,7 @@ import { logout, sendMessage } from "../services/profile-utils";
 import { acceptFriendRequest } from "../services/friend-requests-service";
 
 // const apiurl = "https://code-and-coffee2.azurewebsites.net";
+const status = "";
 
 export default class Profile extends Component<Props> {
     constructor(props) {
@@ -67,6 +68,11 @@ export default class Profile extends Component<Props> {
 
     componentDidMount() {
         this.init();
+        AsyncStorage.getItem("CurrItem")
+            .then(currentItem => JSON.parse(currentItem))
+            .then(currData => {
+                status = currData.toString();
+            });
     }
 
     // deleteFriendRequest() {
@@ -193,18 +199,11 @@ export default class Profile extends Component<Props> {
             git_username,
             name,
             picture_url,
-            user_id,
-            status
+            user_id
         } = this.state.user;
         // TODO:
         // followers: followers,
         // following: following,`
-
-        AsyncStorage.getItem("CurrItem")
-            .then(currentItem => JSON.parse(currentItem))
-            .then(currData => {
-                this.status = currData.toString();
-            });
 
         console.log("Status var:", this.status);
         return (
@@ -224,7 +223,7 @@ export default class Profile extends Component<Props> {
                             <Text style={styles.name}> {bio} </Text>
                             <Text style={styles.info}>Bloomington, IN</Text>
                             <Text style={styles.info}>
-                                Need Help : {this.status}
+                                Need Help : {status}
                             </Text>
                             <Text style={styles.description}>
                                 Skills Set:React Native
