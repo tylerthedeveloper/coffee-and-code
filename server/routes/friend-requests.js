@@ -86,7 +86,6 @@ router.delete("/", function(req, res, next) {
     });
 });
 
-
 /**
  * accept friend request
  */
@@ -152,8 +151,6 @@ router.post("/accept", function(req, res, next) {
             res.send({ message: "success" });
         });
     });
-
 });
-
 
 module.exports = router;
