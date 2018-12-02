@@ -66,67 +66,187 @@
 
 import React, { Component } from "react";
 import {
-    ScrollView,
+    Platform,
     StyleSheet,
     Text,
-    TouchableOpacity,
-    View
+    View,
+    Button,
+    AsyncStorage,
+    ScrollView,
+    TouchableHighlight
 } from "react-native";
-import Modal from "react-native-modal";
+import PropTypes from "prop-types";
+import { Card } from "react-native-elements";
+import ToggleSwitch from "toggle-switch-react-native";
+import SectionedMultiSelect from "react-native-sectioned-multi-select";
+// import MultiSelect from "react-native-multiple-select";
 
-export default class Example extends Component {
-    constructor(props) {
-        super();
-        this.state = {
-            visibleModal: null
-        };
-        console.log("constructpo");
+const items = [
+    {
+        name: "Front End",
+        id: 0,
+        children: [
+            {
+                name: "React Native",
+                id: 10
+            },
+            {
+                name: "HTML",
+                id: 17
+            },
+            {
+                name: "CSS",
+                id: 13
+            }
+        ]
+    },
+    {
+        name: "Back End",
+        id: 1,
+        children: [
+            {
+                name: "Java",
+                id: 20
+            },
+            {
+                name: "PHP",
+                id: 21
+            }
+        ]
+    }
+];
+const currentHelpItem = [];
+
+export default class List extends Component<props> {
+    state = {
+        isOnDefaultToggleSwitch: false,
+        selectedItems: []
+        //currentItems: []
+    };
+
+    onSelectedItemsChange = selectedItems => {
+        this.setState({ selectedItems });
+        console.log("Selected item:", selectedItems);
+    };
+
+    onConfirm = () => {
+        // Need Help value added on confirm button
+        currentHelpItem = this.state.selectedItems;
+        console.log("Current Item:", currentHelpItem);
+        AsyncStorage.setItem("CurrItem", JSON.stringify(currentHelpItem));
+    };
+
+    onToggle(isOn) {
+        console.log("Its on");
+    }
+    componentDidMount() {
+        // AsyncStorage.setItem("CurrItem", JSON.stringify(items));
+        AsyncStorage.getItem("CurrItem")
+            .then(currentItem => JSON.parse(currentItem))
+            .then(currData => this.setState({ selectedItems: currData }));
+        console.log("Did Mount sele item:", this.state.selectedItems);
     }
 
-    renderButton = (text, onPress) => (
-        <TouchableOpacity onPress={onPress}>
-            <View style={styles.button}>
-                <Text>{text}</Text>
-            </View>
-        </TouchableOpacity>
-    );
-
-    renderModalContent = () => (
-        <View style={styles.modalContent}>
-            <Text>Hello!</Text>
-            {this.renderButton("Close", () =>
-                this.setState({ visibleModal: null })
-            )}
-        </View>
-    );
-
     render() {
-        console.log("render");
         return (
             <View style={styles.container}>
-                {this.renderButton("Default modal", () =>
-                    this.setState({ visibleModal: 1 })
-                )}
-                {this.renderButton(
-                    "Modal that can be closed on backdrop press",
-                    () => this.setState({ visibleModal: 6 })
-                )}
-                <Modal
-                    isVisible={this.state.visibleModal === 1}
-                    animationIn="slideInLeft"
-                    animationOut="slideOutRight"
-                    //   onBackdropPress={() => this.setState({ visibleModal: null })}
+                <ScrollView>
+                    <Card style={styles.card}>
+                        <Text style={styles.welcome}>Need Help</Text>
+
+                        <ToggleSwitch
+                            isOn={this.state.isOnDefaultToggleSwitch}
+                            onToggle={isOnDefaultToggleSwitch => {
+                                this.setState({ isOnDefaultToggleSwitch });
+                                this.onToggle(isOnDefaultToggleSwitch);
+                            }}
+                        />
+                        <SectionedMultiSelect
+                            items={items}
+                            uniqueKey="name"
+                            subKey="children"
+                            selectText="Choose any Language"
+                            showDropDowns={true}
+                            readOnlyHeadings={true}
+                            onSelectedItemsChange={this.onSelectedItemsChange}
+                            selectedItems={this.state.selectedItems}
+                            //onConfirm={this.onConfirm}
+                        />
+                    </Card>
+
+                    <Card
+                        style={{
+                            padding: 150,
+                            color: "powderblue",
+                            flexDirection: "row"
+                        }}
+                    >
+                        <Text style={styles.welcome}>Willing To Help</Text>
+
+                        <ToggleSwitch
+                            isOn={this.state.isOnDefaultToggleSwitch}
+                            onToggle={isOnDefaultToggleSwitch => {
+                                this.setState({ isOnDefaultToggleSwitch });
+                                this.onToggle(isOnDefaultToggleSwitch);
+                            }}
+                        />
+                        <SectionedMultiSelect
+                            items={items}
+                            uniqueKey="name"
+                            subKey="children"
+                            selectText="Choose any Language"
+                            showDropDowns={true}
+                            readOnlyHeadings={true}
+                            onSelectedItemsChange={this.onSelectedItemsChange}
+                            selectedItems={this.state.selectedItems}
+                            onConfirm={this.onConfirm}
+                        />
+                    </Card>
+
+                    <Card
+                        style={{
+                            padding: 150,
+                            color: "powderblue",
+                            flexDirection: "row"
+                        }}
+                    >
+                        <Text style={styles.welcome}>Let's Make A Team</Text>
+
+                        <ToggleSwitch
+                            isOn={this.state.isOnDefaultToggleSwitch}
+                            onToggle={isOnDefaultToggleSwitch => {
+                                this.setState({ isOnDefaultToggleSwitch });
+                                this.onToggle(isOnDefaultToggleSwitch);
+                            }}
+                        />
+                        <SectionedMultiSelect
+                            items={items}
+                            uniqueKey="name"
+                            subKey="children"
+                            selectText="Choose any Language"
+                            showDropDowns={true}
+                            readOnlyHeadings={true}
+                            onSelectedItemsChange={this.onSelectedItemsChange}
+                            selectedItems={this.state.selectedItems}
+                            onConfirm={this.onConfirm}
+                        />
+                    </Card>
+                </ScrollView>
+
+                <Button
+                    style={styles.saveButton}
+                    // styleDisabled={{color: 'red'}}
+                    onPress={() => this.onConfirm()}
+                    title="Save"
                 >
-                    {this.renderModalContent()}
-                </Modal>
-                <Modal
-                    isVisible={this.state.visibleModal === 6}
-                    onBackdropPress={() =>
-                        this.setState({ visibleModal: null })
-                    }
-                >
-                    {this.renderModalContent()}
-                </Modal>
+                    Save
+                </Button>
+                {/* <TouchableHighlight
+                    style={styles.saveButton}
+                     onPress={() => this.submitSuggestion(this.props)}
+                     >
+                     <Text style={styles.submitText}>Submit</Text>
+                </TouchableHighlight> */}
             </View>
         );
     }
@@ -136,42 +256,45 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: "center",
-        alignItems: "center"
-    },
-    button: {
-        backgroundColor: "lightblue",
-        padding: 12,
-        margin: 16,
-        justifyContent: "center",
         alignItems: "center",
-        borderRadius: 4,
-        borderColor: "rgba(0, 0, 0, 0.1)"
-    },
-    modalContent: {
         backgroundColor: "white",
-        padding: 22,
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: 4,
-        borderColor: "rgba(0, 0, 0, 0.1)"
+        flexDirection: "column"
     },
-    bottomModal: {
-        justifyContent: "flex-end",
-        margin: 0
+    welcome: {
+        fontSize: 20,
+        textAlign: "left",
+        margin: 20,
+        flexDirection: "row"
     },
-    scrollableModal: {
-        height: 300
+    instructions: {
+        textAlign: "center",
+        color: "#333333",
+        marginBottom: 5
     },
-    scrollableModalContent1: {
-        height: 200,
-        backgroundColor: "orange",
-        alignItems: "center",
-        justifyContent: "center"
+    card: {
+        padding: 150,
+        color: "powderblue",
+        flexDirection: "row"
     },
-    scrollableModalContent2: {
-        height: 200,
-        backgroundColor: "lightgreen",
-        alignItems: "center",
-        justifyContent: "center"
+    saveButton: {
+        zIndex: 1,
+        // backgroundColor:"#841584",
+        // borderRadius:30,
+        // overflow: 'hidden',
+        // paddingTop:20,
+        marginRight: 40,
+        marginLeft: 40,
+        marginTop: 10,
+        paddingTop: 20,
+        paddingBottom: 20,
+        backgroundColor: "#68a0cf",
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: "#fff"
+    },
+
+    submitText: {
+        color: "#fff",
+        textAlign: "center"
     }
 });

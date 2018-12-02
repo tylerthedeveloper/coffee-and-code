@@ -10,6 +10,12 @@ export async function getLoggedinUserName() {
     );
 }
 
+export async function getLoggedinUserProfile() {
+    return await AsyncStorage.getItem("profile")
+        .then(profile => JSON.parse(profile))
+        .then(profile => profile);
+}
+
 // TODO: postgis?
 export function getAllUsers() {
     return fetch(`${apiurl}`, {

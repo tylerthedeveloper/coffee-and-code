@@ -7,7 +7,8 @@ import {
     Dimensions,
     AsyncStorage,
     TouchableHighlight,
-    Button
+    Button,
+    ScrollView
 } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import BottomSheet from "react-native-js-bottom-sheet";
@@ -20,6 +21,7 @@ import MapViewDirections from "react-native-maps-directions";
 import getDirections from "react-native-google-maps-directions";
 import {
     getLoggedinUserName,
+    getLoggedinUserProfile,
     updateLocationAndGetLocalUsers,
     getLocalUsers
 } from "../services/user-service";
@@ -30,9 +32,10 @@ import {
     onRecommendLocations,
     getRandomColor,
     currentLocationColor,
-    shouldUpdateLocation,
-    renderModal
+    shouldUpdateLocation
 } from "../services/map-service";
+import ToggleSwitch from "toggle-switch-react-native";
+import SectionedMultiSelect from "react-native-sectioned-multi-select";
 
 const { width, height } = Dimensions.get("window");
 
@@ -46,6 +49,41 @@ let modal_visibility = false;
 let popup_visibility = false;
 const GOOGLE_MAPS_APIKEY = "AIzaSyAPaNuHNAHk4NSk4TLnN_ngI8Dgm-_W74Y";
 import Modal from "react-native-modal";
+
+const items = [
+    {
+        name: "Front End",
+        id: 0,
+        children: [
+            {
+                name: "React Native",
+                id: 10
+            },
+            {
+                name: "HTML",
+                id: 17
+            },
+            {
+                name: "CSS",
+                id: 13
+            }
+        ]
+    },
+    {
+        name: "Back End",
+        id: 1,
+        children: [
+            {
+                name: "Java",
+                id: 20
+            },
+            {
+                name: "PHP",
+                id: 21
+            }
+        ]
+    }
+];
 
 export default class Home extends Component<Props> {
     constructor(props) {
@@ -136,15 +174,16 @@ export default class Home extends Component<Props> {
             picture_url: localUser.picture_url
         }));
         // TODO: Push logged in user
-        console.log("Markers are: ", markers);
-        markers.push({
-            coordinate: coords,
-            key: this.state.git_username,
-            color: currentLocationColor(),
-            name: "Tony Stark",
-            git_username: "starktony",
-            bio: "Ironman - Mechanic"
-        });
+        // console.log("Markers are: ", markers);
+        // markers.push({
+        //     skills: this.state.profile.skills,
+        //     coordinate: coords,
+        //     key: this.state.profile.git_username,
+        //     color: currentLocationColor(),
+        //     name: this.state.profile.name,
+        //     git_username: this.state.profile.git_username,
+        //     bio: this.state.profile.bio
+        // });
 
         this.setState({
             markers,
@@ -169,9 +208,12 @@ export default class Home extends Component<Props> {
             AsyncStorage.setItem("location", JSON.stringify(location.coords));
             console.log("setlocation ", location);
             const { latitude, longitude } = location.coords;
-            await getLoggedinUserName().then(git_username =>
+            // await getLoggedinUserName().then(git_username =>
+            await getLoggedinUserProfile().then(profile => {
+                console.log("profile: ", profile);
                 this.setState({
-                    git_username,
+                    git_username: profile.git_username,
+                    profile,
                     region: {
                         latitude: latitude,
                         longitude: longitude,
@@ -183,8 +225,8 @@ export default class Home extends Component<Props> {
                         latitude: latitude,
                         longitude: longitude
                     }
-                })
-            );
+                });
+            });
             const coords = location.coords;
             await updateLocationAndGetLocalUsers({
                 git_username: this.state.git_username,
@@ -251,12 +293,14 @@ export default class Home extends Component<Props> {
                     callback(res)
                 );
                 break;
+            case "Close":
+                this.filterUsers();
             default:
                 return;
         }
     }
 
-    renderModal() {
+    renderUserProfileModal() {
         return (
             <Modal
                 isVisible={this.state.visibleModal === 1}
@@ -283,6 +327,135 @@ export default class Home extends Component<Props> {
                     {this.renderButton("Close", () =>
                         this.onModalPressed("Close")
                     )}
+                </View>
+            </Modal>
+        );
+    }
+
+    onSelectedItemsChange = selectedItems => {
+        this.setState({ selectedItems });
+        console.log("Selected item:", selectedItems);
+    };
+
+    onConfirm = () => {
+        // Need Help value added on confirm button
+        currentHelpItem = this.state.selectedItems;
+        console.log("Current Item:", currentHelpItem);
+        AsyncStorage.setItem("CurrItem", JSON.stringify(currentHelpItem));
+    };
+
+    onToggle(isOn) {
+        console.log("Its on");
+    }
+
+    renderFilterModal() {
+        return (
+            <Modal
+                isVisible={this.state.visibleModal === 1}
+                animationIn="slideInLeft"
+                animationOut="slideOutRight"
+                onBackdropPress={() => this.setState({ visibleModal: null })}
+            >
+                <View style={styles.container}>
+                    <ScrollView>
+                        <Card style={styles.card}>
+                            <Text style={styles.welcome}>Need Help</Text>
+
+                            <ToggleSwitch
+                                isOn={this.state.isOnDefaultToggleSwitch}
+                                onToggle={isOnDefaultToggleSwitch => {
+                                    this.setState({ isOnDefaultToggleSwitch });
+                                    this.onToggle(isOnDefaultToggleSwitch);
+                                }}
+                            />
+                            <SectionedMultiSelect
+                                items={items}
+                                uniqueKey="name"
+                                subKey="children"
+                                selectText="Choose any Language"
+                                showDropDowns={true}
+                                readOnlyHeadings={true}
+                                onSelectedItemsChange={
+                                    this.onSelectedItemsChange
+                                }
+                                selectedItems={this.state.selectedItems}
+                                //onConfirm={this.onConfirm}
+                            />
+                        </Card>
+
+                        <Card
+                            style={{
+                                padding: 150,
+                                color: "powderblue",
+                                flexDirection: "row"
+                            }}
+                        >
+                            <Text style={styles.welcome}>Willing To Help</Text>
+
+                            <ToggleSwitch
+                                isOn={this.state.isOnDefaultToggleSwitch}
+                                onToggle={isOnDefaultToggleSwitch => {
+                                    this.setState({ isOnDefaultToggleSwitch });
+                                    this.onToggle(isOnDefaultToggleSwitch);
+                                }}
+                            />
+                            <SectionedMultiSelect
+                                items={items}
+                                uniqueKey="name"
+                                subKey="children"
+                                selectText="Choose any Language"
+                                showDropDowns={true}
+                                readOnlyHeadings={true}
+                                onSelectedItemsChange={
+                                    this.onSelectedItemsChange
+                                }
+                                selectedItems={this.state.selectedItems}
+                                onConfirm={this.onConfirm}
+                            />
+                        </Card>
+
+                        <Card
+                            style={{
+                                padding: 150,
+                                color: "powderblue",
+                                flexDirection: "row"
+                            }}
+                        >
+                            <Text style={styles.welcome}>
+                                Let's Make A Team
+                            </Text>
+
+                            <ToggleSwitch
+                                isOn={this.state.isOnDefaultToggleSwitch}
+                                onToggle={isOnDefaultToggleSwitch => {
+                                    this.setState({ isOnDefaultToggleSwitch });
+                                    this.onToggle(isOnDefaultToggleSwitch);
+                                }}
+                            />
+                            <SectionedMultiSelect
+                                items={items}
+                                uniqueKey="name"
+                                subKey="children"
+                                selectText="Choose any Language"
+                                showDropDowns={true}
+                                readOnlyHeadings={true}
+                                onSelectedItemsChange={
+                                    this.onSelectedItemsChange
+                                }
+                                selectedItems={this.state.selectedItems}
+                                onConfirm={this.onConfirm}
+                            />
+                        </Card>
+                    </ScrollView>
+
+                    <Button
+                        style={styles.saveButton}
+                        // styleDisabled={{color: 'red'}}
+                        onPress={() => this.onConfirm()}
+                        title="Save"
+                    >
+                        Save
+                    </Button>
                 </View>
             </Modal>
         );
@@ -326,11 +499,21 @@ export default class Home extends Component<Props> {
                         ))}
                     </MapView>
                 </View>
+
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity
+                        onPress={() => this.openModal()}
+                        style={styles.bubble}
+                    >
+                        <Text>Filter</Text>
+                    </TouchableOpacity>
+                </View>
                 <View>
                     {/* <TouchableOpacity onPress={() => this.refreshMap()}>
                         <Text>RefershLocation</Text>
                     </TouchableOpacity> */}
-                    {this.renderModal()}
+                    {this.renderFilterModal()}
+                    {/* {this.renderUserProfileModal()} */}
                 </View>
             </View>
         );

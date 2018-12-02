@@ -8,16 +8,17 @@ import {
     ScrollView,
     AsyncStorage
 } from "react-native";
+
+import { getUserByID } from "../services/user-service";
+// import { fetchGitData } from "./LogIn";
 import firebase from "firebase";
 import { createChatThread } from "../services/chat-service";
 import { logout, sendMessage } from "../services/profile-utils";
 import { acceptFriendRequest } from "../services/friend-requests-service";
-import { updateUserSkills, getUserByID } from "../services/user-service";
 
 // const apiurl = "https://code-and-coffee2.azurewebsites.net";
-const status = "";
 
-export default class Profile extends Component<Props> {
+export default class Preference extends Component<Props> {
     constructor(props) {
         super(props);
         const current_user = props.navigation.getParam("current_user");
@@ -26,7 +27,7 @@ export default class Profile extends Component<Props> {
             props.navigation.getParam("isFriendRequest") || false;
         const isCurrentFriend =
             props.navigation.getParam("isCurrentFriend") || false;
-        // console.log("current_user", current_user);
+        console.log("current_user", current_user);
         this.state = {
             current_user: current_user || "",
             current_user_picture_url: "",
@@ -38,52 +39,35 @@ export default class Profile extends Component<Props> {
     }
 
     async init() {
-        let profile = await AsyncStorage.getItem("profile")
+        await AsyncStorage.getItem("profile")
             .then(profile => JSON.parse(profile))
-            .then(profile => {
+            .then(profile =>
                 this.setState({
                     current_user: profile.git_username,
                     current_user_picture_url: profile.picture_url
-                });
-                return profile;
-            });
-        profile.skills = JSON.parse(JSON.stringify(profile.skills));
-        console.log("profile", profile);
+                })
+            );
+        console.log(this.state);
         if (this.state.current_user && this.state.git_username === "") {
-            // await AsyncStorage.getItem("profile")
-            //     .then(profile => JSON.parse(profile))
-            //     .then(user => {
-            //         // console.log("user1", user);
-            // this.setState({ user });
-            //     });
-            this.setState({ user: profile });
+            await AsyncStorage.getItem("profile")
+                .then(profile => JSON.parse(profile))
+                .then(user => {
+                    console.log("user1", user);
+                    this.setState({ user });
+                });
         } else {
             getUserByID(this.state.git_username)
                 .then(users => users[0])
                 .then(user => {
-                    // console.log("user2", user);
+                    console.log("user2", user);
                     this.setState({ user });
                 });
         }
     }
 
-    refreshProfile() {
-        getUserByID(this.state.current_user)
-            .then(users => users[0])
-            .then(user => {
-                console.log("updated user", user);
-                this.setState({ user });
-                AsyncStorage.setItem("profile", JSON.stringify(user));
-            });
+    componentDidMount() {
+        this.init();
     }
-    // componentDidMount() {
-    //     this.init();
-    //     AsyncStorage.getItem("CurrItem")
-    //         .then(currentItem => JSON.parse(currentItem))
-    //         .then(currData => {
-    //             status = currData.toString();
-    //         });
-    // }
 
     // deleteFriendRequest() {
     //     const {
@@ -115,52 +99,6 @@ export default class Profile extends Component<Props> {
 
     editProfile() {
         // TODO: wtf
-    }
-
-    addSkills(skillsObj) {
-        // TODO: Parse object
-    }
-
-    launchUpdateSkills() {
-        // TODO:
-        // this.props.navigation.push("Skills", {
-
-        // })
-        // Promise.resolve({
-        //     data: {
-        //         skills: {
-        //             C: true,
-        //             Java: true,
-        //             Python: true
-        //         }
-        //     }
-        // })
-        //     .then(newSkills => ({
-        //         git_username: this.state.git_username,
-        //         skills: newSkills
-        //     }))
-        //     .then(newSkillsObj => updateUserSkills(newSkillsObj))
-        //     .then(res => this.refreshProfile());
-        const newSkills = {
-            C: true,
-            Java: true,
-            Python: true
-        };
-        const newSkillsObj = {
-            git_username: this.state.current_user,
-            skills: newSkills
-        };
-        Promise.resolve(newSkillsObj)
-            // .then(newSkills => ({
-            //     git_username: this.state.git_username,
-            //     skills: newSkills
-            // }))
-            .then(newSkillsObj => updateUserSkills(newSkillsObj))
-            .then(res => this.refreshProfile());
-    }
-
-    componentDidMount() {
-        this.init();
     }
 
     createButtonView() {
@@ -231,12 +169,6 @@ export default class Profile extends Component<Props> {
                 <View>
                     <TouchableOpacity
                         style={styles.buttonContainer}
-                        onPress={() => this.launchUpdateSkills()}
-                    >
-                        <Text>Update Skills</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.buttonContainer}
                         onPress={() => this.editProfile()}
                     >
                         <Text>Edit Profile</Text>
@@ -255,19 +187,18 @@ export default class Profile extends Component<Props> {
     render() {
         const {
             bio,
-            blog,
-            company,
+            current_latitude,
             current_location,
-            email,
-            latitude,
-            longitude,
+            current_longitude,
             git_username,
             name,
             picture_url,
-            skills,
             user_id
         } = this.state.user;
-        console.log("skills", skills);
+        // TODO:
+        // followers: followers,
+        // following: following,`
+        console.log(this.state);
         return (
             <ScrollView>
                 <View style={styles.container}>
@@ -282,18 +213,10 @@ export default class Profile extends Component<Props> {
                         <View style={styles.bodyContent}>
                             <Text style={styles.name}> {git_username} </Text>
                             <Text style={styles.name}> {name} </Text>
-                            <Text style={styles.info}> {bio} </Text>
+                            <Text style={styles.name}> {bio} </Text>
                             <Text style={styles.info}>Bloomington, IN</Text>
-                            {/* <Text style={styles.description}>
-                                Skills Set:React Native
-                            </Text> */}
-                            {/* TODO: Style and commas!!! */}
                             <Text style={styles.description}>
-                                Skills:{" "}
-                                {skills &&
-                                    Object.keys(skills).map(
-                                        skill => (skills[skill] ? skill : "")
-                                    )}
+                                Skills Set:React Native
                             </Text>
                             <View>{this.createButtonView()}</View>
                         </View>
