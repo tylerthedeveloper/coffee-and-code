@@ -24,6 +24,7 @@ import {
     getLocalUsers
 } from "../services/user-service";
 import Entypo from "react-native-vector-icons/Entypo";
+import geolib from "geolib";
 
 // import { SERVER_API } from "app/constants";
 
@@ -51,6 +52,7 @@ export default class Home extends Component<Props> {
     constructor(props) {
         super(props);
         this.state = {
+            nearbyLocations: [],
             git_username: "",
             region: {
                 latitude: LATITUDE,
@@ -67,6 +69,7 @@ export default class Home extends Component<Props> {
             popup: true,
             popup_visibility: popup_visibility,
             bottomsheet: {
+                picture_url: "",
                 name: "",
                 location_data: {
                     source: {
@@ -246,11 +249,47 @@ export default class Home extends Component<Props> {
         });
     }
 
-    onPressButton = (name, coordinate) => {
-        this.setState({ name: name });
-        console.log(coordinate);
-        this.mapViewDirections.open();
+    onPressButton = (name, coordinate, picture) => {
+        let bottomsheet_refresh = { ...this.state.bottomsheet };
+        bottomsheet_refresh.name = name;
+        bottomsheet_refresh.location_data.destination = coordinate;
+        bottomsheet_refresh.picture_url = picture;
+        bottomsheet_refresh.location_data.source = this.state.markers[
+            this.state.markers.length - 1
+        ].coordinate;
+        this.setState({ bottomsheet: bottomsheet_refresh });
         this.bottomSheet.open();
+    };
+
+    onRecommendLocations = source => {
+        const restaurantPromise = fetch(
+            `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${
+                source.latitude
+            },${
+                source.longitude
+            }&radius=2000&type=cafe&key=AIzaSyAPaNuHNAHk4NSk4TLnN_ngI8Dgm-_W74Y`,
+            {
+                method: "GET",
+                headers: {
+                    "Content-type": "application/json"
+                    // TODO: Credentials / accesstoken
+                }
+            }
+        );
+
+        restaurantPromise.then(res => res.json()).then(resData => {
+            const allRestaurants = resData.results.map(res => {
+                return {
+                    name: res.name,
+                    coords: {
+                        latitude: res.geometry.location.lat,
+                        longitude: res.geometry.location.lng
+                    },
+                    icon: res.icon
+                };
+            });
+            this.setState({ nearbyLocations: allRestaurants });
+        });
     };
 
     getPath = (user_coords, destination_coords) => {
@@ -266,16 +305,10 @@ export default class Home extends Component<Props> {
         );
     };
 
-    handleGetDirections = () => {
+    handleGetDirections = (source, destination) => {
         const data = {
-            source: {
-                latitude: -33.8356372,
-                longitude: 18.6947617
-            },
-            destination: {
-                latitude: -33.8600024,
-                longitude: 18.697459
-            },
+            source: source,
+            destination: destination,
             params: [
                 {
                     key: "travelmode",
@@ -287,37 +320,7 @@ export default class Home extends Component<Props> {
                 }
             ]
         };
-        const restaurantPromise = fetch(
-            `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${
-                coords[0].latitude
-            },${
-                coords[0].longitude
-            }&radius=1000&type=cafe&key=AIzaSyAPaNuHNAHk4NSk4TLnN_ngI8Dgm-_W74Y`,
-            {
-                method: "GET",
-                headers: {
-                    "Content-type": "application/json"
-                    // TODO: Credentials / accesstoken
-                }
-            }
-        );
-
-        restaurantPromise
-            .then(res => res.json())
-            .then(resData => {
-                const allRestaurants = resData.results.map(res => {
-                    return {
-                        name: res.name,
-                        coords: {
-                            latitude: res.geometry.location.lat,
-                            longitude: res.geometry.location.lng
-                        },
-                        icon: res.icon
-                    };
-                });
-                this.setState({ nearbyLocations: allRestaurants });
-            })
-            .then(() => getDirections(data));
+        getDirections(data);
     };
 
     render() {
@@ -337,21 +340,27 @@ export default class Home extends Component<Props> {
                                 coordinate={marker.coordinate}
                                 description="Information"
                                 pinColor={marker.color}
-                                onPress={this.onPressButton(
-                                    marker.name,
-                                    marker.coordinate
-                                )}
+                                onPress={() =>
+                                    this.onPressButton(
+                                        marker.name,
+                                        marker.coordinate,
+                                        marker.picture_url
+                                    )
+                                }
                             />
                         ))}
-                        {/* <Dialog
-              visible={this.state.popup_visibility}
-              onTouchOutside={this.popupFalse}
-              style={{ zIndex: 1 }}
-            >
-              <DialogContent>
-                <Text>Nishchaya</Text>
-              </DialogContent>
-            </Dialog> */}
+                        {this.state.nearbyLocations.map(rest => (
+                            <Marker
+                                key={rest.coords.longitude}
+                                coordinate={rest.coords}
+                                pinColor="blue"
+                                image={{ uri: rest.icon }}
+                            >
+                                <Callout>
+                                    <Text>{rest.name}</Text>
+                                </Callout>
+                            </Marker>
+                        ))}
                     </MapView>
 
                     <BottomSheet
@@ -365,13 +374,13 @@ export default class Home extends Component<Props> {
                         title="Create"
                         options={[
                             {
-                                title: this.state.bottomsheet_name,
+                                title: this.state.bottomsheet.name,
                                 onPress: e => {
                                     e.preventDefault();
                                 }
                             },
                             {
-                                title: "Spreadsheet",
+                                title: "Get Directions",
                                 icon: (
                                     <Entypo
                                         name="spreadsheet"
@@ -379,10 +388,16 @@ export default class Home extends Component<Props> {
                                         size={24}
                                     />
                                 ),
-                                onPress: () => null
+                                onPress: () =>
+                                    this.handleGetDirections(
+                                        this.state.bottomsheet.location_data
+                                            .source,
+                                        this.state.bottomsheet.location_data
+                                            .destination
+                                    )
                             },
                             {
-                                title: "Folder",
+                                title: "Get Recommended Locations to Meet",
                                 icon: (
                                     <MaterialCommunityIcons
                                         name="folder"
@@ -390,7 +405,12 @@ export default class Home extends Component<Props> {
                                         size={24}
                                     />
                                 ),
-                                onPress: () => null
+                                onPress: () => {
+                                    this.onRecommendLocations(
+                                        this.state.bottomsheet.location_data
+                                            .destination
+                                    );
+                                }
                             }
                         ]}
                         isOpen={false}
