@@ -25,8 +25,14 @@ import {
 } from "../services/user-service";
 import Entypo from "react-native-vector-icons/Entypo";
 import geolib from "geolib";
-
-// import { SERVER_API } from "app/constants";
+import {
+    handleGetDirections,
+    onRecommendLocations,
+    getRandomColor,
+    currentLocationColor,
+    shouldUpdateLocation,
+    renderModal
+} from "../services/map-service";
 
 const { width, height } = Dimensions.get("window");
 
@@ -39,16 +45,9 @@ const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 let modal_visibility = false;
 let popup_visibility = false;
 const GOOGLE_MAPS_APIKEY = "AIzaSyAPaNuHNAHk4NSk4TLnN_ngI8Dgm-_W74Y";
-console.log("popup_visibility ", popup_visibility);
+import Modal from "react-native-modal";
+
 export default class Home extends Component<Props> {
-    randomColor() {
-        return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
-    }
-
-    currentLocationColor() {
-        return `#${Math.floor(1 * 16777215).toString(16)}`;
-    }
-
     constructor(props) {
         super(props);
         this.state = {
@@ -66,84 +65,17 @@ export default class Home extends Component<Props> {
             },
             markers: [],
             filtered_markers: [],
-            popup: true,
-            popup_visibility: popup_visibility,
-            bottomsheet: {
-                picture_url: "",
-                name: "",
-                location_data: {
-                    source: {
-                        latitude: 0.0,
-                        longitude: 0.0
-                    },
-                    destination: {
-                        latitude: 0.0,
-                        longitude: 0.0
-                    },
-                    params: [
-                        {
-                            key: "travelmode",
-                            value: "driving" // may be "walking", "bicycling" or "transit" as well
-                        },
-                        {
-                            key: "dir_action",
-                            value: "navigate" // this instantly initializes navigation using the given travel mode
-                        }
-                    ]
-                }
-            }
+            selectedMarker: {},
+            visibleModal: null
         };
-        console.log(
-            "Constructor is called popup_visibility: ",
-            this.state.popup_visibility
-        );
     }
 
     componentWillMount() {
         this._initMap();
     }
 
-    setModalVisible(visible) {
-        console.log(this.state.modalVisible);
-        this.setState({ modalVisible: visible });
-    }
-
-    // TODO: Calculate difference ... function
-    shouldUpdateLocation(storedLocation, location) {
-        return false;
-    }
-
-    // TODO: Add refresh button
-    async refreshMap() {
-        const storedLocation = JSON.parse(
-            await AsyncStorage.getItem("location")
-        );
-        const location = null;
-        // await Location.getCurrentPositionAsync({enableHighAccuracy: true });
-        // {enableHighAccuracy: true}
-
-        /*
-        if (this.shouldUpdateLocation(storedLocation, location)) {
-            const coords = location.coords;
-            updateLocationAndGetLocalUsers({
-                git_username: this.state.git_username,
-                location: coords
-            }).then(localUsers => this.setMapMarkers(coords, localUsers));
-        } else {
-            console.log("storedLocation: ", storedLocation);
-            // const coords = storedLocation.coords;
-            const coords = storedLocation;
-            getLocalUsers({
-                git_username: this.state.git_username,
-                location: storedLocation
-            }).then(localUsers => this.setMapMarkers(coords, localUsers));
-        }
-        */
-
-        // TODO: MOVE TO FILTER
-        // console.log('before sklls');
-        // this.state.markers.forEach(marker => console.log(marker.git_username));
-
+    // TODO: make generic
+    filterUsers() {
         const skillsQuery = ["React-Native"];
         const filtered_markers = new Set();
         this.state.markers.map(marker => {
@@ -160,6 +92,32 @@ export default class Home extends Component<Props> {
         this.setState({ filtered_markers: [...filtered_markers] });
     }
 
+    // TODO: Add refresh button
+    async refreshMap() {
+        const storedLocation = JSON.parse(
+            await AsyncStorage.getItem("location")
+        );
+        const location = null;
+        // await Location.getCurrentPositionAsync({enableHighAccuracy: true });
+        // {enableHighAccuracy: true}
+
+        if (shouldUpdateLocation(storedLocation, location)) {
+            const coords = location.coords;
+            updateLocationAndGetLocalUsers({
+                git_username: this.state.git_username,
+                location: coords
+            }).then(localUsers => this.setMapMarkers(coords, localUsers));
+        } else {
+            console.log("storedLocation: ", storedLocation);
+            // const coords = storedLocation.coords;
+            const coords = storedLocation;
+            getLocalUsers({
+                git_username: this.state.git_username,
+                location: storedLocation
+            }).then(localUsers => this.setMapMarkers(coords, localUsers));
+        }
+    }
+
     setMapMarkers(coords, localUsers) {
         const markers = localUsers.map(localUser => ({
             coordinate: {
@@ -167,10 +125,11 @@ export default class Home extends Component<Props> {
                 longitude: localUser.longitude
             },
             key: localUser.git_username,
-            color: this.randomColor(),
+            color: getRandomColor(),
             name: localUser.name,
             git_username: localUser.git_username,
             bio: localUser.bio,
+            // TODO:
             // isCurrentFriend: localUser.isCurrentFriend,
             // isFriendRequest: localUser.isFriendRequest,
             skills: localUser.skills,
@@ -181,7 +140,7 @@ export default class Home extends Component<Props> {
         markers.push({
             coordinate: coords,
             key: this.state.git_username,
-            color: this.currentLocationColor(),
+            color: currentLocationColor(),
             name: "Tony Stark",
             git_username: "starktony",
             bio: "Ironman - Mechanic"
@@ -218,6 +177,11 @@ export default class Home extends Component<Props> {
                         longitude: longitude,
                         latitudeDelta: LATITUDE_DELTA,
                         longitudeDelta: LONGITUDE_DELTA
+                    },
+                    // TODO: MAKE SURE THIS IS PERSISTED
+                    current_coords: {
+                        latitude: latitude,
+                        longitude: longitude
                     }
                 })
             );
@@ -229,109 +193,103 @@ export default class Home extends Component<Props> {
         }
     }
 
-    popup() {
-        console.log("Printed");
+    // getPath = (user_coords, destination_coords) => {
+    //     return (
+    //         <MapViewDirections
+    //             origin={user_coords}
+    //             destination={destination_coords}
+    //             apikey={GOOGLE_MAPS_APIKEY}
+    //             strokeWidth={3}
+    //             strokeColor="steelblue"
+    //             mode="driving"
+    //         />
+    //     );
+    // };
+
+    // getRest = destination => {
+    //     let current_location = {
+    //         latitude: this.state.region.latitude,
+    //         longitude: this.state.region.longitude
+    //     };
+    //     this.handleGetDirections(current_location, destination);
+    // };
+
+    openModal(markerData) {
+        console.log(markerData);
+        this.setState({
+            selectedMarker: markerData,
+            visibleModal: 1
+        });
+    }
+
+    renderButton = (text, onPress) => (
+        <TouchableOpacity onPress={onPress}>
+            <View style={styles.button}>
+                <Text>{text}</Text>
+            </View>
+        </TouchableOpacity>
+    );
+
+    onModalPressed(action, callback) {
+        const marker = this.state.selectedMarker;
+        this.setState({ visibleModal: null });
+        switch (action) {
+            case "Profile":
+                this.props.navigation.navigate("Profile", {
+                    git_username: marker.git_username
+                    // TODO: Friend stuff ...
+                });
+                break;
+            case "Directions":
+                handleGetDirections(
+                    this.state.current_coords,
+                    marker.coordinate
+                );
+                break;
+            case "Recommendations":
+                onRecommendLocations(marker.coordinate).then(res =>
+                    callback(res)
+                );
+                break;
+            default:
+                return;
+        }
     }
 
     renderModal() {
-        console.log("in render method");
-        modal_visibility = true;
-        console.log("visibility", modal_visibility);
-    }
-
-    navigateToProfile(marker) {
-        console.log("Navigating to profile");
-        this.props.navigation.push("Profile", {
-            git_username: marker.git_username,
-            isCurrentFriend: marker.isCurrentFriend,
-            isFriendRequest: marker.isFriendRequest,
-            current_user: false
-        });
-    }
-
-    onPressButton = (name, coordinate, picture) => {
-        let bottomsheet_refresh = { ...this.state.bottomsheet };
-        bottomsheet_refresh.name = name;
-        bottomsheet_refresh.location_data.destination = coordinate;
-        bottomsheet_refresh.picture_url = picture;
-        bottomsheet_refresh.location_data.source = this.state.markers[
-            this.state.markers.length - 1
-        ].coordinate;
-        this.setState({ bottomsheet: bottomsheet_refresh });
-        this.bottomSheet.open();
-    };
-
-    onRecommendLocations = source => {
-        const restaurantPromise = fetch(
-            `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${
-                source.latitude
-            },${
-                source.longitude
-            }&radius=2000&type=cafe&key=AIzaSyAPaNuHNAHk4NSk4TLnN_ngI8Dgm-_W74Y`,
-            {
-                method: "GET",
-                headers: {
-                    "Content-type": "application/json"
-                    // TODO: Credentials / accesstoken
-                }
-            }
-        );
-
-        restaurantPromise.then(res => res.json()).then(resData => {
-            const allRestaurants = resData.results.map(res => {
-                return {
-                    name: res.name,
-                    coords: {
-                        latitude: res.geometry.location.lat,
-                        longitude: res.geometry.location.lng
-                    },
-                    icon: res.icon
-                };
-            });
-            this.setState({ nearbyLocations: allRestaurants });
-        });
-    };
-
-    getPath = (user_coords, destination_coords) => {
         return (
-            <MapViewDirections
-                origin={user_coords}
-                destination={destination_coords}
-                apikey={GOOGLE_MAPS_APIKEY}
-                strokeWidth={3}
-                strokeColor="steelblue"
-                mode="driving"
-            />
+            <Modal
+                isVisible={this.state.visibleModal === 1}
+                animationIn="slideInLeft"
+                animationOut="slideOutRight"
+                onBackdropPress={() => this.setState({ visibleModal: null })}
+            >
+                <View style={styles.modalContent}>
+                    <Text>{this.state.selectedMarker.git_username}</Text>
+                    {this.renderButton("Profile", () =>
+                        this.onModalPressed("Profile")
+                    )}
+                    {this.renderButton("Get Directions", () =>
+                        this.onModalPressed("Directions")
+                    )}
+                    {this.renderButton("Get Recommendations", () =>
+                        this.onModalPressed("Recommendations", allRestaurants =>
+                            this.setState({
+                                visibleModal: null,
+                                nearbyLocations: allRestaurants
+                            })
+                        )
+                    )}
+                    {this.renderButton("Close", () =>
+                        this.onModalPressed("Close")
+                    )}
+                </View>
+            </Modal>
         );
-    };
-
-    handleGetDirections = (source, destination) => {
-        const data = {
-            source: source,
-            destination: destination,
-            params: [
-                {
-                    key: "travelmode",
-                    value: "driving" // may be "walking", "bicycling" or "transit" as well
-                },
-                {
-                    key: "dir_action",
-                    value: "navigate" // this instantly initializes navigation using the given travel mode
-                }
-            ]
-        };
-        getDirections(data);
-    };
-
-    getRest = destination => {
-        let current_location = {
-            latitude: this.state.region.latitude,
-            longitude: this.state.region.longitude
-        };
-        this.handleGetDirections(current_location, destination);
-    };
+    }
 
     render() {
+        const { navigation } = this.props;
         return (
             <View style={styles.container}>
                 <View style={styles.maps}>
@@ -348,13 +306,7 @@ export default class Home extends Component<Props> {
                                 coordinate={marker.coordinate}
                                 description="Information"
                                 pinColor={marker.color}
-                                onPress={() =>
-                                    this.onPressButton(
-                                        marker.name,
-                                        marker.coordinate,
-                                        marker.picture_url
-                                    )
-                                }
+                                onPress={() => this.openModal(marker)}
                             />
                         ))}
                         {this.state.nearbyLocations.map(rest => (
@@ -365,76 +317,21 @@ export default class Home extends Component<Props> {
                                 image={{ uri: rest.icon }}
                             >
                                 <Callout
-                                    onPress={() => this.getRest(rest.coords)}
+                                // TODO:
+                                // onPress={() => this.getRest(rest.coords)}
                                 >
                                     <Text>{rest.name}</Text>
                                 </Callout>
                             </Marker>
                         ))}
                     </MapView>
-
-                    <BottomSheet
-                        ref={(ref: BottomSheet) => {
-                            this.bottomSheet = ref;
-                            //   console.log("ref: ", ref);
-                        }}
-                        itemDivider={3}
-                        backButtonEnabled={true}
-                        coverScreen={false}
-                        title="Create"
-                        options={[
-                            {
-                                title: this.state.bottomsheet.name,
-                                onPress: e => {
-                                    e.preventDefault();
-                                }
-                            },
-                            {
-                                title: "Get Directions",
-                                icon: (
-                                    <Entypo
-                                        name="spreadsheet"
-                                        color="#43a047"
-                                        size={24}
-                                    />
-                                ),
-                                onPress: () =>
-                                    this.handleGetDirections(
-                                        this.state.bottomsheet.location_data
-                                            .source,
-                                        this.state.bottomsheet.location_data
-                                            .destination
-                                    )
-                            },
-                            {
-                                title: "Get Recommended Locations to Meet",
-                                icon: (
-                                    <MaterialCommunityIcons
-                                        name="folder"
-                                        color="grey"
-                                        size={24}
-                                    />
-                                ),
-                                onPress: () => {
-                                    this.onRecommendLocations(
-                                        this.state.bottomsheet.location_data
-                                            .destination
-                                    );
-                                }
-                            }
-                        ]}
-                        isOpen={false}
-                    />
                 </View>
                 <View>
-                    <TouchableOpacity onPress={() => this.refreshMap()}>
+                    {/* <TouchableOpacity onPress={() => this.refreshMap()}>
                         <Text>RefershLocation</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
+                    {this.renderModal()}
                 </View>
-
-                {/* <View style={styles.cards}>
-          <PersonList markers={this.state.filtered_markers} />
-        </View> */}
             </View>
         );
     }
@@ -477,6 +374,14 @@ const styles = StyleSheet.create({
     },
     maps: {
         flex: 1
+    },
+    modalContent: {
+        backgroundColor: "white",
+        padding: 22,
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 4,
+        borderColor: "rgba(0, 0, 0, 0.1)"
     },
     cards: {
         flex: 0.33
