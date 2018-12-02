@@ -16,7 +16,7 @@ export function getAllUsers() {
         method: "GET"
         //headers: {
         //}
-    })  
+    })
         .then(res => res.json())
         .then(res => res.rows)
         .then(res => console.log(res));
@@ -60,6 +60,7 @@ export function addNewUser(profile) {
 }
 
 export async function updateLocationAndGetLocalUsers(user_location) {
+    console.log("username", user_location.git_username);
     const {
         git_username,
         location: { latitude, longitude }

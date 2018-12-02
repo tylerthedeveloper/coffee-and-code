@@ -1,29 +1,29 @@
 import React from "react";
 import { createRootNavigator } from "./app/router/route";
-import * as firebase from 'firebase';
-import initializeFirebase from './app/screens/LogIn';
+import * as firebase from "firebase";
+import initializeFirebase from "./app/screens/LogIn";
 // import attemptToRestoreAuthAsync from './app/screens/LogIn';
 // import firebaseConfig from './firebaseConfig'
-import firestore from 'firebase/firestore';
+import firestore from "firebase/firestore";
 import { Text, AsyncStorage } from "react-native";
 
 // TODO: environment
-  const firebaseConfig = {
-    apiKey: "AIzaSyCoeV0BahxO-nKIFPVw8rEDjsxtH9xI2GM",
-    authDomain: "coffee-and-code-41247.firebaseapp.com",
-    databaseURL: "https://coffee-and-code-41247.firebaseio.com",
-    projectId: "coffee-and-code-41247",
-    storageBucket: "coffee-and-code-41247.appspot.com",
-    messagingSenderId: "115392856682"
-  };
-  const settings = { timestampsInSnapshots: true };
+const firebaseConfig = {
+  apiKey: "AIzaSyCoeV0BahxO-nKIFPVw8rEDjsxtH9xI2GM",
+  authDomain: "coffee-and-code-41247.firebaseapp.com",
+  databaseURL: "https://coffee-and-code-41247.firebaseio.com",
+  projectId: "coffee-and-code-41247",
+  storageBucket: "coffee-and-code-41247.appspot.com",
+  messagingSenderId: "115392856682"
+};
+const settings = { timestampsInSnapshots: true };
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      signedIn: false,
+      signedIn: false
     };
   }
 
@@ -32,24 +32,23 @@ export default class App extends React.Component {
     if (!firebase.apps.length) {
       return firebase.initializeApp(firebaseConfig);
     }
-  }
-    
+  };
+
   async componentDidMount() {
     this.setupFirebaseAsync();
     // firestore.settings(settings);
-    await AsyncStorage.getItem("@Expo:GithubToken")
-      .then(res => {
-        // const signedIN = (res !== undefined);
-          if (res) {
-            this.setState({
-              signedIn: true
-            });
-          } else {
-            this.setState({
-              signedIn: false
-            });
-          }
-      });
+    await AsyncStorage.getItem("@Expo:GithubToken").then(res => {
+      // const signedIN = (res !== undefined);
+      if (res) {
+        this.setState({
+          signedIn: true
+        });
+      } else {
+        this.setState({
+          signedIn: false
+        });
+      }
+    });
   }
 
   render() {
