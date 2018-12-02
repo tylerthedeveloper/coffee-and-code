@@ -63,7 +63,7 @@ export default class Login extends Component<Props> {
                             // console.log("picture_url");
                             AsyncStorage.setItem(
                                 "profile",
-                                JSON.stringify(profile)
+                                JSON.strgify(profile)
                             );
                             // console.log("profile");
                             AsyncStorage.setItem(
@@ -197,7 +197,11 @@ export function fetchGitData(username) {
                 Java: false,
                 Python: true
             },
-            user_id: id
+            user_id: id,
+            will_help: {},
+            need_help: {},
+            will_tutor: {},
+            looking_for: {}
         };
         console.log("Profile:", slimProfile);
         const repos = res[1].map(repo => {

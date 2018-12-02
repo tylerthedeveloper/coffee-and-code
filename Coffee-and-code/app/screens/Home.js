@@ -11,7 +11,6 @@ import {
     ScrollView
 } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import BottomSheet from "react-native-js-bottom-sheet";
 import { Card } from "react-native-elements";
 import CustomCallout from "../component/CustomCallout";
 import { Marker, ProviderPropType, Callout } from "react-native-maps";
@@ -56,7 +55,7 @@ const items = [
         id: 0,
         children: [
             {
-                name: "React Native",
+                name: "React-Native",
                 id: 10
             },
             {
@@ -113,8 +112,9 @@ export default class Home extends Component<Props> {
     }
 
     // TODO: make generic
-    filterUsers() {
-        const skillsQuery = ["React-Native"];
+    filterUsers(skillsQuery) {
+        console.log("skillsQuery: ", skillsQuery);
+        // const skillsQuery = ["React-Native"];
         const filtered_markers = new Set();
         this.state.markers.map(marker => {
             skillsQuery.forEach(skill => {
@@ -342,6 +342,8 @@ export default class Home extends Component<Props> {
         currentHelpItem = this.state.selectedItems;
         console.log("Current Item:", currentHelpItem);
         AsyncStorage.setItem("CurrItem", JSON.stringify(currentHelpItem));
+        this.setState({ visibleModal: null });
+        this.filterUsers(currentHelpItem);
     };
 
     onToggle(isOn) {
