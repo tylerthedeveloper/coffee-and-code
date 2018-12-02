@@ -323,6 +323,14 @@ export default class Home extends Component<Props> {
         getDirections(data);
     };
 
+    getRest = destination => {
+        let current_location = {
+            latitude: this.state.region.latitude,
+            longitude: this.state.region.longitude
+        };
+        this.handleGetDirections(current_location, destination);
+    };
+
     render() {
         return (
             <View style={styles.container}>
@@ -356,7 +364,9 @@ export default class Home extends Component<Props> {
                                 pinColor="blue"
                                 image={{ uri: rest.icon }}
                             >
-                                <Callout>
+                                <Callout
+                                    onPress={() => this.getRest(rest.coords)}
+                                >
                                     <Text>{rest.name}</Text>
                                 </Callout>
                             </Marker>
