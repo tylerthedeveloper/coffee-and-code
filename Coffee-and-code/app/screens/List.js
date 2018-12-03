@@ -152,10 +152,13 @@ export default class List extends Component<props> {
         currentHelpItem = this.state.helpItems;
         curWillingItem = this.state.willingHelpItem;
         curTeamItem = this.state.teamItem;
-        console.log("Current Help Item:", currentHelpItem);
-        console.log("Current Willing Item:", curWillingItem);
-        console.log("Current Team Item:", curTeamItem);
-
+        let finalList = {
+            need_help: currentHelpItem,
+            will_help: curWillingItem,
+            looking_for: curTeamItem
+        };
+        console.log("Final List:", finalList);
+        return finalList;
         // AsyncStorage.setItem("CurrItem", JSON.stringify(currentHelpItem));
     };
 
@@ -164,10 +167,10 @@ export default class List extends Component<props> {
     }
     componentDidMount() {
         // AsyncStorage.setItem("CurrItem", JSON.stringify(items));
-        AsyncStorage.getItem("CurrItem")
-            .then(currentItem => JSON.parse(currentItem))
-            .then(currData => this.setState({ helpItems: currData }));
-        console.log("Did Mount sele item:", this.state.helpItems);
+        // AsyncStorage.getItem("CurrItem")
+        //     .then(currentItem => JSON.parse(currentItem))
+        //     .then(currData => this.setState({ helpItems: currData }));
+        // console.log("Did Mount sele item:", this.state.helpItems);
     }
 
     render() {
@@ -195,7 +198,6 @@ export default class List extends Component<props> {
                                 this.onSelectedItemsChangeHelp
                             }
                             selectedItems={this.state.helpItems}
-                            //onConfirm={this.onConfirm}
                         />
                     </Card>
 
@@ -226,7 +228,6 @@ export default class List extends Component<props> {
                                 this.onSelectedItemsChangeWilling
                             }
                             selectedItems={this.state.willingHelpItem}
-                            onConfirm={this.onConfirm}
                         />
                     </Card>
 
@@ -257,7 +258,6 @@ export default class List extends Component<props> {
                                 this.onSelectedItemsChangeTeam
                             }
                             selectedItems={this.state.teamItem}
-                            onConfirm={this.onConfirm}
                         />
                     </Card>
                 </ScrollView>
@@ -270,12 +270,6 @@ export default class List extends Component<props> {
                 >
                     Save
                 </Button>
-                {/* <TouchableHighlight
-                    style={styles.saveButton}
-                     onPress={() => this.submitSuggestion(this.props)}
-                     >
-                     <Text style={styles.submitText}>Submit</Text>
-                </TouchableHighlight> */}
             </View>
         );
     }
