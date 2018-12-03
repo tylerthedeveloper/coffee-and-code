@@ -112,12 +112,12 @@ export default class Home extends Component<Props> {
     }
 
     // TODO: make generic
-    filterUsers(skillsQuery) {
-        console.log("skillsQuery: ", skillsQuery);
+    filterUsers(queryObj) {
+        console.log("skillsQuery: ", queryObj);
         // const skillsQuery = ["React-Native"];
         const filtered_markers = new Set();
         // this.state.markers.map(marker => {
-        //     skillsQuery.forEach(skill => {
+        //     queryObj.forEach(skill => {
         //         const _marker = Object.keys(marker.skills).some(
         //             _skill => skill === _skill
         //         );
@@ -127,20 +127,25 @@ export default class Home extends Component<Props> {
         //         }
         //     });
         // });
-        // this.state.markers.map(marker => {
-        //     Object.keys(skillsQuery).map(preferenceKey => {
-        //         const curObj = skillsQuery[preferenceKey];
-        //         Object.keys(curObj).map(preference => {
-        //             // TODO: where == true
-        //                 const _marker = Object.keys(marker[preferenceKey]).some(
-        //                     _preference => preference === _preference
-        //         );
-        //         if (_marker) {
-        //             filtered_markers.add(marker);
-        //             return;
-        //         }
-        //     });
-        // });
+        const filterObj = queryObj.finalList;
+        // console.log(queryObj);
+        console.log(filterObj);
+        this.state.markers.map(marker => {
+            Object.keys(filterObj).map(preferenceKey => {
+                const curObj = filterObj[preferenceKey];
+                curObj.map(preference => {
+                    console.log(preferenceKey, preference);
+                    const _marker = Object.keys(marker[preferenceKey]).some(
+                        _preference => preference === _preference
+                    );
+                    if (_marker) {
+                        filtered_markers.add(marker);
+                        // TODO: early termination
+                        return;
+                    }
+                });
+            });
+        });
         this.setState({ filtered_markers: [...filtered_markers] });
     }
 
@@ -185,7 +190,11 @@ export default class Home extends Component<Props> {
             // isCurrentFriend: localUser.isCurrentFriend,
             // isFriendRequest: localUser.isFriendRequest,
             skills: localUser.skills,
-            picture_url: localUser.picture_url
+            picture_url: localUser.picture_url,
+            will_help: localUser.will_help || {},
+            need_help: localUser.need_help || {},
+            will_tutor: localUser.will_tutor || {}
+            // looking_for:
         }));
         // TODO: Push logged in user
         // console.log("Markers are: ", markers);
@@ -217,6 +226,7 @@ export default class Home extends Component<Props> {
                     longitude: -86.499862
                 }
             };
+            // TODO:
             // const location = await Location.getCurrentPositionAsync({enableHighAccuracy: true }); // {enableHighAccuracy: true}
             // location.then(res => console.log(res))
             AsyncStorage.setItem("location", JSON.stringify(location.coords));
@@ -354,7 +364,6 @@ export default class Home extends Component<Props> {
                     {this.renderButton("Get Directions", () =>
                         this.onModalPressed("Directions")
                     )}
-                    // TODO:
                     {this.renderButton("Show Path", () =>
                         this.onModalPressed("Path")
                     )}
@@ -427,137 +436,6 @@ export default class Home extends Component<Props> {
         );
     }
 
-    onSelectedItemsChange = selectedItems => {
-        this.setState({ selectedItems });
-        console.log("Selected item:", selectedItems);
-    };
-
-    onConfirm = () => {
-        // Need Help value added on confirm button
-        currentHelpItem = this.state.selectedItems;
-        console.log("Current Item:", currentHelpItem);
-        AsyncStorage.setItem("CurrItem", JSON.stringify(currentHelpItem));
-        this.setState({ visibleModal: null });
-        // this.filterUsers(currentHelpItem);
-    };
-
-    onToggle(isOn) {
-        console.log("Its on");
-    }
-
-    renderFilterModal() {
-        return (
-            <Modal
-                isVisible={this.state.visibleModal === 2}
-                animationIn="slideInLeft"
-                animationOut="slideOutRight"
-                onBackdropPress={() => this.setState({ visibleModal: null })}
-            >
-                <View style={styles.container}>
-                    <ScrollView>
-                        <Card style={styles.card}>
-                            <Text style={styles.welcome}>Need Help</Text>
-
-                            <ToggleSwitch
-                                isOn={this.state.isOnDefaultToggleSwitch}
-                                onToggle={isOnDefaultToggleSwitch => {
-                                    this.setState({ isOnDefaultToggleSwitch });
-                                    this.onToggle(isOnDefaultToggleSwitch);
-                                }}
-                            />
-                            <SectionedMultiSelect
-                                items={items}
-                                uniqueKey="name"
-                                subKey="children"
-                                selectText="Choose any Language"
-                                showDropDowns={true}
-                                readOnlyHeadings={true}
-                                onSelectedItemsChange={
-                                    this.onSelectedItemsChange
-                                }
-                                selectedItems={this.state.selectedItems}
-                                //onConfirm={this.onConfirm}
-                            />
-                        </Card>
-
-                        <Card
-                            style={{
-                                padding: 150,
-                                color: "powderblue",
-                                flexDirection: "row"
-                            }}
-                        >
-                            <Text style={styles.welcome}>Willing To Help</Text>
-
-                            <ToggleSwitch
-                                isOn={this.state.isOnDefaultToggleSwitch}
-                                onToggle={isOnDefaultToggleSwitch => {
-                                    this.setState({ isOnDefaultToggleSwitch });
-                                    this.onToggle(isOnDefaultToggleSwitch);
-                                }}
-                            />
-                            <SectionedMultiSelect
-                                items={items}
-                                uniqueKey="name"
-                                subKey="children"
-                                selectText="Choose any Language"
-                                showDropDowns={true}
-                                readOnlyHeadings={true}
-                                onSelectedItemsChange={
-                                    this.onSelectedItemsChange
-                                }
-                                selectedItems={this.state.selectedItems}
-                                onConfirm={this.onConfirm}
-                            />
-                        </Card>
-
-                        <Card
-                            style={{
-                                padding: 150,
-                                color: "powderblue",
-                                flexDirection: "row"
-                            }}
-                        >
-                            <Text style={styles.welcome}>
-                                Let's Make A Team
-                            </Text>
-
-                            <ToggleSwitch
-                                isOn={this.state.isOnDefaultToggleSwitch}
-                                onToggle={isOnDefaultToggleSwitch => {
-                                    this.setState({ isOnDefaultToggleSwitch });
-                                    this.onToggle(isOnDefaultToggleSwitch);
-                                }}
-                            />
-                            <SectionedMultiSelect
-                                items={items}
-                                uniqueKey="name"
-                                subKey="children"
-                                selectText="Choose any Language"
-                                showDropDowns={true}
-                                readOnlyHeadings={true}
-                                onSelectedItemsChange={
-                                    this.onSelectedItemsChange
-                                }
-                                selectedItems={this.state.selectedItems}
-                                onConfirm={this.onConfirm}
-                            />
-                        </Card>
-                    </ScrollView>
-
-                    <Button
-                        style={styles.saveButton}
-                        // styleDisabled={{color: 'red'}}
-                        onPress={() => this.onConfirm()}
-                        title="Save"
-                    >
-                        Save
-                    </Button>
-                </View>
-            </Modal>
-        );
-    }
-
     setFilters = fitlerObj => {
         console.log(fitlerObj);
     };
@@ -590,26 +468,18 @@ export default class Home extends Component<Props> {
                                 pinColor="blue"
                                 image={{ uri: rest.icon }}
                                 onPress={() => this.openModal(3, rest)}
-                            >
-                                {/* <Callout
-                                // onPress={() => this.getRest(rest.coords)}
-                                >
-                                    <Text>{rest.name}</Text>
-                                </Callout> */}
-                            </Marker>
+                            />
                         ))}
                         {/* TODO: */}
                         <View>{this.getPath()}</View>
                     </MapView>
                 </View>
-
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity
                         onPress={() =>
                             navigation.push("List", {
                                 passProps: {
-                                    callback: data => console.log(data)
-                                    // this.setFilters
+                                    callback: data => this.filterUsers(data)
                                 }
                             })
                         }
@@ -625,7 +495,6 @@ export default class Home extends Component<Props> {
                     </TouchableOpacity>
                 </View>
                 <View>{this.renderUserProfileModal()}</View>
-                {/* <View>{this.renderFilterModal()}</View> */}
                 <View>{this.renderRecommendationModal()}</View>
             </View>
         );

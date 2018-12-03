@@ -96,7 +96,7 @@ export default class List extends Component<props> {
         //     skills: ["C", "Java", "Python"],
         //     will_help: ["B", "D", "F"],
         // });
-        this.props.navigation.getParam("passProps").callback(finalList);
+        this.props.navigation.getParam("passProps").callback({ finalList });
         this.props.navigation.pop();
     };
 
