@@ -55,7 +55,10 @@ export default class List extends Component<Props> {
         super(props);
         this.state = {
             isOnDefaultToggleSwitch: false,
-            selectedItems: []
+            selectedItems: [],
+            needHelpSwitch: false,
+            willHelpSwitch: false,
+            teamSwitch: false
         };
     }
 
@@ -92,10 +95,10 @@ export default class List extends Component<Props> {
                         <Text style={styles.welcome}>Need Help</Text>
 
                         <ToggleSwitch
-                            isOn={this.state.isOnDefaultToggleSwitch}
-                            onToggle={isOnDefaultToggleSwitch => {
-                                this.setState({ isOnDefaultToggleSwitch });
-                                this.onToggle(isOnDefaultToggleSwitch);
+                            isOn={this.state.needHelpSwitch}
+                            onToggle={needHelpSwitch => {
+                                this.setState({ needHelpSwitch });
+                                this.onToggle(needHelpSwitch);
                             }}
                         />
                         <SectionedMultiSelect
@@ -121,10 +124,10 @@ export default class List extends Component<Props> {
                         <Text style={styles.welcome}>Willing To Help</Text>
 
                         <ToggleSwitch
-                            isOn={this.state.isOnDefaultToggleSwitch}
-                            onToggle={isOnDefaultToggleSwitch => {
-                                this.setState({ isOnDefaultToggleSwitch });
-                                this.onToggle(isOnDefaultToggleSwitch);
+                            isOn={this.state.willHelpSwitch}
+                            onToggle={willHelpSwitch => {
+                                this.setState({ willHelpSwitch });
+                                this.onToggle(willHelpSwitch);
                             }}
                         />
                         <SectionedMultiSelect
@@ -150,10 +153,10 @@ export default class List extends Component<Props> {
                         <Text style={styles.welcome}>Let's Make A Team</Text>
 
                         <ToggleSwitch
-                            isOn={this.state.isOnDefaultToggleSwitch}
-                            onToggle={isOnDefaultToggleSwitch => {
-                                this.setState({ isOnDefaultToggleSwitch });
-                                this.onToggle(isOnDefaultToggleSwitch);
+                            isOn={this.state.teamSwitch}
+                            onToggle={teamSwitch => {
+                                this.setState({ teamSwitch });
+                                this.onToggle(teamSwitch);
                             }}
                         />
                         <SectionedMultiSelect
