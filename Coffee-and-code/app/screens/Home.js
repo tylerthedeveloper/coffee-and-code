@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import {
     TouchableOpacity,
     Text,
+    Image,
     View,
     StyleSheet,
     Dimensions,
@@ -256,16 +257,30 @@ export default class Home extends Component<Props> {
     //     this.handleGetDirections(current_location, destination);
     // };
 
-    openModal(markerData) {
+    openModal(modalNumber, markerData) {
         console.log(markerData);
-        this.setState({
-            selectedMarker: markerData,
-            visibleModal: 1
-        });
+        //  PROFILE and Recommendation
+        if (modalNumber === 1 || modalNumber === 2) {
+            this.setState({
+                selectedMarker: markerData,
+                visibleModal: modalNumber
+            });
+            // Filter
+        } else if (modalNumber === 2) {
+            this.setState({
+                visibleModal: modalNumber
+            });
+        }
+        // else if (modalNumber === 3) {
+        //     this.setState({
+        //         visibleModal: modalNumber
+        //     });
+        // }
+        // Recommendation
     }
 
     renderButton = (text, onPress) => (
-        <TouchableOpacity onPress={onPress}>
+        <TouchableOpacity onPress={onPress} style={styles.TouchableButton}>
             <View style={styles.button}>
                 <Text>{text}</Text>
             </View>
@@ -293,8 +308,8 @@ export default class Home extends Component<Props> {
                     callback(res)
                 );
                 break;
-            case "Close":
-                this.filterUsers();
+            // case "Close":
+            //     this.filterUsers();
             default:
                 return;
         }
@@ -309,6 +324,17 @@ export default class Home extends Component<Props> {
                 onBackdropPress={() => this.setState({ visibleModal: null })}
             >
                 <View style={styles.modalContent}>
+                    <Image
+                        style={{
+                            width: 100,
+                            height: 100,
+                            borderRadius: 50,
+                            borderColor: "black"
+                        }}
+                        source={{
+                            uri: this.state.selectedMarker.picture_url
+                        }}
+                    />
                     <Text>{this.state.selectedMarker.git_username}</Text>
                     {this.renderButton("Profile", () =>
                         this.onModalPressed("Profile")
@@ -332,6 +358,38 @@ export default class Home extends Component<Props> {
         );
     }
 
+    renderRecommendationModal() {
+        return (
+            <Modal
+                isVisible={this.state.visibleModal === 3}
+                animationIn="slideInLeft"
+                animationOut="slideOutRight"
+                onBackdropPress={() => this.setState({ visibleModal: null })}
+            >
+                <View style={styles.modalContent}>
+                    <Image
+                        style={{
+                            width: 100,
+                            height: 100,
+                            borderRadius: 50,
+                            borderColor: "black"
+                        }}
+                        source={{
+                            uri: this.state.selectedMarker.picture_url
+                        }}
+                    />
+                    <Text>{this.state.selectedMarker.title}</Text>
+                    {this.renderButton("Get Directions", () =>
+                        this.onModalPressed("Directions")
+                    )}
+                    {this.renderButton("Close", () =>
+                        this.onModalPressed("Close")
+                    )}
+                </View>
+            </Modal>
+        );
+    }
+
     onSelectedItemsChange = selectedItems => {
         this.setState({ selectedItems });
         console.log("Selected item:", selectedItems);
@@ -343,7 +401,7 @@ export default class Home extends Component<Props> {
         console.log("Current Item:", currentHelpItem);
         AsyncStorage.setItem("CurrItem", JSON.stringify(currentHelpItem));
         this.setState({ visibleModal: null });
-        this.filterUsers(currentHelpItem);
+        // this.filterUsers(currentHelpItem);
     };
 
     onToggle(isOn) {
@@ -353,7 +411,7 @@ export default class Home extends Component<Props> {
     renderFilterModal() {
         return (
             <Modal
-                isVisible={this.state.visibleModal === 1}
+                isVisible={this.state.visibleModal === 2}
                 animationIn="slideInLeft"
                 animationOut="slideOutRight"
                 onBackdropPress={() => this.setState({ visibleModal: null })}
@@ -481,7 +539,7 @@ export default class Home extends Component<Props> {
                                 coordinate={marker.coordinate}
                                 description="Information"
                                 pinColor={marker.color}
-                                onPress={() => this.openModal(marker)}
+                                onPress={() => this.openModal(1, marker)}
                             />
                         ))}
                         {this.state.nearbyLocations.map(rest => (
@@ -490,6 +548,7 @@ export default class Home extends Component<Props> {
                                 coordinate={rest.coords}
                                 pinColor="blue"
                                 image={{ uri: rest.icon }}
+                                onPress={() => this.openModal(3, rest)}
                             >
                                 <Callout
                                 // TODO:
@@ -504,19 +563,21 @@ export default class Home extends Component<Props> {
 
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity
-                        onPress={() => this.openModal()}
+                        onPress={() => this.openModal(2)}
                         style={styles.bubble}
                     >
                         <Text>Filter</Text>
                     </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => this.refreshMap()}
+                        style={styles.bubble}
+                    >
+                        <Text>Refresh Location</Text>
+                    </TouchableOpacity>
                 </View>
-                <View>
-                    {/* <TouchableOpacity onPress={() => this.refreshMap()}>
-                        <Text>RefershLocation</Text>
-                    </TouchableOpacity> */}
-                    {this.renderFilterModal()}
-                    {/* {this.renderUserProfileModal()} */}
-                </View>
+                <View>{this.renderUserProfileModal()}</View>
+                <View>{this.renderFilterModal()}</View>
+                <View>{this.renderRecommendationModal()}</View>
             </View>
         );
     }
@@ -546,12 +607,6 @@ const styles = StyleSheet.create({
         width: 200,
         alignItems: "stretch"
     },
-    button: {
-        width: 80,
-        paddingHorizontal: 12,
-        alignItems: "center",
-        marginHorizontal: 10
-    },
     buttonContainer: {
         flexDirection: "row",
         marginVertical: 20,
@@ -573,5 +628,24 @@ const styles = StyleSheet.create({
     },
     customView: {
         flex: 4
+    },
+    TouchableButton: {
+        shadowColor: "rgba(0,0,0, .4)", // IOS
+        shadowOffset: { height: 1, width: 1 }, // IOS
+        shadowOpacity: 1, // IOS
+        shadowRadius: 1, //IOS
+        backgroundColor: "#fff",
+        elevation: 2, // Android
+        height: 50,
+        width: 200,
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "row"
+    },
+    button: {
+        width: 200,
+        paddingHorizontal: 12,
+        alignItems: "center",
+        marginHorizontal: 10
     }
 });

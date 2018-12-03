@@ -63,7 +63,7 @@ export default class Login extends Component<Props> {
                             // console.log("picture_url");
                             AsyncStorage.setItem(
                                 "profile",
-                                JSON.strgify(profile)
+                                JSON.stringify(profile)
                             );
                             // console.log("profile");
                             AsyncStorage.setItem(
