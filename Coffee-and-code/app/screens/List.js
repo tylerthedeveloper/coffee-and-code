@@ -155,7 +155,7 @@ export default class List extends Component<props> {
         let finalList = {
             need_help: currentHelpItem,
             will_help: curWillingItem,
-            looking_for: curTeamItem
+            will_tutor: curTeamItem
         };
         console.log("Final List:", finalList);
         return finalList;
@@ -198,6 +198,7 @@ export default class List extends Component<props> {
                                 this.onSelectedItemsChangeHelp
                             }
                             selectedItems={this.state.helpItems}
+                            //onConfirm={this.onConfirm}
                         />
                     </Card>
 
@@ -228,6 +229,7 @@ export default class List extends Component<props> {
                                 this.onSelectedItemsChangeWilling
                             }
                             selectedItems={this.state.willingHelpItem}
+                            // onConfirm={this.onConfirm}
                         />
                     </Card>
 
@@ -238,7 +240,7 @@ export default class List extends Component<props> {
                             flexDirection: "row"
                         }}
                     >
-                        <Text style={styles.welcome}>Let's Make A Team</Text>
+                        <Text style={styles.welcome}>Tutor</Text>
 
                         <ToggleSwitch
                             isOn={this.state.teamSwitch}
@@ -258,6 +260,7 @@ export default class List extends Component<props> {
                                 this.onSelectedItemsChangeTeam
                             }
                             selectedItems={this.state.teamItem}
+                            //onConfirm={this.onConfirm}
                         />
                     </Card>
                 </ScrollView>
@@ -270,6 +273,12 @@ export default class List extends Component<props> {
                 >
                     Save
                 </Button>
+                {/* <TouchableHighlight
+                    style={styles.saveButton}
+                     onPress={() => this.submitSuggestion(this.props)}
+                     >
+                     <Text style={styles.submitText}>Submit</Text>
+                </TouchableHighlight> */}
             </View>
         );
     }
