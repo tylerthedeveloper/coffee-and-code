@@ -116,17 +116,31 @@ export default class Home extends Component<Props> {
         console.log("skillsQuery: ", skillsQuery);
         // const skillsQuery = ["React-Native"];
         const filtered_markers = new Set();
-        this.state.markers.map(marker => {
-            skillsQuery.forEach(skill => {
-                const _marker = Object.keys(marker.skills).some(
-                    _skill => skill === _skill
-                );
-                if (_marker) {
-                    filtered_markers.add(marker);
-                    return;
-                }
-            });
-        });
+        // this.state.markers.map(marker => {
+        //     skillsQuery.forEach(skill => {
+        //         const _marker = Object.keys(marker.skills).some(
+        //             _skill => skill === _skill
+        //         );
+        //         if (_marker) {
+        //             filtered_markers.add(marker);
+        //             return;
+        //         }
+        //     });
+        // });
+        // this.state.markers.map(marker => {
+        //     Object.keys(skillsQuery).map(preferenceKey => {
+        //         const curObj = skillsQuery[preferenceKey];
+        //         Object.keys(curObj).map(preference => {
+        //             // TODO: where == true
+        //                 const _marker = Object.keys(marker[preferenceKey]).some(
+        //                     _preference => preference === _preference
+        //         );
+        //         if (_marker) {
+        //             filtered_markers.add(marker);
+        //             return;
+        //         }
+        //     });
+        // });
         this.setState({ filtered_markers: [...filtered_markers] });
     }
 
@@ -544,6 +558,10 @@ export default class Home extends Component<Props> {
         );
     }
 
+    setFilters = fitlerObj => {
+        console.log(fitlerObj);
+    };
+
     render() {
         const { navigation } = this.props;
         return (
@@ -573,22 +591,28 @@ export default class Home extends Component<Props> {
                                 image={{ uri: rest.icon }}
                                 onPress={() => this.openModal(3, rest)}
                             >
-                                <Callout
-                                // TODO:
+                                {/* <Callout
                                 // onPress={() => this.getRest(rest.coords)}
                                 >
                                     <Text>{rest.name}</Text>
-                                </Callout>
+                                </Callout> */}
                             </Marker>
                         ))}
-                        {/* TODO */}
+                        {/* TODO: */}
                         <View>{this.getPath()}</View>
                     </MapView>
                 </View>
 
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity
-                        onPress={() => navigation.push("List")}
+                        onPress={() =>
+                            navigation.push("List", {
+                                passProps: {
+                                    callback: data => console.log(data)
+                                    // this.setFilters
+                                }
+                            })
+                        }
                         style={styles.bubble}
                     >
                         <Text>Filter</Text>

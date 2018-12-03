@@ -12,7 +12,11 @@ import firebase from "firebase";
 import { createChatThread } from "../services/chat-service";
 import { logout, sendMessage } from "../services/profile-utils";
 import { acceptFriendRequest } from "../services/friend-requests-service";
-import { updateUserSkills, getUserByID } from "../services/user-service";
+import {
+    updateUserSkills,
+    getUserByID,
+    updateUserPreferences
+} from "../services/user-service";
 
 // const apiurl = "https://code-and-coffee2.azurewebsites.net";
 const status = "";
@@ -48,7 +52,7 @@ export default class Profile extends Component<Props> {
                 return profile;
             });
         profile.skills = JSON.parse(JSON.stringify(profile.skills));
-        console.log("profile", profile);
+        // console.log("profile", profile);
         if (this.state.current_user && this.state.git_username === "") {
             // await AsyncStorage.getItem("profile")
             //     .then(profile => JSON.parse(profile))
@@ -76,14 +80,6 @@ export default class Profile extends Component<Props> {
                 AsyncStorage.setItem("profile", JSON.stringify(user));
             });
     }
-    // componentDidMount() {
-    //     this.init();
-    //     AsyncStorage.getItem("CurrItem")
-    //         .then(currentItem => JSON.parse(currentItem))
-    //         .then(currData => {
-    //             status = currData.toString();
-    //         });
-    // }
 
     // deleteFriendRequest() {
     //     const {
@@ -121,42 +117,48 @@ export default class Profile extends Component<Props> {
         // TODO: Parse object
     }
 
-    launchUpdateSkills() {
-        // TODO:
-        // this.props.navigation.push("Skills", {
+    // launchUpdateSkills(skillsObj) {
+    //     let _skillsObj = {};
+    //     Object.keys(skillsObj).map(key => {
+    //         const arr = skillsObj[key];
+    //         _skillsObj[key] = {};
+    //         arr.map(skill => _skillsObj[key][skill] = true);
+    //     })
+    //     console.log(_skillsObj);
+    //     // const newSkills = {
+    //     //     C: true,
+    //     //     Java: true,
+    //     //     Python: true
+    //     // };
+    //     updateUserPreferences
+    //     // const newSkillsObj = {
+    //     //     git_username: this.state.current_user,
+    //     //     skills: newSkills
+    //     // };
+    //     // Promise.resolve(newSkillsObj)
+    //     //     // .then(newSkills => ({
+    //     //     //     git_username: this.state.git_username,
+    //     //     //     skills: newSkills
+    //     //     // }))
+    //     //     .then(newSkillsObj => updateUserSkills(newSkillsObj))
+    //     //     .then(res => this.refreshProfile());
+    // }
 
-        // })
-        // Promise.resolve({
-        //     data: {
-        //         skills: {
-        //             C: true,
-        //             Java: true,
-        //             Python: true
-        //         }
-        //     }
-        // })
-        //     .then(newSkills => ({
-        //         git_username: this.state.git_username,
-        //         skills: newSkills
-        //     }))
-        //     .then(newSkillsObj => updateUserSkills(newSkillsObj))
-        //     .then(res => this.refreshProfile());
-        const newSkills = {
-            C: true,
-            Java: true,
-            Python: true
-        };
+    launchUpdateSkills(skillsObj) {
+        let _skillsObj = {};
+        Object.keys(skillsObj).map(key => {
+            const arr = skillsObj[key];
+            _skillsObj[key] = {};
+            arr.map(skill => (_skillsObj[key][skill] = true));
+        });
+
+        console.log("_skillsObj", _skillsObj);
         const newSkillsObj = {
             git_username: this.state.current_user,
-            skills: newSkills
+            preferences: _skillsObj
         };
-        Promise.resolve(newSkillsObj)
-            // .then(newSkills => ({
-            //     git_username: this.state.git_username,
-            //     skills: newSkills
-            // }))
-            .then(newSkillsObj => updateUserSkills(newSkillsObj))
-            .then(res => this.refreshProfile());
+        console.log("newSkillsObj", newSkillsObj);
+        updateUserPreferences(newSkillsObj).then(res => this.refreshProfile());
     }
 
     componentDidMount() {
@@ -231,7 +233,14 @@ export default class Profile extends Component<Props> {
                 <View>
                     <TouchableOpacity
                         style={styles.buttonContainer}
-                        onPress={() => this.launchUpdateSkills()}
+                        onPress={() =>
+                            this.props.navigation.push("List", {
+                                passProps: {
+                                    callback: data =>
+                                        this.launchUpdateSkills(data)
+                                }
+                            })
+                        }
                     >
                         <Text>Update Skills</Text>
                     </TouchableOpacity>
@@ -265,6 +274,9 @@ export default class Profile extends Component<Props> {
             name,
             picture_url,
             skills,
+            need_help,
+            will_help,
+            will_tutor,
             user_id
         } = this.state.user;
         console.log("skills", skills);
@@ -284,16 +296,45 @@ export default class Profile extends Component<Props> {
                             <Text style={styles.name}> {name} </Text>
                             <Text style={styles.info}> {bio} </Text>
                             <Text style={styles.info}>Bloomington, IN</Text>
-                            {/* <Text style={styles.description}>
-                                Skills Set:React Native
-                            </Text> */}
-                            {/* TODO: Style and commas!!! */}
                             <Text style={styles.description}>
-                                Skills:{" "}
+                                Skills:
                                 {skills &&
-                                    Object.keys(skills).map(
-                                        skill => (skills[skill] ? skill : "")
-                                    )}
+                                    Object.keys(skills)
+                                        .map(
+                                            skill =>
+                                                skills[skill] ? skill : ""
+                                        )
+                                        .join(",")}
+                            </Text>
+                            <Text style={styles.description}>
+                                Need Help with:
+                                {need_help &&
+                                    Object.keys(need_help)
+                                        .map(
+                                            help =>
+                                                need_help[help] ? help : ""
+                                        )
+                                        .join(",")}
+                            </Text>
+                            <Text style={styles.description}>
+                                Will Help With:
+                                {will_help &&
+                                    Object.keys(will_help)
+                                        .map(
+                                            help =>
+                                                will_help[help] ? help : ""
+                                        )
+                                        .join(",")}
+                            </Text>
+                            <Text style={styles.description}>
+                                Will Tutor in:
+                                {will_tutor &&
+                                    Object.keys(will_tutor)
+                                        .map(
+                                            tutor =>
+                                                will_tutor[tutor] ? tutor : ""
+                                        )
+                                        .join(",")}
                             </Text>
                             <View>{this.createButtonView()}</View>
                         </View>

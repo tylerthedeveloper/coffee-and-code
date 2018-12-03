@@ -127,8 +127,27 @@ export async function updateUserSkills(user_skills) {
             skills
         }
     };
-    // return fetch(`http://192.168.64.17:3001/users/${git_username}/near-me`, {
     return fetch(`${apiurl}/${git_username}/skills`, {
+        method: "PUT",
+        body: JSON.stringify(body),
+        headers: {
+            "Content-type": "application/json"
+        }
+    })
+        .then(res => res.json())
+        .then(res => res.rows);
+}
+
+export async function updateUserPreferences(user_preferences) {
+    console.log(user_preferences);
+    const { git_username, preferences } = user_preferences;
+    console.log(git_username, preferences);
+    const body = {
+        data: {
+            preferences
+        }
+    };
+    return fetch(`http:192.168.64.17:3001/users/${git_username}`, {
         method: "PUT",
         body: JSON.stringify(body),
         headers: {

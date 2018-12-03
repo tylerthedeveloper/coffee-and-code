@@ -13,6 +13,7 @@ import PropTypes from "prop-types";
 import { Card } from "react-native-elements";
 import ToggleSwitch from "toggle-switch-react-native";
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
+// import MultiSelect from "react-native-multiple-select";
 
 const items = [
     {
@@ -49,45 +50,59 @@ const items = [
     }
 ];
 const currentHelpItem = [];
+const curWillingItem = [];
+const curTeamItem = [];
 
-export default class List extends Component<Props> {
-    constructor(props) {
-        super(props);
-        this.state = {
-            isOnDefaultToggleSwitch: false,
-            selectedItems: [],
-            needHelpSwitch: false,
-            willHelpSwitch: false,
-            teamSwitch: false
-        };
-    }
-
-    onSelectedItemsChange = selectedItems => {
-        this.setState({ selectedItems });
-        console.log("Selected item:", selectedItems);
+export default class List extends Component<props> {
+    state = {
+        needHelpSwitch: false,
+        willHelpSwitch: false,
+        teamSwitch: false,
+        helpItems: [],
+        willingHelpItem: [],
+        teamItem: []
+        //currentItems: []
     };
 
-    onConfirm = () => {
+    onSelectedItemsChangeHelp = helpItems => {
+        this.setState({ helpItems });
+        console.log("Help item:", helpItems);
+        return helpItems;
+    };
+    onSelectedItemsChangeTeam = teamItem => {
+        this.setState({ teamItem });
+        console.log("Team item:", teamItem);
+        return teamItem;
+    };
+
+    onSelectedItemsChangeWilling = willingHelpItem => {
+        this.setState({ willingHelpItem });
+        console.log("Willing item:", willingHelpItem);
+        return willingHelpItem;
+    };
+
+    save = () => {
         // Need Help value added on confirm button
-        currentHelpItem = this.state.selectedItems;
-        console.log("Current Item:", currentHelpItem);
-        AsyncStorage.setItem("CurrItem", JSON.stringify(currentHelpItem));
+        currentHelpItem = this.state.helpItems;
+        curWillingItem = this.state.willingHelpItem;
+        curTeamItem = this.state.teamItem;
+        let finalList = {
+            need_help: currentHelpItem,
+            will_help: curWillingItem,
+            will_tutor: curTeamItem
+        };
+        console.log("Final List:", finalList);
+        // navigation.getParam("passProps").callback({
+        //     skills: ["C", "Java", "Python"],
+        //     will_help: ["B", "D", "F"],
+        // });
+        this.props.navigation.getParam("passProps").callback(finalList);
+        this.props.navigation.pop();
     };
 
-    onToggle(isOn) {
-        console.log("Its on");
-    }
-    componentDidMount() {
-        // AsyncStorage.setItem("CurrItem", JSON.stringify(items));
-        AsyncStorage.getItem("CurrItem")
-            .then(currentItem => JSON.parse(currentItem))
-            .then(currData => this.setState({ selectedItems: currData }));
-        console.log("Did Mount sele item:", this.state.selectedItems);
-    }
+    componentDidMount() {}
 
     render() {
-        const { navigation } = this.props;
-
         return (
             <View style={styles.container}>
                 <ScrollView>
@@ -98,7 +113,6 @@ export default class List extends Component<Props> {
                             isOn={this.state.needHelpSwitch}
                             onToggle={needHelpSwitch => {
                                 this.setState({ needHelpSwitch });
-                                this.onToggle(needHelpSwitch);
                             }}
                         />
                         <SectionedMultiSelect
@@ -108,9 +122,10 @@ export default class List extends Component<Props> {
                             selectText="Choose any Language"
                             showDropDowns={true}
                             readOnlyHeadings={true}
-                            onSelectedItemsChange={this.onSelectedItemsChange}
-                            selectedItems={this.state.selectedItems}
-                            //onConfirm={this.onConfirm}
+                            onSelectedItemsChange={
+                                this.onSelectedItemsChangeHelp
+                            }
+                            selectedItems={this.state.helpItems}
                         />
                     </Card>
 
@@ -127,7 +142,6 @@ export default class List extends Component<Props> {
                             isOn={this.state.willHelpSwitch}
                             onToggle={willHelpSwitch => {
                                 this.setState({ willHelpSwitch });
-                                this.onToggle(willHelpSwitch);
                             }}
                         />
                         <SectionedMultiSelect
@@ -137,9 +151,10 @@ export default class List extends Component<Props> {
                             selectText="Choose any Language"
                             showDropDowns={true}
                             readOnlyHeadings={true}
-                            onSelectedItemsChange={this.onSelectedItemsChange}
-                            selectedItems={this.state.selectedItems}
-                            onConfirm={this.onConfirm}
+                            onSelectedItemsChange={
+                                this.onSelectedItemsChangeWilling
+                            }
+                            selectedItems={this.state.willingHelpItem}
                         />
                     </Card>
 
@@ -150,13 +165,12 @@ export default class List extends Component<Props> {
                             flexDirection: "row"
                         }}
                     >
-                        <Text style={styles.welcome}>Let's Make A Team</Text>
+                        <Text style={styles.welcome}>Tutor</Text>
 
                         <ToggleSwitch
                             isOn={this.state.teamSwitch}
                             onToggle={teamSwitch => {
                                 this.setState({ teamSwitch });
-                                this.onToggle(teamSwitch);
                             }}
                         />
                         <SectionedMultiSelect
@@ -166,17 +180,17 @@ export default class List extends Component<Props> {
                             selectText="Choose any Language"
                             showDropDowns={true}
                             readOnlyHeadings={true}
-                            onSelectedItemsChange={this.onSelectedItemsChange}
-                            selectedItems={this.state.selectedItems}
-                            onConfirm={this.onConfirm}
+                            onSelectedItemsChange={
+                                this.onSelectedItemsChangeTeam
+                            }
+                            selectedItems={this.state.teamItem}
                         />
                     </Card>
                 </ScrollView>
-
                 <Button
                     style={styles.saveButton}
                     // styleDisabled={{color: 'red'}}
-                    onPress={() => navigation.pop()}
+                    onPress={() => this.save()}
                     title="Save"
                 >
                     Save
