@@ -1,69 +1,3 @@
-// import React, { Component } from "react";
-// import {Modal, Text, TouchableHighlight, View, Alert, StyleSheet} from 'react-native';
-// import { Card, Button } from "react-native-elements";
-// import { Constants, Location, Permissions } from "expo";
-
-// const data = [];
-
-// export default class List extends Component<Props> {
-
-//     constructor(props) {
-//         super();
-//         this.state = {
-//             modalVisible: false,
-//         };
-//         console.log('constructpo');
-//     }
-
-//     componentWillMount() { }
-
-//     setModalVisible(visible) {
-//         this.setState({modalVisible: visible});
-//       }
-
-//       render() {
-//         return (
-//           <View style={{marginTop: 22}}>
-
-//             <TouchableHighlight
-//               onPress={() => {
-//                 this.setModalVisible(true);
-//               }}>
-//               <Text>Show Modal</Text>
-//             </TouchableHighlight>
-
-//                         <Modal
-//                             animationType="slide"
-//                             transparent={false}
-//                             visible={this.state.modalVisible}
-//                             onRequestClose={() => {
-//                                 Alert.alert('Modal has been closed.');
-//                             }}>
-//                             <View style={{marginTop: 22}}>
-//                                 <View>
-//                                 <Text>Hello World!</Text>
-
-//                                 <TouchableHighlight
-//                                     onPress={() => {
-//                                     this.setModalVisible(!this.state.modalVisible);
-//                                     }}>
-//                                     <Text>Hide Modal</Text>
-//                                 </TouchableHighlight>
-//                                 </View>
-//                             </View>
-//                             </Modal>
-
-//           </View>
-//         );
-//       }
-// }
-
-// const styles = StyleSheet.create({
-//     container: {},
-//     button: {},
-//     buttonContainer: {}
-// });
-
 import React, { Component } from "react";
 import {
     Platform,
@@ -79,7 +13,6 @@ import PropTypes from "prop-types";
 import { Card } from "react-native-elements";
 import ToggleSwitch from "toggle-switch-react-native";
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
-// import MultiSelect from "react-native-multiple-select";
 
 const items = [
     {
@@ -117,12 +50,14 @@ const items = [
 ];
 const currentHelpItem = [];
 
-export default class List extends Component<props> {
-    state = {
-        isOnDefaultToggleSwitch: false,
-        selectedItems: []
-        //currentItems: []
-    };
+export default class List extends Component<Props> {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isOnDefaultToggleSwitch: false,
+            selectedItems: []
+        };
+    }
 
     onSelectedItemsChange = selectedItems => {
         this.setState({ selectedItems });
@@ -148,6 +83,8 @@ export default class List extends Component<props> {
     }
 
     render() {
+        const { navigation } = this.props;
+
         return (
             <View style={styles.container}>
                 <ScrollView>
@@ -236,17 +173,11 @@ export default class List extends Component<props> {
                 <Button
                     style={styles.saveButton}
                     // styleDisabled={{color: 'red'}}
-                    onPress={() => this.onConfirm()}
+                    onPress={() => navigation.pop()}
                     title="Save"
                 >
                     Save
                 </Button>
-                {/* <TouchableHighlight
-                    style={styles.saveButton}
-                     onPress={() => this.submitSuggestion(this.props)}
-                     >
-                     <Text style={styles.submitText}>Submit</Text>
-                </TouchableHighlight> */}
             </View>
         );
     }

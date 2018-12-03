@@ -43,10 +43,8 @@ const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
 const LATITUDE = 39.1834026;
 const LONGITUDE = -106.523;
-const LATITUDE_DELTA = 0.0922;
+const LATITUDE_DELTA = 0.03; // 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
-let modal_visibility = false;
-let popup_visibility = false;
 const GOOGLE_MAPS_APIKEY = "AIzaSyAPaNuHNAHk4NSk4TLnN_ngI8Dgm-_W74Y";
 import Modal from "react-native-modal";
 
@@ -95,7 +93,7 @@ export default class Home extends Component<Props> {
                 latitude: LATITUDE,
                 longitude: LONGITUDE,
                 latitudeDelta: LATITUDE_DELTA,
-                longitudeDelta: LONGITUDE_DELTA
+                longitudeDelta: LATITUDE_DELTA
             },
             current_coords: {
                 latitude: LATITUDE,
@@ -104,7 +102,8 @@ export default class Home extends Component<Props> {
             markers: [],
             filtered_markers: [],
             selectedMarker: {},
-            visibleModal: null
+            visibleModal: null,
+            travelPath: false
         };
     }
 
@@ -236,18 +235,18 @@ export default class Home extends Component<Props> {
         }
     }
 
-    // getPath = (user_coords, destination_coords) => {
-    //     return (
-    //         <MapViewDirections
-    //             origin={user_coords}
-    //             destination={destination_coords}
-    //             apikey={GOOGLE_MAPS_APIKEY}
-    //             strokeWidth={3}
-    //             strokeColor="steelblue"
-    //             mode="driving"
-    //         />
-    //     );
-    // };
+    getPath = destination_coords => {
+        return (
+            <MapViewDirections
+                origin={this.state.current_coords}
+                destination={destination_coords}
+                apikey={GOOGLE_MAPS_APIKEY}
+                strokeWidth={3}
+                strokeColor="steelblue"
+                mode="driving"
+            />
+        );
+    };
 
     // getRest = destination => {
     //     let current_location = {
@@ -260,7 +259,7 @@ export default class Home extends Component<Props> {
     openModal(modalNumber, markerData) {
         console.log(markerData);
         //  PROFILE and Recommendation
-        if (modalNumber === 1 || modalNumber === 2) {
+        if (modalNumber === 1 || modalNumber === 3) {
             this.setState({
                 selectedMarker: markerData,
                 visibleModal: modalNumber
@@ -271,12 +270,6 @@ export default class Home extends Component<Props> {
                 visibleModal: modalNumber
             });
         }
-        // else if (modalNumber === 3) {
-        //     this.setState({
-        //         visibleModal: modalNumber
-        //     });
-        // }
-        // Recommendation
     }
 
     renderButton = (text, onPress) => (
@@ -308,6 +301,11 @@ export default class Home extends Component<Props> {
                     callback(res)
                 );
                 break;
+            case "Path":
+                this.getPath(marker.coordinate);
+                this.setState({ travelPath: true });
+                break;
+
             // case "Close":
             //     this.filterUsers();
             default:
@@ -342,6 +340,10 @@ export default class Home extends Component<Props> {
                     {this.renderButton("Get Directions", () =>
                         this.onModalPressed("Directions")
                     )}
+                    // TODO:
+                    {this.renderButton("Show Path", () =>
+                        this.onModalPressed("Path")
+                    )}
                     {this.renderButton("Get Recommendations", () =>
                         this.onModalPressed("Recommendations", allRestaurants =>
                             this.setState({
@@ -358,7 +360,24 @@ export default class Home extends Component<Props> {
         );
     }
 
+    // async getLocationImage = photoReference => {
+    //     const photoPromise = fetch(
+    //         `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference${photoReference}&key=AIzaSyAPaNuHNAHk4NSk4TLnN_ngI8Dgm-_W74Y`,
+    //         {
+    //             method: "GET",
+    //             headers: {
+    //                 "Content-type": "application/json"
+    //                 // TODO: Credentials / accesstoken
+    //             }
+    //         }
+    //     );
+    //     return photoPromise.then(res => {
+    //         return res.url;
+    //     });
+    // };
+
     renderRecommendationModal() {
+        // const photo_reference = await this.getLocationImage(this.state.selectedMarker.photo_reference);
         return (
             <Modal
                 isVisible={this.state.visibleModal === 3}
@@ -375,10 +394,14 @@ export default class Home extends Component<Props> {
                             borderColor: "black"
                         }}
                         source={{
-                            uri: this.state.selectedMarker.picture_url
+                            uri: this.state.selectedMarker.icon
                         }}
                     />
-                    <Text>{this.state.selectedMarker.title}</Text>
+                    <Text>{this.state.selectedMarker.name}</Text>
+                    // TODO:
+                    {this.renderButton("Show Path", () =>
+                        this.onModalPressed("Path")
+                    )}
                     {this.renderButton("Get Directions", () =>
                         this.onModalPressed("Directions")
                     )}
@@ -558,12 +581,14 @@ export default class Home extends Component<Props> {
                                 </Callout>
                             </Marker>
                         ))}
+                        {/* TODO */}
+                        <View>{this.getPath()}</View>
                     </MapView>
                 </View>
 
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity
-                        onPress={() => this.openModal(2)}
+                        onPress={() => navigation.push("List")}
                         style={styles.bubble}
                     >
                         <Text>Filter</Text>
@@ -576,7 +601,7 @@ export default class Home extends Component<Props> {
                     </TouchableOpacity>
                 </View>
                 <View>{this.renderUserProfileModal()}</View>
-                <View>{this.renderFilterModal()}</View>
+                {/* <View>{this.renderFilterModal()}</View> */}
                 <View>{this.renderRecommendationModal()}</View>
             </View>
         );
