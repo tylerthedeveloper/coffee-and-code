@@ -116,26 +116,47 @@ const items = [
     }
 ];
 const currentHelpItem = [];
+const curWillingItem = [];
+const curTeamItem = [];
 
 export default class List extends Component<props> {
     state = {
         needHelpSwitch: false,
         willHelpSwitch: false,
         teamSwitch: false,
-        selectedItems: []
+        helpItems: [],
+        willingHelpItem: [],
+        teamItem: []
         //currentItems: []
     };
 
-    onSelectedItemsChange = selectedItems => {
-        this.setState({ selectedItems });
-        console.log("Selected item:", selectedItems);
+    onSelectedItemsChangeHelp = helpItems => {
+        this.setState({ helpItems });
+        console.log("Help item:", helpItems);
+        return helpItems;
+    };
+    onSelectedItemsChangeTeam = teamItem => {
+        this.setState({ teamItem });
+        console.log("Team item:", teamItem);
+        return teamItem;
+    };
+
+    onSelectedItemsChangeWilling = willingHelpItem => {
+        this.setState({ willingHelpItem });
+        console.log("Willing item:", willingHelpItem);
+        return willingHelpItem;
     };
 
     onConfirm = () => {
         // Need Help value added on confirm button
-        currentHelpItem = this.state.selectedItems;
-        console.log("Current Item:", currentHelpItem);
-        AsyncStorage.setItem("CurrItem", JSON.stringify(currentHelpItem));
+        currentHelpItem = this.state.helpItems;
+        curWillingItem = this.state.willingHelpItem;
+        curTeamItem = this.state.teamItem;
+        console.log("Current Help Item:", currentHelpItem);
+        console.log("Current Willing Item:", curWillingItem);
+        console.log("Current Team Item:", curTeamItem);
+
+        // AsyncStorage.setItem("CurrItem", JSON.stringify(currentHelpItem));
     };
 
     onToggle(isOn) {
@@ -145,8 +166,8 @@ export default class List extends Component<props> {
         // AsyncStorage.setItem("CurrItem", JSON.stringify(items));
         AsyncStorage.getItem("CurrItem")
             .then(currentItem => JSON.parse(currentItem))
-            .then(currData => this.setState({ selectedItems: currData }));
-        console.log("Did Mount sele item:", this.state.selectedItems);
+            .then(currData => this.setState({ helpItems: currData }));
+        console.log("Did Mount sele item:", this.state.helpItems);
     }
 
     render() {
@@ -170,8 +191,10 @@ export default class List extends Component<props> {
                             selectText="Choose any Language"
                             showDropDowns={true}
                             readOnlyHeadings={true}
-                            onSelectedItemsChange={this.onSelectedItemsChange}
-                            selectedItems={this.state.selectedItems}
+                            onSelectedItemsChange={
+                                this.onSelectedItemsChangeHelp
+                            }
+                            selectedItems={this.state.helpItems}
                             //onConfirm={this.onConfirm}
                         />
                     </Card>
@@ -199,8 +222,10 @@ export default class List extends Component<props> {
                             selectText="Choose any Language"
                             showDropDowns={true}
                             readOnlyHeadings={true}
-                            onSelectedItemsChange={this.onSelectedItemsChange}
-                            selectedItems={this.state.selectedItems}
+                            onSelectedItemsChange={
+                                this.onSelectedItemsChangeWilling
+                            }
+                            selectedItems={this.state.willingHelpItem}
                             onConfirm={this.onConfirm}
                         />
                     </Card>
@@ -228,8 +253,10 @@ export default class List extends Component<props> {
                             selectText="Choose any Language"
                             showDropDowns={true}
                             readOnlyHeadings={true}
-                            onSelectedItemsChange={this.onSelectedItemsChange}
-                            selectedItems={this.state.selectedItems}
+                            onSelectedItemsChange={
+                                this.onSelectedItemsChangeTeam
+                            }
+                            selectedItems={this.state.teamItem}
                             onConfirm={this.onConfirm}
                         />
                     </Card>
