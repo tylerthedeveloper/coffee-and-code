@@ -15,7 +15,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { Card } from "react-native-elements";
 import CustomCallout from "../component/CustomCallout";
 import { Marker, ProviderPropType, Callout } from "react-native-maps";
-import { MapView, Location, Permissions } from "expo";
+import { MapView, Location, Permissions, Notifications } from "expo";
 import PersonList from "../component/PersonList";
 import MapViewDirections from "react-native-maps-directions";
 import getDirections from "react-native-google-maps-directions";
@@ -36,8 +36,8 @@ import {
 } from "../services/map-service";
 import ToggleSwitch from "toggle-switch-react-native";
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
-
 const { width, height } = Dimensions.get("window");
+import * as firebase from "firebase";
 
 // TODO: Constants
 const ASPECT_RATIO = width / height;
@@ -107,8 +107,34 @@ export default class Home extends Component<Props> {
         };
     }
 
+    registerForPushNotifications = async () => {
+        //check for existing permissions
+        const { status } = await Permissions.getAsync(
+            Permissions.NOTIFICATIONS
+        );
+        let finalStatus = status;
+
+        if (status !== "granted") {
+            const { status } = await Permissions.askAsync(
+                Permissions.NOTIFICATIONS
+            );
+            finalStatus = status;
+        }
+
+        if (finalStatus !== "granted") {
+            return;
+        }
+
+        let token = await Notifications.getExpoPushTokenAsync();
+        console.log("expo token", token);
+    };
+
     componentWillMount() {
         this._initMap();
+    }
+
+    componentDidMount() {
+        this.registerForPushNotifications();
     }
 
     // TODO: make generic
