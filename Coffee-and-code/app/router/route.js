@@ -25,7 +25,7 @@ const SignedOut = createStackNavigator({
     LogIn: {
         screen: LogIn,
         navigationOptions: {
-            title: "Log In"
+            header: null
         }
     }
 });
