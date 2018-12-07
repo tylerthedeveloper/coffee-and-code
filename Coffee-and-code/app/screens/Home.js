@@ -470,56 +470,62 @@ export default class Home extends Component<Props> {
         const { navigation } = this.props;
         return (
             <View style={styles.container}>
-                <View style={styles.maps}>
-                    <MapView
-                        provider={this.props.provider}
-                        style={styles.map}
-                        initialRegion={this.state.region}
-                        region={this.state.region}
-                        showsUserLocation
+                <MapView
+                    provider={this.props.provider}
+                    style={styles.map}
+                    initialRegion={this.state.region}
+                    region={this.state.region}
+                    showsUserLocation
+                >
+                    {this.state.filtered_markers.map(marker => (
+                        <Marker
+                            key={marker.key}
+                            coordinate={marker.coordinate}
+                            description="Information"
+                            pinColor={marker.color}
+                            onPress={() => this.openModal(1, marker)}
+                        />
+                    ))}
+                    {this.state.nearbyLocations.map(rest => (
+                        <Marker
+                            key={rest.coords.longitude}
+                            coordinate={rest.coords}
+                            pinColor="blue"
+                            image={{ uri: rest.icon }}
+                            onPress={() => this.openModal(3, rest)}
+                        />
+                    ))}
+                </MapView>
+                <Callout>
+                    <View
+                        style={{
+                            flexDirection: "column",
+                            marginTop: height - 150,
+                            marginLeft: width * 0.3
+                        }}
                     >
-                        {this.state.filtered_markers.map(marker => (
-                            <Marker
-                                key={marker.key}
-                                coordinate={marker.coordinate}
-                                description="Information"
-                                pinColor={marker.color}
-                                onPress={() => this.openModal(1, marker)}
-                            />
-                        ))}
-                        {this.state.nearbyLocations.map(rest => (
-                            <Marker
-                                key={rest.coords.longitude}
-                                coordinate={rest.coords}
-                                pinColor="blue"
-                                image={{ uri: rest.icon }}
-                                onPress={() => this.openModal(3, rest)}
-                            />
-                        ))}
-                        {/* TODO: */}
-                        <View>{this.getPath()}</View>
-                    </MapView>
-                </View>
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity
-                        onPress={() =>
-                            navigation.push("List", {
-                                passProps: {
-                                    callback: data => this.filterUsers(data)
-                                }
-                            })
-                        }
-                        style={styles.bubble}
-                    >
-                        <Text>Filter</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => this.refreshMap()}
-                        style={styles.bubble}
-                    >
-                        <Text>Refresh Location</Text>
-                    </TouchableOpacity>
-                </View>
+                        <TouchableOpacity
+                            onPress={() =>
+                                navigation.push("List", {
+                                    passProps: {
+                                        callback: data => this.filterUsers(data)
+                                    }
+                                })
+                            }
+                            style={styles.bubble}
+                        >
+                            <Text>Filter</Text>
+                        </TouchableOpacity>
+                        <Text />
+                        <TouchableOpacity
+                            onPress={() => this.refreshMap()}
+                            style={styles.bubble}
+                        >
+                            <Text>Refresh Location</Text>
+                        </TouchableOpacity>
+                    </View>
+                </Callout>
+
                 <View>{this.renderUserProfileModal()}</View>
                 <View>{this.renderRecommendationModal()}</View>
             </View>
@@ -551,14 +557,6 @@ const styles = StyleSheet.create({
         width: 200,
         alignItems: "stretch"
     },
-    buttonContainer: {
-        flexDirection: "row",
-        marginVertical: 20,
-        backgroundColor: "transparent"
-    },
-    maps: {
-        flex: 1
-    },
     modalContent: {
         backgroundColor: "white",
         padding: 22,
@@ -585,11 +583,5 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "row"
-    },
-    button: {
-        width: 200,
-        paddingHorizontal: 12,
-        alignItems: "center",
-        marginHorizontal: 10
     }
 });
