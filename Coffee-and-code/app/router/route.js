@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, AsyncStorage } from "react-native";
+import { Text, AsyncStorage, View } from "react-native";
 import {
   createStackNavigator,
   createSwitchNavigator,
@@ -7,7 +7,7 @@ import {
   createMaterialTopTabNavigator,
   createAppContainer
 } from "react-navigation";
-
+import { Icon } from "react-native-elements";
 import LogIn from "../screens/LogIn";
 import Home from "../screens/Home";
 import List from "../screens/List";
@@ -108,7 +108,7 @@ const ScreenStackNavigator = createStackNavigator(
   {
     headerMode: "float",
     navigationOptions: ({ navigation }) => ({
-      headerStyle: { backgroundColor: "#4C3E54" },
+      headerStyle: { backgroundColor: "black" },
       title: navigation.routeName || "Coffee-and-Code",
       headerTintColor: "white",
       gesturesEnabled: false,
@@ -137,15 +137,16 @@ const DrawerStack = createDrawerNavigator(
 );
 
 const drawerButton = navigation => (
-  <Text
-    style={{ padding: 5, color: "white" }}
-    onPress={() => {
-      navigation.toggleDrawer();
-    }}
-  >
-    {/* TODO: Change to hamburger font awesome */}
-    Menu
-  </Text>
+  <View style={{ position: "absolute" }}>
+    <Icon
+      name="menu"
+      color="white"
+      style={{ marginLeft: 10 }}
+      onPress={() => {
+        navigation.toggleDrawer();
+      }}
+    />
+  </View>
 );
 
 export const DrawerNavigation = createStackNavigator(
