@@ -65,6 +65,43 @@ router.post("/", function(req, res, next) {
 });
 
 /**
+ * add new user expo token for notifications
+ */
+router.post("/expo-token", function(req, res, next) {
+    console.log("expo-token");
+    const { git_username, expo_token } = req.body.data;
+    const key = `expo-token:${git_username}`;
+    console.log("expo-token key: ", key);
+    console.log("expo-token value: ", expo_token);
+    return redisClient.set(key, expo_token, function(error, result) {
+        if (error) {
+            console.log(error);
+            throw error;
+        }
+        console.log("SET result expo token-> " + result);
+        res.send({ result: result });
+    });
+});
+
+/**
+ * add new user expo token for notifications
+ */
+router.post("/expo-token-ret", function(req, res, next) {
+    const { git_username } = req.body.data;
+    const key = `expo-token:${git_username}`;
+    console.log(git_username);
+    console.log(key);
+    return redisClient.get(key, function(error, result) {
+        if (error) {
+            console.log(error);
+            throw error;
+        }
+        console.log("GET result -> " + result);
+        res.send({ result: result });
+    });
+});
+
+/**
  * delete user by ID
  */
 router.delete("/:userID", function(req, res, next) {
@@ -82,6 +119,7 @@ router.delete("/:userID", function(req, res, next) {
  * update one user by git_username
  */
 router.put("/:git_username/update_location", function(req, res, next) {
+    console.log("Update location");
     const git_username = req.params["git_username"];
     const objectDict = req.body.data;
     const { latitude, longitude } = objectDict;
