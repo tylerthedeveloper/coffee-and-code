@@ -15,7 +15,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { Card } from "react-native-elements";
 import CustomCallout from "../component/CustomCallout";
 import { Marker, ProviderPropType, Callout } from "react-native-maps";
-import { MapView, Location, Permissions } from "expo";
+import { MapView, Location, Permissions, Notifications } from "expo";
 import PersonList from "../component/PersonList";
 import MapViewDirections from "react-native-maps-directions";
 import getDirections from "react-native-google-maps-directions";
@@ -36,8 +36,8 @@ import {
 } from "../services/map-service";
 import ToggleSwitch from "toggle-switch-react-native";
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
-
 const { width, height } = Dimensions.get("window");
+import * as firebase from "firebase";
 
 // TODO: Constants
 const ASPECT_RATIO = width / height;
@@ -48,6 +48,8 @@ const LATITUDE_DELTA = 0.006; // 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 const GOOGLE_MAPS_APIKEY = "AIzaSyAPaNuHNAHk4NSk4TLnN_ngI8Dgm-_W74Y";
 import Modal from "react-native-modal";
+
+import { addNewUserExpoNotiToken } from "../services/user-service";
 
 const items = [
     {
@@ -133,9 +135,36 @@ export default class Home extends Component<Props> {
                     ]
                 });
             });
+            this.registerForPushNotifications();
             // console.log('did mount');
         });
     }
+
+    registerForPushNotifications = async () => {
+        //check for existing permissions
+        const { status } = await Permissions.getAsync(
+            Permissions.NOTIFICATIONS
+        );
+        let finalStatus = status;
+
+        if (status !== "granted") {
+            const { status } = await Permissions.askAsync(
+                Permissions.NOTIFICATIONS
+            );
+            finalStatus = status;
+        }
+
+        if (finalStatus !== "granted") {
+            return;
+        }
+
+        let token = await Notifications.getExpoPushTokenAsync();
+        console.log("expo token", token);
+        // TODO: also store in async storage
+        addNewUserExpoNotiToken(this.state.git_username, token).then(res =>
+            console.log("added token")
+        );
+    };
 
     // TODO: make generic
     filterUsers(queryObj) {
@@ -241,6 +270,7 @@ export default class Home extends Component<Props> {
     }
 
     async _initMap() {
+        console.log("inside initMap");
         const { status } = await Permissions.askAsync(Permissions.LOCATION);
         if (status !== "granted") {
             // TODO: re-request for location permission
@@ -252,10 +282,13 @@ export default class Home extends Component<Props> {
                     longitude: -86.523196
                 }
             };
-            // TODO:
-            // const location = await Location.getCurrentPositionAsync({enableHighAccuracy: true }); // {enableHighAccuracy: true}
-            // location.then(res => console.log(res))
-            AsyncStorage.setItem("location", JSON.stringify(location.coords));
+            // let location = await Location.getCurrentPositionAsync({
+            //   enableHighAccuracy: true
+            // }); // {enableHighAccuracy: true}
+            TODO: AsyncStorage.setItem(
+                "location",
+                JSON.stringify(location.coords)
+            );
             console.log("setlocation ", location);
             const { latitude, longitude } = location.coords;
             // await getLoggedinUserName().then(git_username =>
@@ -317,8 +350,10 @@ export default class Home extends Component<Props> {
 
     renderButton = (text, onPress) => (
         <TouchableOpacity onPress={onPress} style={styles.TouchableButton}>
-            <View style={styles.button}>
-                <Text>{text}</Text>
+            <View>
+                <Text style={{ color: "white", fontWeight: "bold" }}>
+                    {text}
+                </Text>
             </View>
         </TouchableOpacity>
     );
@@ -357,12 +392,15 @@ export default class Home extends Component<Props> {
     }
 
     renderUserProfileModal() {
+        console.log("userProfile marker selected", this.state.selectedMarker);
         return (
             <Modal
                 isVisible={this.state.visibleModal === 1}
                 animationIn="slideInLeft"
                 animationOut="slideOutRight"
+                backdropOpacity={0.7}
                 onBackdropPress={() => this.setState({ visibleModal: null })}
+                backdropColor="black"
             >
                 <View style={styles.modalContent}>
                     <Image
@@ -370,22 +408,27 @@ export default class Home extends Component<Props> {
                             width: 100,
                             height: 100,
                             borderRadius: 50,
-                            borderColor: "black"
+                            borderColor: "#4D90FE",
+                            borderWidth: 2
                         }}
                         source={{
                             uri: this.state.selectedMarker.picture_url
                         }}
                     />
-                    <Text>{this.state.selectedMarker.git_username}</Text>
+                    <Text />
+                    <Text style={{ fontWeight: "bold", fontSize: 30 }}>
+                        {this.state.selectedMarker.name}
+                    </Text>
+                    <Text />
+
                     {this.renderButton("Profile", () =>
                         this.onModalPressed("Profile")
                     )}
+                    <Text />
                     {this.renderButton("Get Directions", () =>
                         this.onModalPressed("Directions")
                     )}
-                    {this.renderButton("Show Path", () =>
-                        this.onModalPressed("Path")
-                    )}
+                    <Text />
                     {this.renderButton("Get Recommendations", () =>
                         this.onModalPressed("Recommendations", allRestaurants =>
                             this.setState({
@@ -394,6 +437,7 @@ export default class Home extends Component<Props> {
                             })
                         )
                     )}
+                    <Text />
                     {this.renderButton("Close", () =>
                         this.onModalPressed("Close")
                     )}
@@ -403,6 +447,7 @@ export default class Home extends Component<Props> {
     }
 
     renderRecommendationModal() {
+        console.log(this.state.selectedMarker);
         // const photo_reference = await this.getLocationImage(this.state.selectedMarker.photo_reference);
         return (
             <Modal
@@ -417,20 +462,22 @@ export default class Home extends Component<Props> {
                             width: 100,
                             height: 100,
                             borderRadius: 50,
-                            borderColor: "black"
+                            borderColor: "#4D90FE",
+                            borderWidth: 2
                         }}
                         source={{
                             uri: this.state.selectedMarker.icon
                         }}
                     />
-                    <Text>{this.state.selectedMarker.name}</Text>
-                    // TODO:
-                    {this.renderButton("Show Path", () =>
-                        this.onModalPressed("Path")
-                    )}
+                    <Text />
+                    <Text style={{ fontWeight: "bold", fontSize: 20 }}>
+                        {this.state.selectedMarker.name}
+                    </Text>
+                    <Text />
                     {this.renderButton("Get Directions", () =>
                         this.onModalPressed("Directions")
                     )}
+                    <Text />
                     {this.renderButton("Close", () =>
                         this.onModalPressed("Close")
                     )}
@@ -449,59 +496,65 @@ export default class Home extends Component<Props> {
     }
 
     render() {
+        console.log(this.state.region);
         const { navigation } = this.props;
         return (
             <View style={styles.container}>
-                <View style={styles.maps}>
-                    <MapView
-                        provider={this.props.provider}
-                        style={styles.map}
-                        initialRegion={this.state.region}
-                        region={this.state.region}
-                        showsUserLocation
+                <MapView.Animated
+                    provider={this.props.provider}
+                    style={styles.map}
+                    initialRegion={this.state.region}
+                    region={this.state.region}
+                    showsUserLocation
+                >
+                    {this.state.filtered_markers.map(marker => (
+                        <Marker
+                            key={marker.key}
+                            coordinate={marker.coordinate}
+                            pinColor={marker.color}
+                            onPress={() => this.openModal(1, marker)}
+                        />
+                    ))}
+                    {this.state.nearbyLocations.map(rest => (
+                        <Marker
+                            key={rest.coords.longitude}
+                            coordinate={rest.coords}
+                            pinColor="blue"
+                            image={{ uri: rest.icon }}
+                            onPress={() => this.openModal(3, rest)}
+                        />
+                    ))}
+                </MapView.Animated>
+                <Callout>
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            marginTop: height - 600,
+                            marginLeft: width * 0.2
+                        }}
                     >
-                        {this.state.filtered_markers.map(marker => (
-                            <Marker
-                                key={marker.key}
-                                coordinate={marker.coordinate}
-                                description="Information"
-                                pinColor={marker.color}
-                                onPress={() => this.openModal(1, marker)}
-                            />
-                        ))}
-                        {this.state.nearbyLocations.map(rest => (
-                            <Marker
-                                key={rest.coords.longitude}
-                                coordinate={rest.coords}
-                                pinColor="blue"
-                                image={{ uri: rest.icon }}
-                                onPress={() => this.openModal(3, rest)}
-                            />
-                        ))}
-                        {/* TODO: */}
-                        <View>{this.getPath()}</View>
-                    </MapView>
-                </View>
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity
-                        onPress={() =>
-                            navigation.push("List", {
-                                passProps: {
-                                    callback: data => this.filterUsers(data)
-                                }
-                            })
-                        }
-                        style={styles.bubble}
-                    >
-                        <Text>Filter</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => this.refreshMap()}
-                        style={styles.bubble}
-                    >
-                        <Text>Refresh Location</Text>
-                    </TouchableOpacity>
-                </View>
+                        <TouchableOpacity
+                            onPress={() =>
+                                navigation.push("List", {
+                                    passProps: {
+                                        callback: data => this.filterUsers(data)
+                                    }
+                                })
+                            }
+                            style={styles.bubble}
+                        >
+                            <Text>Filter</Text>
+                        </TouchableOpacity>
+                        <Text />
+                        <TouchableOpacity
+                            onPress={() => this.refreshMap()}
+                            style={styles.bubble}
+                        >
+                            <Text>Refresh Location</Text>
+                        </TouchableOpacity>
+                    </View>
+                </Callout>
+
                 <View>{this.renderUserProfileModal()}</View>
                 <View>{this.renderRecommendationModal()}</View>
             </View>
@@ -533,14 +586,6 @@ const styles = StyleSheet.create({
         width: 200,
         alignItems: "stretch"
     },
-    buttonContainer: {
-        flexDirection: "row",
-        marginVertical: 20,
-        backgroundColor: "transparent"
-    },
-    maps: {
-        flex: 1
-    },
     modalContent: {
         backgroundColor: "white",
         padding: 22,
@@ -560,18 +605,18 @@ const styles = StyleSheet.create({
         shadowOffset: { height: 1, width: 1 }, // IOS
         shadowOpacity: 1, // IOS
         shadowRadius: 1, //IOS
-        backgroundColor: "#fff",
+        backgroundColor: "#4D90FE",
         elevation: 2, // Android
         height: 50,
         width: 200,
         justifyContent: "center",
         alignItems: "center",
-        flexDirection: "row"
+        flexDirection: "row",
+        borderRadius: 30,
+        borderColor: "steelblue",
+        borderWidth: 3
     },
     button: {
-        width: 200,
-        paddingHorizontal: 12,
-        alignItems: "center",
-        marginHorizontal: 10
+        borderRadius: 30
     }
 });

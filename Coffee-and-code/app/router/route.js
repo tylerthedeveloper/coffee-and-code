@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, AsyncStorage } from "react-native";
+import { Text, AsyncStorage, View } from "react-native";
 import {
     createStackNavigator,
     createSwitchNavigator,
@@ -7,7 +7,7 @@ import {
     createMaterialTopTabNavigator,
     createAppContainer
 } from "react-navigation";
-
+import { Icon } from "react-native-elements";
 import LogIn from "../screens/LogIn";
 import Home from "../screens/Home";
 import List from "../screens/List";
@@ -17,7 +17,6 @@ import FriendsPage from "../screens/FriendsPage";
 import RepoPage from "../screens/RepoPage";
 import ChatThreads from "../screens/ChatThreads";
 import ChatMessages from "../screens/ChatMessages";
-import Preference from "../screens/Preference";
 
 // TODO: Separate files
 
@@ -25,7 +24,7 @@ const SignedOut = createStackNavigator({
     LogIn: {
         screen: LogIn,
         navigationOptions: {
-            title: "Log In"
+            header: null
         }
     }
 });
@@ -114,7 +113,6 @@ const ScreenStackNavigator = createStackNavigator(
             headerTintColor: "white",
             gesturesEnabled: false,
             headerLeft: drawerButton(navigation),
-            // headerRight: prefButton(navigation),
             git_username: navigation.getParam("git_username") || ""
             // current_user: current_user || ""
         })
@@ -139,36 +137,8 @@ const DrawerStack = createDrawerNavigator(
 );
 
 const drawerButton = navigation => (
-    <Text
-        style={{ padding: 5, color: "white" }}
-        onPress={() => {
-            navigation.toggleDrawer();
-        }}
-    >
-        {/* TODO: Change to hamburger font awesome */}
-        Menu
-    </Text>
+    <View style={{ position: "absolute" }}>Menu</View>
 );
-
-// const PrefStackNavigator = createStackNavigator({
-//     Preference: {
-//         screen: Preference,
-//         navigationOptions: {
-//             title: "Preference"
-//         }
-//     }
-// });
-// const prefButton = navigation => (
-//     <Text
-//         style={{ padding: 5, color: "white", textAlign: "right" }}
-//         // onPress={() => {
-//         //     navigation.navigate("Screen1");
-//         // }}
-//     >
-//         {/* TODO: Change to hamburger font awesome */}
-//         Preference
-//     </Text>
-// );
 
 export const DrawerNavigation = createStackNavigator(
     {

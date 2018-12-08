@@ -1,9 +1,8 @@
 // import { apiurl } from '../constants';
 import { AsyncStorage } from "react-native";
 
-// const apiurl = "https://code-and-coffee2.azurewebsites.net/users";
-// const apiurl = "http://149.161.198.32:3001/users";
-const apiurl = "http://192.168.64.17:3001/users";
+const apiurl = "https://code-and-coffee2.azurewebsites.net/users";
+// const apiurl = "http://192.168.64.220:3001/users";
 
 export async function getLoggedinUserName() {
     return await AsyncStorage.getItem("git_username").then(
@@ -64,6 +63,25 @@ export function addNewUser(profile) {
             // TODO: Credentials / accesstoken
         }
     }).then(res => res);
+}
+
+export function addNewUserExpoNotiToken(git_username, token) {
+    console.log("addNewUserExpoNotiToken");
+    const body = {
+        data: {
+            git_username,
+            expo_token: token
+        }
+    };
+    // return fetch("http://192.168.64.17:3001/users/expo-token", {
+    return fetch(`${apiurl}/expo-token`, {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: {
+            "Content-type": "application/json"
+            // TODO: Credentials / accesstoken
+        }
+    }).then(res => console.log(res));
 }
 
 export async function updateLocationAndGetLocalUsers(user_location) {
@@ -148,7 +166,8 @@ export async function updateUserPreferences(user_preferences) {
             preferences
         }
     };
-    return fetch(`http:192.168.64.17:3001/users/${git_username}`, {
+    // return fetch(`http:192.168.64.17:3001/users/${git_username}`, {
+    return fetch(`${apiurl}/${git_username}`, {
         method: "PUT",
         body: JSON.stringify(body),
         headers: {

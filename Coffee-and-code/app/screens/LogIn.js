@@ -1,5 +1,13 @@
 import React, { Component } from "react";
-import { View, Image, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+    View,
+    Image,
+    Text,
+    StyleSheet,
+    TouchableOpacity,
+    ImageBackground,
+    Dimensions
+} from "react-native";
 import * as firebase from "firebase";
 import getGithubTokenAsync from "../gitAuth/getGitHubToken";
 import { AsyncStorage } from "react-native";
@@ -102,61 +110,61 @@ export default class Login extends Component<Props> {
 
     render() {
         const { navigation } = this.props;
-
         return (
             <View style={styles.container}>
-                <Image
-                    source={require("../../assets/giphy.gif")}
-                    style={{ width: 200, height: 350, marginLeft: 100 }}
-                />
-                <Text
-                    style={{
-                        color: "white",
-                        fontSize: 50,
-                        marginLeft: 180,
-                        fontWeight: "bold"
-                    }}
+                <ImageBackground
+                    source={require("../../assets/coffee.jpg")}
+                    style={styles.backgroundImage}
                 >
-                    &
-                </Text>
-                <Text
-                    style={{
-                        color: "white",
-                        fontSize: 50,
-                        marginLeft: 140,
-                        fontWeight: "bold"
-                    }}
-                >
-                    Code
-                </Text>
-                <TouchableOpacity
-                    style={{
-                        width: 175,
-                        height: 50,
-                        marginLeft: 110,
-                        marginTop: 0
-                    }}
-                    onPress={() => this.signIn(navigation)}
-                >
-                    <Icon.Button
-                        name="github"
-                        style={{ width: 180, height: 50 }}
-                        color="black"
-                        backgroundColor="white"
+                    <Image
+                        source={require("../../assets/banner.png")}
+                        style={styles.banner}
+                    />
+                    <TouchableOpacity
+                        style={styles.gitButton}
                         onPress={() => this.signIn(navigation)}
                     >
-                        Sign In with Github
-                    </Icon.Button>
-                </TouchableOpacity>
+                        <Icon.Button
+                            name="github"
+                            style={{ width: 180, height: 50 }}
+                            color="black"
+                            backgroundColor="white"
+                            onPress={() => this.signIn(navigation)}
+                        >
+                            Sign In with Github
+                        </Icon.Button>
+                    </TouchableOpacity>
+                </ImageBackground>
             </View>
         );
     }
 }
+const { height, width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "black"
+    },
+    backgroundImage: {
+        flex: 1,
+        width: null,
+        height: null
+    },
+    gitButton: {
+        flex: 1,
+        width: 175,
+        height: 50,
+        marginLeft: width * 0.28,
+        marginTop: height * 0.35,
+        borderRadius: 50
+    },
+    banner: {
+        flex: 1,
+        width: null,
+        height: null,
+        marginTop: 130,
+        resizeMode: "contain"
     }
 });
 

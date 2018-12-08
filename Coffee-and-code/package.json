@@ -41,6 +41,7 @@
     "react-native-navigation": "^2.0.2641",
     "react-native-paper": "^2.2.4",
     "react-native-sectioned-multi-select": "^0.6.3",
+    "react-native-sound": "^0.10.9",
     "react-navigation": "^2.18.2",
     "socket.io": "^2.2.0",
     "socket.io-client": "^2.2.0",

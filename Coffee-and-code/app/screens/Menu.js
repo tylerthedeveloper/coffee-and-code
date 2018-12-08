@@ -8,8 +8,6 @@ import {
 } from "react-native";
 import { NavigationActions } from "react-navigation";
 import { logout } from "../services/profile-utils";
-import { TextButton, RaisedTextButton } from "react-native-material-buttons";
-import Ripple from "react-native-material-ripple";
 import { Icon } from "react-native-elements";
 
 export default class Menu extends React.Component {
