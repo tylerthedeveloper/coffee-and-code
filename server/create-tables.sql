@@ -61,16 +61,33 @@ FOR EACH ROW
 WHEN (OLD.current_location <> NEW.current_location)
 EXECUTE PROCEDURE notify_update_location();
 
+-- CREATE OR REPLACE FUNCTION notify_update_location() 
+-- RETURNS trigger AS $$
+-- BEGIN
+--     PERFORM pg_notify(CAST('user_update_location' AS text), (
+--         select json_agg(row_to_json(users))
+--             from users 
+--             where git_username <> NEW.git_username and
+--                 ST_DWithin(current_location, ST_POINT(NEW.latitude, NEW.longitude), 10000)
+--         )::text
+--     );
+--     RETURN NEW;
+-- END;
+-- $$ LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION notify_update_location() 
 RETURNS trigger AS $$
 BEGIN
-    -- PERFORM pg_notify('user_update_location', (
+    raise notice '%', new::text;
     PERFORM pg_notify(CAST('user_update_location' AS text), (
-        select json_agg(row_to_json(users))
+        select json_build_object('newUser',
+            (select row_to_json(newUser) from (select * from users where git_username = NEW.git_username) as newUser), 
+            'localUsers',
+            (select array_agg(user_id) as local_users
             from users 
             where git_username <> NEW.git_username and
-                ST_DWithin(current_location, ST_POINT(NEW.latitude, NEW.longitude), 10000)
-        )::text
+            ST_DWithin(current_location, ST_POINT(NEW.latitude, NEW.longitude), 10000))
+        )::text)
     );
     -- PERFORM pg_notify('user_update_location', 'updated');
     RETURN NEW;
@@ -78,4 +95,13 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+
+select json_build_object('newUser',
+    (select row_to_json(newUser) from (select * from users where git_username = 'tylerthedeveloper') as newUser), 
+    'localUsers',
+    (select array_agg(user_id) as local_users
+    from users 
+    where git_username <> 'tylerthedeveloper' and
+    ST_DWithin(current_location, ST_POINT(39.172767, -86.523198), 10000))
+);
 --insert into users(git_username, name, user_id) values ('de', 'de', 2223);

@@ -43,7 +43,8 @@ const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
 const LATITUDE = 39.1834026;
 const LONGITUDE = -106.523;
-const LATITUDE_DELTA = 0.03; // 0.0922;
+// const LATITUDE_DELTA = 0.03; // 0.0922;
+const LATITUDE_DELTA = 0.006; // 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 const GOOGLE_MAPS_APIKEY = "AIzaSyAPaNuHNAHk4NSk4TLnN_ngI8Dgm-_W74Y";
 import Modal from "react-native-modal";
@@ -93,6 +94,7 @@ export default class Home extends Component<Props> {
         this.state = {
             nearbyLocations: [],
             git_username: "",
+            user_id: -1,
             region: {
                 latitude: LATITUDE,
                 longitude: LONGITUDE,
@@ -113,36 +115,33 @@ export default class Home extends Component<Props> {
 
     socket;
 
-    componentWillMount() {
-        this._initMap();
-    }
-
     componentDidMount() {
-        this.socket = openSocket("http://192.168.64.17:8000");
-        this.socket.on("new_local_user", res => {
-            // this.observer.next(res.data);
-            console.log(res.data);
+        this._initMap().then(() => {
+            this.socket = openSocket("http://192.168.64.17:8000", {
+                query: {
+                    user_id: this.state.user_id
+                }
+            });
+            this.socket.on("new_local_user", res => {
+                console.log("new_local_user", res.data);
+                const newMarker = this.makeMarker(res.data);
+                this.setState({
+                    markers: [...this.state.markers, newMarker],
+                    filtered_markers: [
+                        ...this.state.filtered_markers,
+                        newMarker
+                    ]
+                });
+            });
+            // console.log('did mount');
         });
     }
 
     // TODO: make generic
     filterUsers(queryObj) {
         console.log("skillsQuery: ", queryObj);
-        // const skillsQuery = ["React-Native"];
         const filtered_markers = new Set();
-        // this.state.markers.map(marker => {
-        //     queryObj.forEach(skill => {
-        //         const _marker = Object.keys(marker.skills).some(
-        //             _skill => skill === _skill
-        //         );
-        //         if (_marker) {
-        //             filtered_markers.add(marker);
-        //             return;
-        //         }
-        //     });
-        // });
         const filterObj = queryObj.finalList;
-        // console.log(queryObj);
         console.log(filterObj);
         this.state.markers.map(marker => {
             Object.keys(filterObj).map(preferenceKey => {
@@ -189,7 +188,31 @@ export default class Home extends Component<Props> {
         }
     }
 
+    makeMarker(localUser) {
+        return {
+            coordinate: {
+                latitude: localUser.latitude,
+                longitude: localUser.longitude
+            },
+            key: localUser.git_username,
+            color: getRandomColor(),
+            name: localUser.name,
+            git_username: localUser.git_username,
+            bio: localUser.bio,
+            // TODO:
+            // isCurrentFriend: localUser.isCurrentFriend,
+            // isFriendRequest: localUser.isFriendRequest,
+            skills: localUser.skills,
+            picture_url: localUser.picture_url,
+            will_help: localUser.will_help || {},
+            need_help: localUser.need_help || {},
+            will_tutor: localUser.will_tutor || {}
+            // looking_for:
+        };
+    }
+
     setMapMarkers(coords, localUsers) {
+        // TODO: use makeMarker
         const markers = localUsers.map(localUser => ({
             coordinate: {
                 latitude: localUser.latitude,
@@ -210,17 +233,6 @@ export default class Home extends Component<Props> {
             will_tutor: localUser.will_tutor || {}
             // looking_for:
         }));
-        // TODO: Push logged in user
-        // console.log("Markers are: ", markers);
-        // markers.push({
-        //     skills: this.state.profile.skills,
-        //     coordinate: coords,
-        //     key: this.state.profile.git_username,
-        //     color: currentLocationColor(),
-        //     name: this.state.profile.name,
-        //     git_username: this.state.profile.git_username,
-        //     bio: this.state.profile.bio
-        // });
 
         this.setState({
             markers,
@@ -236,8 +248,8 @@ export default class Home extends Component<Props> {
         } else {
             let location = {
                 coords: {
-                    latitude: 39.168718,
-                    longitude: -86.499862
+                    latitude: 39.173175,
+                    longitude: -86.523196
                 }
             };
             // TODO:
@@ -248,9 +260,10 @@ export default class Home extends Component<Props> {
             const { latitude, longitude } = location.coords;
             // await getLoggedinUserName().then(git_username =>
             await getLoggedinUserProfile().then(profile => {
-                console.log("profile: ", profile);
+                console.log("profile: ", profile.user_id);
                 this.setState({
                     git_username: profile.git_username,
+                    user_id: profile.user_id,
                     profile,
                     region: {
                         latitude: latitude,
@@ -285,14 +298,6 @@ export default class Home extends Component<Props> {
             />
         );
     };
-
-    // getRest = destination => {
-    //     let current_location = {
-    //         latitude: this.state.region.latitude,
-    //         longitude: this.state.region.longitude
-    //     };
-    //     this.handleGetDirections(current_location, destination);
-    // };
 
     openModal(modalNumber, markerData) {
         console.log(markerData);
@@ -397,22 +402,6 @@ export default class Home extends Component<Props> {
         );
     }
 
-    // async getLocationImage = photoReference => {
-    //     const photoPromise = fetch(
-    //         `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference${photoReference}&key=AIzaSyAPaNuHNAHk4NSk4TLnN_ngI8Dgm-_W74Y`,
-    //         {
-    //             method: "GET",
-    //             headers: {
-    //                 "Content-type": "application/json"
-    //                 // TODO: Credentials / accesstoken
-    //             }
-    //         }
-    //     );
-    //     return photoPromise.then(res => {
-    //         return res.url;
-    //     });
-    // };
-
     renderRecommendationModal() {
         // const photo_reference = await this.getLocationImage(this.state.selectedMarker.photo_reference);
         return (
@@ -453,6 +442,11 @@ export default class Home extends Component<Props> {
     setFilters = fitlerObj => {
         console.log(fitlerObj);
     };
+
+    // TODO: ???
+    clearFilter() {
+        this.setState({ filtered_markers: this.state.markers });
+    }
 
     render() {
         const { navigation } = this.props;

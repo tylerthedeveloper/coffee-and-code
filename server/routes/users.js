@@ -17,14 +17,19 @@ server.listen(8000);
 
 const sockets = new Set();
 
+// for (const s of sockets) {
+//         console.log(`Emitting msg`);
+//         s.disconnect(true);
+// }
+    
 /**
  * get all user's
  */
  router.get("/", function(req, res, next) {
-    for (const s of sockets) {
-        console.log(`Emitting msg`);
-        s.emit('new_local_user', { data: "msg" });
-    }
+    // for (const s of sockets) {
+    //     console.log(`Emitting msg`);
+    //     s.emit('new_local_user', { data: "msg" });
+    // }
 
     const sql = format("SELECT * FROM users");
     return pool.query(sql, (err, result) => {
@@ -94,28 +99,32 @@ router.delete("/:userID", function(req, res, next) {
     });
 });
 
+
+io.on('connection', (socket) => {
+    
+    const user_id = socket.handshake.query["user_id"];
+    socket.user_id = user_id;
+    console.log(`Socket ${socket.id} added with user_id: ${socket.user_id}`);
+    sockets.add(socket);
+  
+    socket.on('new_local_user', data => {
+      console.log("sokcet channel data: ", data);
+    });
+  
+    socket.on('disconnect', () => {
+      console.log(`Deleting socket: ${socket.id}`);
+      sockets.delete(socket);
+      console.log(`Remaining sockets: ${sockets.size}`);
+    });
+
+});
+
 /**
  * update one user by git_username
  */
 router.put("/:git_username/update_location", function(req, res, next) {
 
     console.log("Update location");
-    io.on('connection', socket => {
-    
-        console.log(`Socket ${socket.id} added`);
-        sockets.add(socket);
-      
-        socket.on('new_local_user', data => {
-          console.log("sokcet channel data: ", data);
-        });
-      
-        socket.on('disconnect', () => {
-          console.log(`Deleting socket: ${socket.id}`);
-          sockets.delete(socket);
-          console.log(`Remaining sockets: ${sockets.size}`);
-        });
-    
-    });
     
     
     const git_username = req.params["git_username"];
@@ -184,6 +193,22 @@ router.put("/:git_username/update_location", function(req, res, next) {
                     );
                 });
         });
+
+        client.on('notification', function(msg) {
+            // console.log('msg',  msg.payload);
+            const { newUser, localUsers } = JSON.parse(msg.payload);
+            console.log('msg', newUser, localUsers);
+            // TODO: only in sockets where id in list of local users
+            for (const s of sockets) {
+                const user_id = s.user_id;
+                // if (localUsers.indexOf(user_id) > -1) {
+                console.log(`Emitting value: ${msg}`);
+                s.emit('new_local_user', { data: newUser });
+                // }
+            }
+        });
+
+        client.query("LISTEN user_update_location");
     });
 });
 
