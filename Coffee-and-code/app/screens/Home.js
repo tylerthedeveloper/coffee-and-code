@@ -119,11 +119,14 @@ export default class Home extends Component<Props> {
 
     componentDidMount() {
         this._initMap().then(() => {
-            this.socket = openSocket("http://192.168.64.17:8000", {
-                query: {
-                    user_id: this.state.user_id
+            this.socket = openSocket(
+                "https://www.code-and-coffee2.azurewebsites.net:8000",
+                {
+                    query: {
+                        user_id: this.state.user_id
+                    }
                 }
-            });
+            );
             this.socket.on("new_local_user", res => {
                 console.log("new_local_user", res.data);
                 const newMarker = this.makeMarker(res.data);
