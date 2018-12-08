@@ -53,7 +53,19 @@ export default class Menu extends React.Component {
                 </Text> */}
                 </TouchableHighlight>
 
-                <View styles={{ flexDirection: "row" }}>
+                <View>
+                    <Text
+                        onPress={() => navigation.navigate("Profile")}
+                        style={styles.uglyDrawerItem}
+                    >
+                        Profile
+                    </Text>
+                    <View style={styles.icon}>
+                        <Icon name="face" color="#00aced" />
+                    </View>
+                </View>
+
+                <View>
                     <Text
                         title="Home"
                         onPress={() => navigation.navigate("Home")}
@@ -61,30 +73,45 @@ export default class Menu extends React.Component {
                     >
                         Home
                     </Text>
-
-                    <Icon
-                        // style = {styles.icon}
-                        name="home"
-                        color="#00aced"
-                    />
+                    <View style={styles.icon}>
+                        <Icon name="home" color="#00aced" />
+                    </View>
                 </View>
 
-                <Text
-                    onPress={() => navigation.navigate("List")}
-                    style={styles.uglyDrawerItem}
-                >
-                    List
-                </Text>
-                <Text
-                    onPress={() => navigation.navigate("Chat")}
-                    style={styles.uglyDrawerItem}
-                >
-                    Chat
-                </Text>
-                {/* ADD LINE DIVIDER HERE */}
-                <Text onPress={() => logout()} style={styles.uglyDrawerItem}>
-                    Log Out
-                </Text>
+                <View>
+                    <Text
+                        onPress={() => navigation.navigate("List")}
+                        style={styles.uglyDrawerItem}
+                    >
+                        Preference
+                    </Text>
+                    <View style={styles.icon}>
+                        <Icon name="list" color="#00aced" />
+                    </View>
+                </View>
+                <View>
+                    <Text
+                        onPress={() => navigation.navigate("Chat")}
+                        style={styles.uglyDrawerItem}
+                    >
+                        Chat
+                    </Text>
+                    <View style={styles.icon}>
+                        <Icon name="chat" color="#00aced" />
+                    </View>
+                </View>
+                <View>
+                    {/* ADD LINE DIVIDER HERE */}
+                    <Text
+                        onPress={() => logout()}
+                        style={styles.uglyDrawerItem}
+                    >
+                        Log Out
+                    </Text>
+                    <View style={styles.icon}>
+                        <Icon name="subdirectory-arrow-right" color="#00aced" />
+                    </View>
+                </View>
             </View>
         );
     }
@@ -102,21 +129,29 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: "bold",
         color: "white",
-        padding: 15,
+        padding: 10,
         margin: 10,
         marginTop: 30,
-        textAlign: "left"
+        textAlign: "left",
+        flexDirection: "row"
     },
     icon: {
-        marginTop: 0,
-        textAlign: "right",
-        position: "relative",
-        left: 80
+        flexDirection: "row",
+        marginTop: 48,
+        position: "absolute",
+        left: 198
     },
+    // icon_list: {
+    //     flexDirection: "row",
+    //     marginTop: 48,
+    //     position: "absolute",
+    //     left: 198
+    // },
     profileImage: {
-        borderRadius: 80,
+        borderRadius: 100,
         borderWidth: 4,
         borderColor: "white",
+
         left: 60
     }
 });
