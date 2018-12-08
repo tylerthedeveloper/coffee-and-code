@@ -302,7 +302,7 @@ export default class Profile extends Component<Props> {
             will_tutor,
             user_id
         } = this.state.user;
-        console.log("skills", skills);
+        console.log("needHelp", need_help);
         return (
             <ScrollView>
                 <View style={styles.container}>
@@ -323,9 +323,9 @@ export default class Profile extends Component<Props> {
                             {/* <Text style={styles.name}> {git_username} A </Text> */}
                             <View style={{ height: 100 }}>
                                 <Card style={styles.card_skill}>
-                                    <CardTitle title="Skills :">
-                                        <Text style={styles.description}>
-                                            Skills:
+                                    <CardTitle title="Skills :" />
+                                    <CardContent>
+                                        <Text style={styles.skills_desc}>
                                             {skills &&
                                                 Object.keys(skills)
                                                     .map(
@@ -336,7 +336,7 @@ export default class Profile extends Component<Props> {
                                                     )
                                                     .join(",")}
                                         </Text>
-                                    </CardTitle>
+                                    </CardContent>
                                 </Card>
                             </View>
 
@@ -473,10 +473,19 @@ const styles = StyleSheet.create({
         alignSelf: "center"
     },
     description: {
-        fontSize: 16,
+        fontSize: 18,
         color: "#696969",
         marginTop: 10,
-        textAlign: "center"
+        textAlign: "center",
+        fontWeight: "bold"
+    },
+    skills_desc: {
+        fontSize: 18,
+        color: "#696969",
+        textAlign: "center",
+        fontWeight: "bold",
+        top: -20,
+        left: -40
     },
     buttonContainer: {
         marginTop: 10,
@@ -525,7 +534,7 @@ const styles = StyleSheet.create({
         shadowRadius: 20,
         shadowOpacity: 0.3,
         shadowOffset: { x: 2, y: -2 },
-        height: 10,
+        height: 30,
         width: 400,
         overflow: "hidden"
     },

@@ -260,7 +260,8 @@ export default class Home extends Component<Props> {
             const { latitude, longitude } = location.coords;
             // await getLoggedinUserName().then(git_username =>
             await getLoggedinUserProfile().then(profile => {
-                console.log("profile: ", profile.user_id);
+                // console.log("profile: ", profile);
+
                 this.setState({
                     git_username: profile.git_username,
                     user_id: profile.user_id,
