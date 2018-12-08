@@ -1,9 +1,9 @@
 // import { apiurl } from '../constants';
 import { AsyncStorage } from "react-native";
 
-// const apiurl = "https://code-and-coffee2.azurewebsites.net/users";
+const apiurl = "https://code-and-coffee2.azurewebsites.net/users";
 // const apiurl = "http://149.161.198.32:3001/users";
-const apiurl = "http://192.168.64.17:3001/users";
+// const apiurl = "http://192.168.64.17:3001/users";
 
 export async function getLoggedinUserName() {
     return await AsyncStorage.getItem("git_username").then(

@@ -307,39 +307,36 @@ export default class Profile extends Component<Props> {
             <ScrollView>
                 <View style={styles.container}>
                     <View style={styles.header} />
+
                     <Image
                         style={styles.avatar}
                         source={{
                             uri: picture_url
                         }}
                     />
+
                     <Text style={styles.name}> {name} </Text>
                     <Text style={styles.info_about}> {bio} </Text>
                     <Text style={styles.info_city}>Bloomington, IN</Text>
                     <View style={styles.body}>
                         <View style={styles.bodyContent}>
                             {/* <Text style={styles.name}> {git_username} A </Text> */}
-                            <LinearGradient
-                                colors={["#4c669f", "#3b5998", "#192f6a"]}
-                                style={styles.linearGradient}
-                            >
-                                <Card style={styles.card_skill}>
-                                    <CardTitle title="Skills :">
-                                        <Text style={styles.description}>
-                                            Skills:
-                                            {skills &&
-                                                Object.keys(skills)
-                                                    .map(
-                                                        skill =>
-                                                            skills[skill]
-                                                                ? skill
-                                                                : ""
-                                                    )
-                                                    .join(",")}
-                                        </Text>
-                                    </CardTitle>
-                                </Card>
-                            </LinearGradient>
+                            <Card style={styles.card_skill}>
+                                <CardTitle title="Skills :">
+                                    <Text style={styles.description}>
+                                        Skills:
+                                        {skills &&
+                                            Object.keys(skills)
+                                                .map(
+                                                    skill =>
+                                                        skills[skill]
+                                                            ? skill
+                                                            : ""
+                                                )
+                                                .join(",")}
+                                    </Text>
+                                </CardTitle>
+                            </Card>
 
                             <Animated.ScrollView
                                 horizontal
@@ -418,7 +415,7 @@ const styles = StyleSheet.create({
     header: {
         backgroundColor: "black",
         height: 300,
-        elevation: 1
+        elevation: -1
     },
     avatar: {
         width: 130,
@@ -429,8 +426,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         alignSelf: "center",
         position: "absolute",
-        marginTop: 50,
-        elevation: 3
+        marginTop: 50
     },
     name: {
         fontSize: 28,
