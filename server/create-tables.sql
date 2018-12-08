@@ -13,7 +13,7 @@ insert into Users values (1, 'tylerthedeveloper', 'tyler citrin','https://avatar
 insert into Users values (2, 'abi', 'abi shek','https://avatars0.githubusercontent.com/u/1957707?s=400&v=4', 'afbeggi', 39.1653, 86.5364, null);
 
 -- TODO: when do we do this
-UPDATE users SET current_location = ST_POINT(current_latitude, current_longitude);
+UPDATE users SET current_location = ST_POINT(latitude, longitude);
 
 select * from users where git_username <> 'tylerthedeveloper' and ST_DWithin(current_location, ST_POINT(39.1653, 86.5264), 10000);
 
@@ -39,4 +39,43 @@ CREATE TABLE IF NOT EXISTS FRIENDS (
 insert into FRIENDS values ('tylerthedeveloper', 'kanikeabhishek');
 insert into FRIENDS values ('kanikeabhishek', 'tylerthedeveloper');
 
+-- FIRST TEST
+CREATE TRIGGER notify_new_user 
+AFTER INSERT ON users
+FOR EACH ROW EXECUTE PROCEDURE notify_new_user();
 
+CREATE OR REPLACE FUNCTION notify_new_user() RETURNS trigger AS $$
+DECLARE
+BEGIN
+  PERFORM pg_notify('user_watcher', 'users' || ',git_username,' || NEW.git_username );
+  RETURN new;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+-- SECOND TEST --
+CREATE TRIGGER trigger_update_location 
+AFTER UPDATE ON users
+FOR EACH ROW 
+WHEN (OLD.current_location <> NEW.current_location)
+EXECUTE PROCEDURE notify_update_location();
+
+CREATE OR REPLACE FUNCTION notify_update_location() 
+RETURNS trigger AS $$
+BEGIN
+    -- PERFORM pg_notify('user_update_location', (
+    PERFORM pg_notify(CAST('user_update_location' AS text), (
+        select json_agg(row_to_json(users))
+            from users 
+            where git_username <> NEW.git_username and
+                ST_DWithin(current_location, ST_POINT(NEW.latitude, NEW.longitude), 10000)
+        )::text
+    );
+    -- PERFORM pg_notify('user_update_location', 'updated');
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+--insert into users(git_username, name, user_id) values ('de', 'de', 2223);

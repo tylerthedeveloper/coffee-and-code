@@ -16,6 +16,7 @@
     "configGradleSetup": "configGradleSetup"
   },
   "dependencies": {
+    "@types/socket.io": "^2.1.0",
     "babel-eslint": "^10.0.1",
     "expo": "^30.0.1",
     "firebase": "^4.12.1",
@@ -41,6 +42,8 @@
     "react-native-paper": "^2.2.4",
     "react-native-sectioned-multi-select": "^0.6.3",
     "react-navigation": "^2.18.2",
+    "socket.io": "^2.2.0",
+    "socket.io-client": "^2.2.0",
     "toggle-switch-react-native": "^2.0.2"
   },
   "devDependencies": {

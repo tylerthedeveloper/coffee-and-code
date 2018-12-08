@@ -4,13 +4,28 @@ const pool = require("../psql-config").psqlPool;
 const format = require("pg-format");
 const redisClient = require("../redis-client").redisClient;
 
+var socket = require('socket.io');
+var http = require('http');
+
+var server = http.createServer(express);
+var io = socket.listen(server);
+server.listen(8000);
+
+
 // TODO: ERRORS???
 // TODO: update returns with success / error
+
+const sockets = new Set();
 
 /**
  * get all user's
  */
-router.get("/", function(req, res, next) {
+ router.get("/", function(req, res, next) {
+    for (const s of sockets) {
+        console.log(`Emitting msg`);
+        s.emit('new_local_user', { data: "msg" });
+    }
+
     const sql = format("SELECT * FROM users");
     return pool.query(sql, (err, result) => {
         if (err) {
@@ -53,7 +68,8 @@ router.post("/", function(req, res, next) {
         });
     const sql = format(
         "insert into users (bio, blog, company, current_location, email, git_username,\
-            latitude, longitude, name, picture_url, skills, user_id) VALUES (%L)",
+                            latitude, longitude, looking_for, name, need_help, \
+                            picture_url, skills, user_id, will_help, will_tutor) VALUES (%L)",
         str
     );
     return pool.query(sql, (err, result) => {
@@ -82,10 +98,30 @@ router.delete("/:userID", function(req, res, next) {
  * update one user by git_username
  */
 router.put("/:git_username/update_location", function(req, res, next) {
+
+    console.log("Update location");
+    io.on('connection', socket => {
+    
+        console.log(`Socket ${socket.id} added`);
+        sockets.add(socket);
+      
+        socket.on('new_local_user', data => {
+          console.log("sokcet channel data: ", data);
+        });
+      
+        socket.on('disconnect', () => {
+          console.log(`Deleting socket: ${socket.id}`);
+          sockets.delete(socket);
+          console.log(`Remaining sockets: ${sockets.size}`);
+        });
+    
+    });
+    
+    
     const git_username = req.params["git_username"];
     const objectDict = req.body.data;
     const { latitude, longitude } = objectDict;
-    console.log(latitude, longitude, objectDict);
+    // console.log(latitude, longitude, objectDict);
     const query =
         "SET " +
         Object.keys(objectDict).map(key => {
@@ -100,11 +136,11 @@ router.put("/:git_username/update_location", function(req, res, next) {
         "'";
     const sql2 = `UPDATE users SET current_location = ST_POINT(${latitude},${longitude}) \
         where git_username = '${git_username}'`;
-    console.log(sql2);
+    // console.log(sql2);
     // TODO: check this number
     const sql3 = `select * from users where git_username <> '${git_username}' \
         and ST_DWithin(current_location, ST_POINT(${latitude},${longitude}), 10000)`;
-    console.log(sql3);
+    // console.log(sql3);
     return pool.connect((err, client, done) => {
         const shouldAbort = err => {
             if (err) {
@@ -142,7 +178,7 @@ router.put("/:git_username/update_location", function(req, res, next) {
                         },
                         result => {
                             done();
-                            console.log(rows);
+                            // console.log(rows);
                             res.send({ rows: rows });
                         }
                     );
@@ -294,6 +330,30 @@ router.post("/:git_username/near-me", function(req, res, next) {
     });
 });
 
+
+/**
+ * update one user by git_username
+ */
+router.put("/:git_username", function(req, res, next) {
+    const git_username = req.params["git_username"];
+    const objectDict = req.body.data.preferences;
+    console.log(objectDict);
+    const query =
+        "SET " +
+        Object.keys(objectDict).map(key => {
+            const value = objectDict[key];
+            return key + " = " + `'${JSON.stringify(value)}'`;
+        });
+        // const sql = "UPDATE users " + query + " WHERE git_username = " + git_username;
+    const sql = `UPDATE users ${query} WHERE git_username = '${git_username}'`;
+    return pool.query(sql, (err, result) => {
+        if (err) {
+            return console.error("Error executing query", err.stack);
+        }
+        res.send({ rows: result.rows });
+    });
+});
+
 /**
  * update skills by git_username
  */
@@ -333,4 +393,32 @@ router.post("/:git_username/near-me", function(req, res, next) {
     });
 });
 
+
+//////////////////////
+// TEMPPPPPPPP
+///////////////////////
+  
+
+// FOR UPDATE USER SET LOGIN
+router.get("/noti", function(req, res, next) {
+    
+    pool.connect(function(err, client) {
+        if(err) {
+          console.log(err);
+        }
+        client.on('notification', function(msg) {
+          console.log('msg', msg);
+            for (const s of sockets) {
+                console.log(`Emitting value: ${msg}`);
+                s.emit('new_local_user', { data: msg });
+            }
+        });
+        client.query("LISTEN user_update_location");
+      });
+    // subject.subscribe(args => res.send(args));
+    res.send('connected')
+
+});
+
 module.exports = router;
+

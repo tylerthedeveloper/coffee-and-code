@@ -8,6 +8,23 @@ const logger = require('morgan');
 const pool = require('./psql-config').psqlPool;
 const redisClient = require("./redis-client").redisClient;
 
+// const http = require('http');
+// const server = http.createServer(express);
+// // server.listen(3001, "127.0.0.1");
+// const io = require('socket.io')(server);
+// io.listen(server);
+// server.listen(3001, "127.0.0.1");
+
+
+// var socket = require('socket.io');
+// // var express = require('express');
+// var http = require('http');
+
+var app = express();
+// var server = http.createServer(express);
+
+// var io = socket.listen(server);
+// server.listen(8000);
 // TODO: Dele
 redisClient.set('my test key', 'my test value');
 
@@ -19,7 +36,7 @@ const friendsRouter = require('./routes/friends');
 
 const friendRequestsRouter = require('./routes/friend-requests');
 
-const app = express();
+// const app = express();
 
 /*
 app.use(function(req, res, next) {
@@ -51,6 +68,10 @@ app.use('/repos', reposRouter);
 app.use('/friends', friendsRouter);
 app.use('/test', function(req, res, next) {
     console.log('in test')
+    for (const s of sockets) {
+        // console.log(`Emitting value: ${msg}`);
+        s.emit('new_local_user', { data: "working" });
+    }
     return pool.query('SELECT NOW()', (err, result) => {
       if (err) {
         return console.error('Error executing query', err.stack)
@@ -68,6 +89,25 @@ app.use('/test2', function(req, res, next) {
     res.send( { test2: reply })
   });
 });
+
+// const sockets = new Set();
+
+// io.on('connection', socket => {
+
+//     console.log(`Socket ${socket.id} added`);
+//     sockets.add(socket);
+  
+//     socket.on('new_local_user', data => {
+//       console.log(data);
+//     });
+  
+//     socket.on('disconnect', () => {
+//       console.log(`Deleting socket: ${socket.id}`);
+//       sockets.delete(socket);
+//       console.log(`Remaining sockets: ${sockets.size}`);
+//     });
+  
+// });
 
 // TODO: catch 404 and forward to error handler
 app.use(function(req, res, next) {

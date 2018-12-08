@@ -83,6 +83,10 @@ const items = [
     }
 ];
 
+import * as socketIo from "socket.io-client";
+import openSocket from "socket.io-client";
+import SocketIOClient from "socket.io-client";
+
 export default class Home extends Component<Props> {
     constructor(props) {
         super(props);
@@ -107,8 +111,18 @@ export default class Home extends Component<Props> {
         };
     }
 
+    socket;
+
     componentWillMount() {
         this._initMap();
+    }
+
+    componentDidMount() {
+        this.socket = openSocket("http://192.168.64.17:8000");
+        this.socket.on("new_local_user", res => {
+            // this.observer.next(res.data);
+            console.log(res.data);
+        });
     }
 
     // TODO: make generic
