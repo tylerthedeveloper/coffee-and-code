@@ -241,6 +241,7 @@ export default class Home extends Component<Props> {
   }
 
   async _initMap() {
+    console.log("inside initMap");
     const { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status !== "granted") {
       // TODO: re-request for location permission
@@ -252,9 +253,9 @@ export default class Home extends Component<Props> {
           longitude: -86.499862
         }
       };
-      // TODO:
-      // const location = await Location.getCurrentPositionAsync({enableHighAccuracy: true }); // {enableHighAccuracy: true}
-      // location.then(res => console.log(res))
+      TODO: // let location = await Location.getCurrentPositionAsync({
+      //   enableHighAccuracy: true
+      // }); // {enableHighAccuracy: true}
       AsyncStorage.setItem("location", JSON.stringify(location.coords));
       console.log("setlocation ", location);
       const { latitude, longitude } = location.coords;
@@ -468,6 +469,7 @@ export default class Home extends Component<Props> {
   };
 
   render() {
+    console.log(this.state.region);
     const { navigation } = this.props;
     return (
       <View style={styles.container}>
