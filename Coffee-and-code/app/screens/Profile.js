@@ -15,6 +15,15 @@ import { createChatThread } from "../services/chat-service";
 import { logout, sendMessage } from "../services/profile-utils";
 import { LinearGradient } from "expo";
 
+import {
+    Card,
+    CardTitle,
+    CardContent,
+    CardAction,
+    CardButton,
+    CardImage
+} from "react-native-material-cards";
+
 // import FontAwesome from 'react-native-fontawesome';
 import {
     acceptFriendRequest,
@@ -264,31 +273,30 @@ export default class Profile extends Component<Props> {
             will_tutor,
             user_id
         } = this.state.user;
-        console.log("skills", skills);
+        console.log("needHelp", need_help);
         return (
             <ScrollView>
                 <View style={styles.container}>
                     <View style={styles.header} />
+
                     <Image
                         style={styles.avatar}
                         source={{
                             uri: picture_url
                         }}
                     />
+
                     <Text style={styles.name}> {name} </Text>
                     <Text style={styles.info_about}> {bio} </Text>
                     <Text style={styles.info_city}>Bloomington, IN</Text>
                     <View style={styles.body}>
                         <View style={styles.bodyContent}>
                             {/* <Text style={styles.name}> {git_username} A </Text> */}
-                            <LinearGradient
-                                colors={["#4c669f", "#3b5998", "#192f6a"]}
-                                style={styles.linearGradient}
-                            >
+                            <View style={{ height: 100 }}>
                                 <Card style={styles.card_skill}>
-                                    <CardTitle title="Skills :">
-                                        <Text style={styles.description}>
-                                            Skills:
+                                    <CardTitle title="Skills :" />
+                                    <CardContent>
+                                        <Text style={styles.skills_desc}>
                                             {skills &&
                                                 Object.keys(skills)
                                                     .map(
@@ -299,9 +307,9 @@ export default class Profile extends Component<Props> {
                                                     )
                                                     .join(",")}
                                         </Text>
-                                    </CardTitle>
+                                    </CardContent>
                                 </Card>
-                            </LinearGradient>
+                            </View>
 
                             <Animated.ScrollView
                                 horizontal
@@ -380,7 +388,7 @@ const styles = StyleSheet.create({
     header: {
         backgroundColor: "black",
         height: 300,
-        elevation: 1
+        elevation: -1
     },
     avatar: {
         width: 130,
@@ -391,8 +399,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         alignSelf: "center",
         position: "absolute",
-        marginTop: 50,
-        elevation: 3
+        marginTop: 50
     },
     name: {
         fontSize: 28,
@@ -437,10 +444,19 @@ const styles = StyleSheet.create({
         alignSelf: "center"
     },
     description: {
-        fontSize: 16,
+        fontSize: 18,
         color: "#696969",
         marginTop: 10,
-        textAlign: "center"
+        textAlign: "center",
+        fontWeight: "bold"
+    },
+    skills_desc: {
+        fontSize: 18,
+        color: "#696969",
+        textAlign: "center",
+        fontWeight: "bold",
+        top: -20,
+        left: -40
     },
     buttonContainer: {
         marginTop: 10,
@@ -451,15 +467,16 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         width: 200,
         borderRadius: 30,
-        backgroundColor: "black"
+        backgroundColor: "#00aced"
     },
     scrollView: {
         // position: "absolute",
-        marginTop: 150,
+        marginTop: 100,
         bottom: 40,
         left: 0,
         right: 0,
-        paddingVertical: 0
+        paddingVertical: 0,
+        backgroundColor: "black"
     },
     endPadding: {
         paddingRight: CARD_WIDTH
@@ -488,15 +505,10 @@ const styles = StyleSheet.create({
         shadowRadius: 20,
         shadowOpacity: 0.3,
         shadowOffset: { x: 2, y: -2 },
-        height: 10,
+        height: 30,
         width: 400,
         overflow: "hidden"
     },
-    linearGradient: {
-        flex: 1,
-        paddingLeft: 15,
-        paddingRight: 15,
-        borderRadius: 5
-    },
+
     bio: {}
 });

@@ -6,7 +6,7 @@ import {
     Image,
     TouchableHighlight
 } from "react-native";
-import { NavigationActions } from "react-navigation";
+
 import { logout } from "../services/profile-utils";
 import { Icon } from "react-native-elements";
 
@@ -139,12 +139,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         left: 198
     },
-    // icon_list: {
-    //     flexDirection: "row",
-    //     marginTop: 48,
-    //     position: "absolute",
-    //     left: 198
-    // },
+
     profileImage: {
         borderRadius: 100,
         borderWidth: 4,

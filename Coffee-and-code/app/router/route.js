@@ -137,7 +137,9 @@ const DrawerStack = createDrawerNavigator(
 );
 
 const drawerButton = navigation => (
-    <View style={{ position: "absolute" }}>Menu</View>
+    <View style={{ position: "absolute" }}>
+        <Text>Menu</Text>
+    </View>
 );
 
 export const DrawerNavigation = createStackNavigator(
