@@ -253,8 +253,8 @@ export default class Home extends Component<Props> {
           longitude: -86.499862
         }
       };
-      TODO: // let location = await Location.getCurrentPositionAsync({
-      //   enableHighAccuracy: true
+      // let location = await Location.getCurrentPositionAsync({
+      TODO: //   enableHighAccuracy: true
       // }); // {enableHighAccuracy: true}
       AsyncStorage.setItem("location", JSON.stringify(location.coords));
       console.log("setlocation ", location);
@@ -502,7 +502,7 @@ export default class Home extends Component<Props> {
           <View
             style={{
               flexDirection: "row",
-              marginTop: height - 700,
+              marginTop: height - 600,
               marginLeft: width * 0.2
             }}
           >
