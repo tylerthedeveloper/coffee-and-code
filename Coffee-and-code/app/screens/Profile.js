@@ -6,12 +6,25 @@ import {
     Image,
     TouchableOpacity,
     ScrollView,
-    AsyncStorage
+    AsyncStorage,
+    Animated,
+    Dimensions
 } from "react-native";
 import firebase from "firebase";
 import { createChatThread } from "../services/chat-service";
 import { logout, sendMessage } from "../services/profile-utils";
 import { acceptFriendRequest } from "../services/friend-requests-service";
+import { LinearGradient } from "expo";
+
+import {
+    Card,
+    CardTitle,
+    CardContent,
+    CardAction,
+    CardButton,
+    CardImage
+} from "react-native-material-cards";
+// import FontAwesome from 'react-native-fontawesome';
 import {
     updateUserSkills,
     getUserByID,
@@ -20,6 +33,10 @@ import {
 
 // const apiurl = "https://code-and-coffee2.azurewebsites.net";
 const status = "";
+// const { width, height } = Dimensions.get("window");
+
+const CARD_HEIGHT = 120;
+const CARD_WIDTH = CARD_HEIGHT + 50;
 
 export default class Profile extends Component<Props> {
     constructor(props) {
@@ -164,6 +181,10 @@ export default class Profile extends Component<Props> {
     componentDidMount() {
         this.init();
     }
+    // componentWillMount(){
+    //     this.index = 0;
+    // this.animation = new Animated.Value(0);
+    // }
 
     createButtonView() {
         if (
@@ -224,7 +245,9 @@ export default class Profile extends Component<Props> {
                         style={styles.buttonContainer}
                         onPress={() => sendFriendRequest()}
                     >
-                        <Text>Send Friend Request</Text>
+                        <Text style={(backgroundColor = "white")}>
+                            Send Friend Request
+                        </Text>
                     </TouchableOpacity>
                 </View>
             );
@@ -290,52 +313,98 @@ export default class Profile extends Component<Props> {
                             uri: picture_url
                         }}
                     />
+                    <Text style={styles.name}> {name} </Text>
+                    <Text style={styles.info_about}> {bio} </Text>
+                    <Text style={styles.info_city}>Bloomington, IN</Text>
                     <View style={styles.body}>
                         <View style={styles.bodyContent}>
-                            <Text style={styles.name}> {git_username} </Text>
-                            <Text style={styles.name}> {name} </Text>
-                            <Text style={styles.info}> {bio} </Text>
-                            <Text style={styles.info}>Bloomington, IN</Text>
-                            <Text style={styles.description}>
-                                Skills:
-                                {skills &&
-                                    Object.keys(skills)
-                                        .map(
-                                            skill =>
-                                                skills[skill] ? skill : ""
-                                        )
-                                        .join(",")}
-                            </Text>
-                            <Text style={styles.description}>
-                                Need Help with:
-                                {need_help &&
-                                    Object.keys(need_help)
-                                        .map(
-                                            help =>
-                                                need_help[help] ? help : ""
-                                        )
-                                        .join(",")}
-                            </Text>
-                            <Text style={styles.description}>
-                                Will Help With:
-                                {will_help &&
-                                    Object.keys(will_help)
-                                        .map(
-                                            help =>
-                                                will_help[help] ? help : ""
-                                        )
-                                        .join(",")}
-                            </Text>
-                            <Text style={styles.description}>
-                                Will Tutor in:
-                                {will_tutor &&
-                                    Object.keys(will_tutor)
-                                        .map(
-                                            tutor =>
-                                                will_tutor[tutor] ? tutor : ""
-                                        )
-                                        .join(",")}
-                            </Text>
+                            {/* <Text style={styles.name}> {git_username} A </Text> */}
+                            <LinearGradient
+                                colors={["#4c669f", "#3b5998", "#192f6a"]}
+                                style={styles.linearGradient}
+                            >
+                                <Card style={styles.card_skill}>
+                                    <CardTitle title="Skills :">
+                                        <Text style={styles.description}>
+                                            Skills:
+                                            {skills &&
+                                                Object.keys(skills)
+                                                    .map(
+                                                        skill =>
+                                                            skills[skill]
+                                                                ? skill
+                                                                : ""
+                                                    )
+                                                    .join(",")}
+                                        </Text>
+                                    </CardTitle>
+                                </Card>
+                            </LinearGradient>
+
+                            <Animated.ScrollView
+                                horizontal
+                                scrollEventThrottle={1}
+                                showsHorizontalScrollIndicator={false}
+                                // snapToInterval={CARD_WIDTH}
+                                // onScroll={Animated.event(
+                                //     [
+                                //     {
+                                //         nativeEvent: {
+                                //         contentOffset: {
+                                //             x: this.animation,
+                                //         },
+                                //         },
+                                //     },
+                                //     ],
+                                //     { useNativeDriver: true }
+                                // )}
+                                style={styles.scrollView}
+                                // contentContainerStyle={styles.endPadding}
+                            >
+                                <Card style={styles.card}>
+                                    <Text style={styles.description}>
+                                        Need Help with:
+                                        {need_help &&
+                                            Object.keys(need_help)
+                                                .map(
+                                                    help =>
+                                                        need_help[help]
+                                                            ? help
+                                                            : ""
+                                                )
+                                                .join(",")}
+                                    </Text>
+                                </Card>
+                                <Card style={styles.card}>
+                                    <Text style={styles.description}>
+                                        Will Help With:
+                                        {will_help &&
+                                            Object.keys(will_help)
+                                                .map(
+                                                    help =>
+                                                        will_help[help]
+                                                            ? help
+                                                            : ""
+                                                )
+                                                .join(",")}
+                                    </Text>
+                                </Card>
+                                <Card style={styles.card}>
+                                    <Text style={styles.description}>
+                                        Will Tutor in:
+                                        {will_tutor &&
+                                            Object.keys(will_tutor)
+                                                .map(
+                                                    tutor =>
+                                                        will_tutor[tutor]
+                                                            ? tutor
+                                                            : ""
+                                                )
+                                                .join(",")}
+                                    </Text>
+                                </Card>
+                            </Animated.ScrollView>
+
                             <View>{this.createButtonView()}</View>
                         </View>
                     </View>
@@ -347,8 +416,9 @@ export default class Profile extends Component<Props> {
 
 const styles = StyleSheet.create({
     header: {
-        backgroundColor: "#000000",
-        height: 150
+        backgroundColor: "black",
+        height: 300,
+        elevation: 1
     },
     avatar: {
         width: 130,
@@ -356,33 +426,53 @@ const styles = StyleSheet.create({
         borderRadius: 63,
         borderWidth: 4,
         borderColor: "white",
-        marginBottom: 10,
+        marginBottom: 20,
         alignSelf: "center",
         position: "absolute",
-        marginTop: 70
+        marginTop: 50,
+        elevation: 3
     },
     name: {
-        fontSize: 22,
-        color: "#FFFFFF",
-        fontWeight: "600"
+        fontSize: 28,
+        color: "white",
+        fontWeight: "600",
+        fontFamily: "Roboto",
+        elevation: 4,
+        marginTop: 180,
+        position: "absolute",
+        alignSelf: "center"
     },
     body: {
-        marginTop: 30
+        marginTop: 0,
+        backgroundColor: "white"
     },
     bodyContent: {
         flex: 1,
         alignItems: "center",
         padding: 30
     },
-    name: {
-        fontSize: 28,
-        color: "#696969",
-        fontWeight: "600"
-    },
-    info: {
+    // name: {
+    //     fontSize: 28,
+    //     color: "black",
+    //     fontWeight: "600"
+    // },
+    info_about: {
         fontSize: 16,
-        color: "#00BFFF",
-        marginTop: 10
+        color: "white",
+        marginTop: 220,
+        textAlign: "center",
+        elevation: 4,
+        position: "absolute",
+        alignSelf: "center"
+    },
+    info_city: {
+        fontSize: 16,
+        color: "white",
+        marginTop: 240,
+        textAlign: "center",
+        elevation: 4,
+        position: "absolute",
+        alignSelf: "center"
     },
     description: {
         fontSize: 16,
@@ -399,7 +489,52 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         width: 200,
         borderRadius: 30,
-        backgroundColor: "#00BFFF"
+        backgroundColor: "black"
+    },
+    scrollView: {
+        // position: "absolute",
+        marginTop: 150,
+        bottom: 40,
+        left: 0,
+        right: 0,
+        paddingVertical: 0
+    },
+    endPadding: {
+        paddingRight: CARD_WIDTH
+    },
+    card: {
+        borderRadius: 5,
+        padding: 10,
+        elevation: 4,
+        backgroundColor: "#FFF",
+        marginHorizontal: 10,
+        shadowColor: "#000",
+        shadowRadius: 10,
+        shadowOpacity: 0.3,
+        shadowOffset: { x: 2, y: -2 },
+        height: CARD_HEIGHT,
+        width: CARD_WIDTH,
+        overflow: "hidden"
+    },
+    card_skill: {
+        borderRadius: 5,
+        padding: 10,
+        elevation: 2,
+        backgroundColor: "#FFF",
+        marginHorizontal: 10,
+        shadowColor: "#000",
+        shadowRadius: 20,
+        shadowOpacity: 0.3,
+        shadowOffset: { x: 2, y: -2 },
+        height: 10,
+        width: 400,
+        overflow: "hidden"
+    },
+    linearGradient: {
+        flex: 1,
+        paddingLeft: 15,
+        paddingRight: 15,
+        borderRadius: 5
     },
     bio: {}
 });

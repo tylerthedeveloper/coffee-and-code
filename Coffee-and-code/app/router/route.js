@@ -109,12 +109,12 @@ const ScreenStackNavigator = createStackNavigator(
     {
         headerMode: "float",
         navigationOptions: ({ navigation }) => ({
-            headerStyle: { backgroundColor: "#4C3E54" },
+            headerStyle: { backgroundColor: "black" },
             title: navigation.routeName || "Coffee-and-Code",
             headerTintColor: "white",
             gesturesEnabled: false,
             headerLeft: drawerButton(navigation),
-            headerRight: prefButton(navigation),
+            // headerRight: prefButton(navigation),
             git_username: navigation.getParam("git_username") || ""
             // current_user: current_user || ""
         })
@@ -150,25 +150,25 @@ const drawerButton = navigation => (
     </Text>
 );
 
-const PrefStackNavigator = createStackNavigator({
-    Preference: {
-        screen: Preference,
-        navigationOptions: {
-            title: "Preference"
-        }
-    }
-});
-const prefButton = navigation => (
-    <Text
-        style={{ padding: 5, color: "white", textAlign: "right" }}
-        // onPress={() => {
-        //     navigation.navigate("Screen1");
-        // }}
-    >
-        {/* TODO: Change to hamburger font awesome */}
-        Preference
-    </Text>
-);
+// const PrefStackNavigator = createStackNavigator({
+//     Preference: {
+//         screen: Preference,
+//         navigationOptions: {
+//             title: "Preference"
+//         }
+//     }
+// });
+// const prefButton = navigation => (
+//     <Text
+//         style={{ padding: 5, color: "white", textAlign: "right" }}
+//         // onPress={() => {
+//         //     navigation.navigate("Screen1");
+//         // }}
+//     >
+//         {/* TODO: Change to hamburger font awesome */}
+//         Preference
+//     </Text>
+// );
 
 export const DrawerNavigation = createStackNavigator(
     {
