@@ -11,7 +11,10 @@ import {
 import firebase from "firebase";
 import { createChatThread } from "../services/chat-service";
 import { logout, sendMessage } from "../services/profile-utils";
-import { acceptFriendRequest } from "../services/friend-requests-service";
+import {
+    acceptFriendRequest,
+    sendFriendRequest
+} from "../services/friend-requests-service";
 import {
     updateUserSkills,
     getUserByID,
@@ -52,14 +55,8 @@ export default class Profile extends Component<Props> {
                 return profile;
             });
         profile.skills = JSON.parse(JSON.stringify(profile.skills));
-        // console.log("profile", profile);
+        console.log("current_user", this.state.current_user);
         if (this.state.current_user && this.state.git_username === "") {
-            // await AsyncStorage.getItem("profile")
-            //     .then(profile => JSON.parse(profile))
-            //     .then(user => {
-            //         // console.log("user1", user);
-            // this.setState({ user });
-            //     });
             this.setState({ user: profile });
         } else {
             getUserByID(this.state.git_username)
@@ -116,33 +113,6 @@ export default class Profile extends Component<Props> {
     addSkills(skillsObj) {
         // TODO: Parse object
     }
-
-    // launchUpdateSkills(skillsObj) {
-    //     let _skillsObj = {};
-    //     Object.keys(skillsObj).map(key => {
-    //         const arr = skillsObj[key];
-    //         _skillsObj[key] = {};
-    //         arr.map(skill => _skillsObj[key][skill] = true);
-    //     })
-    //     console.log(_skillsObj);
-    //     // const newSkills = {
-    //     //     C: true,
-    //     //     Java: true,
-    //     //     Python: true
-    //     // };
-    //     updateUserPreferences
-    //     // const newSkillsObj = {
-    //     //     git_username: this.state.current_user,
-    //     //     skills: newSkills
-    //     // };
-    //     // Promise.resolve(newSkillsObj)
-    //     //     // .then(newSkills => ({
-    //     //     //     git_username: this.state.git_username,
-    //     //     //     skills: newSkills
-    //     //     // }))
-    //     //     .then(newSkillsObj => updateUserSkills(newSkillsObj))
-    //     //     .then(res => this.refreshProfile());
-    // }
 
     launchUpdateSkills(skillsObj) {
         let _skillsObj = {};
@@ -222,7 +192,7 @@ export default class Profile extends Component<Props> {
                 <View>
                     <TouchableOpacity
                         style={styles.buttonContainer}
-                        onPress={() => sendFriendRequest()}
+                        onPress={() => sendFriendRequest(this.state)}
                     >
                         <Text>Send Friend Request</Text>
                     </TouchableOpacity>
