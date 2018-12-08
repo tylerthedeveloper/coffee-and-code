@@ -321,22 +321,24 @@ export default class Profile extends Component<Props> {
                     <View style={styles.body}>
                         <View style={styles.bodyContent}>
                             {/* <Text style={styles.name}> {git_username} A </Text> */}
-                            <Card style={styles.card_skill}>
-                                <CardTitle title="Skills :">
-                                    <Text style={styles.description}>
-                                        Skills:
-                                        {skills &&
-                                            Object.keys(skills)
-                                                .map(
-                                                    skill =>
-                                                        skills[skill]
-                                                            ? skill
-                                                            : ""
-                                                )
-                                                .join(",")}
-                                    </Text>
-                                </CardTitle>
-                            </Card>
+                            <View style={{ height: 100 }}>
+                                <Card style={styles.card_skill}>
+                                    <CardTitle title="Skills :">
+                                        <Text style={styles.description}>
+                                            Skills:
+                                            {skills &&
+                                                Object.keys(skills)
+                                                    .map(
+                                                        skill =>
+                                                            skills[skill]
+                                                                ? skill
+                                                                : ""
+                                                    )
+                                                    .join(",")}
+                                        </Text>
+                                    </CardTitle>
+                                </Card>
+                            </View>
 
                             <Animated.ScrollView
                                 horizontal
@@ -485,15 +487,16 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         width: 200,
         borderRadius: 30,
-        backgroundColor: "black"
+        backgroundColor: "#00aced"
     },
     scrollView: {
         // position: "absolute",
-        marginTop: 150,
+        marginTop: 100,
         bottom: 40,
         left: 0,
         right: 0,
-        paddingVertical: 0
+        paddingVertical: 0,
+        backgroundColor: "black"
     },
     endPadding: {
         paddingRight: CARD_WIDTH
@@ -526,11 +529,6 @@ const styles = StyleSheet.create({
         width: 400,
         overflow: "hidden"
     },
-    linearGradient: {
-        flex: 1,
-        paddingLeft: 15,
-        paddingRight: 15,
-        borderRadius: 5
-    },
+
     bio: {}
 });
