@@ -4,14 +4,8 @@ export const apiurl =
     "https://www.code-and-coffee2.azurewebsites.net/friend-requests";
 // export const apiurl = "http://192.168.64.17:3001/friend-requests";
 
-// TODO: Test??
-// export const sendFriendRequest = (
-//     usernameFrom,
-//     fromPhotoURL,
-//     usernameTo,
-//     toPhotoURL
-// ) => {
 export const sendFriendRequest = state => {
+    console.log("sendFriendRequest");
     const {
         current_user,
         current_user_picture_url,
@@ -29,13 +23,16 @@ export const sendFriendRequest = state => {
             }
         }
     };
-    return fetch(`${apiurl}`, {
+    console.log(body);
+    return fetch(`https://code-and-coffee2.azurewebsites.net/friend-requests`, {
         method: "POST",
         body: JSON.stringify(body),
         headers: {
             "Content-type": "application/json"
         }
-    }).then(res => res.json());
+    })
+        .then(res => console.log(res))
+        .catch(err => console.log(err));
 };
 
 export function getSentFriendRequests(username) {

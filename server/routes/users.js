@@ -94,8 +94,7 @@ router.post("/expo-token", function(req, res, next) {
     const key = `expo-token:${git_username}`;
     console.log("expo-token key: ", key);
     console.log("expo-token value: ", expo_token);
-    // return redisClient.set('expo-token:nishchayagupta', 'ExponentPushToken[4I-dHCMDqlhBm9eZoO7syr]', function(error, result) {
-    return redisClient.set(key, expoToken, function(error, result) {
+    return redisClient.set(key, expo_token, function(error, result) {
         if (error) {
             console.log(error);
             throw error;

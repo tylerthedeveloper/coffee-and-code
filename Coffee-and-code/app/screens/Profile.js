@@ -216,9 +216,7 @@ export default class Profile extends Component<Props> {
                         style={styles.buttonContainer}
                         onPress={() => sendFriendRequest(this.state)}
                     >
-                        <Text style={(backgroundColor = "white")}>
-                            Send Friend Request
-                        </Text>
+                        <Text>Send Friend Request</Text>
                     </TouchableOpacity>
                 </View>
             );

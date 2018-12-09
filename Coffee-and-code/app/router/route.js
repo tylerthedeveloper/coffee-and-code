@@ -137,8 +137,15 @@ const DrawerStack = createDrawerNavigator(
 );
 
 const drawerButton = navigation => (
-    <View style={{ position: "absolute" }}>
-        <Text>Menu</Text>
+    <View>
+        <Icon
+            name="menu"
+            color="white"
+            style={{ flex: 1 }}
+            onPress={() => {
+                navigation.toggleDrawer();
+            }}
+        />
     </View>
 );
 

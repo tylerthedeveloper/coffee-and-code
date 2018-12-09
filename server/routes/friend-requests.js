@@ -71,7 +71,7 @@ router.post("/", function(req, res, next) {
             "body" : `${git_username_from} sent you a friend request!`,
             "sound" : "default",
             "badge" : 0
-        }).then(() => res.send({ result: "res" }));
+        }).then(() => res.send({ result: expoToken }));
     });
 });
 

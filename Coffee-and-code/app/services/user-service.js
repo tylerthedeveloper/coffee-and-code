@@ -54,7 +54,6 @@ export function addNewUser(profile) {
     const body = {
         data: profile
     };
-    // return fetch(`http://192.168.64.17:3001/users`, {
     return fetch(`${apiurl}`, {
         method: "POST",
         body: JSON.stringify(body),
@@ -69,11 +68,10 @@ export function addNewUserExpoNotiToken(git_username, token) {
     console.log("addNewUserExpoNotiToken");
     const body = {
         data: {
-            git_username,
+            git_username: git_username,
             expo_token: token
         }
     };
-    // return fetch("http://192.168.64.17:3001/users/expo-token", {
     return fetch(`${apiurl}/expo-token`, {
         method: "POST",
         body: JSON.stringify(body),
