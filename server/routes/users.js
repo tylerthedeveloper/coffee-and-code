@@ -1,36 +1,44 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../psql-config").psqlPool;
+const pgClient = require("../psql-config").pgClient;
 const format = require("pg-format");
 const redisClient = require("../redis-client").redisClient;
 
-var socket = require('socket.io');
-var http = require('http');
+var socket = require("socket.io");
+var http = require("http");
 
 var server = http.createServer(express);
 var io = socket.listen(server);
-server.listen(8000);
+server.listen(8080);
 
+const sockets = new Set();
+
+http.createServer(function(req, res) {
+    res.write("Hello World!");
+    res.end();
+}).listen(9955);
+
+pgClient.query('LISTEN "user_update_location"');
+pgClient.on("notification", function(msg) {
+    console.log(msg);
+    const { newUser, localUsers } = JSON.parse(msg.payload);
+    for (const s of sockets) {
+        const user_id = s.user_id;
+        // if (localUsers.indexOf(user_id) > -1) {
+        console.log(`Emitting value: ${msg}`);
+        s.emit("new_local_user", { data: newUser });
+        // }
+    }
+});
 
 // TODO: ERRORS???
 // TODO: update returns with success / error
 
-const sockets = new Set();
-
-// for (const s of sockets) {
-//         console.log(`Emitting msg`);
-//         s.disconnect(true);
-// }
-    
 /**
  * get all user's
  */
- router.get("/", function(req, res, next) {
-    // for (const s of sockets) {
-    //     console.log(`Emitting msg`);
-    //     s.emit('new_local_user', { data: "msg" });
-    // }
-
+router.get("/", function(req, res, next) {
     const sql = format("SELECT * FROM users");
     return pool.query(sql, (err, result) => {
         if (err) {
@@ -136,34 +144,29 @@ router.delete("/:userID", function(req, res, next) {
     });
 });
 
-
-io.on('connection', (socket) => {
-    
+io.on("connection", socket => {
     const user_id = socket.handshake.query["user_id"];
     socket.user_id = user_id;
     console.log(`Socket ${socket.id} added with user_id: ${socket.user_id}`);
     sockets.add(socket);
-  
-    socket.on('new_local_user', data => {
-      console.log("sokcet channel data: ", data);
-    });
-  
-    socket.on('disconnect', () => {
-      console.log(`Deleting socket: ${socket.id}`);
-      sockets.delete(socket);
-      console.log(`Remaining sockets: ${sockets.size}`);
+
+    socket.on("new_local_user", data => {
+        console.log("sokcet channel data: ", data);
     });
 
+    socket.on("disconnect", () => {
+        console.log(`Deleting socket: ${socket.id}`);
+        sockets.delete(socket);
+        console.log(`Remaining sockets: ${sockets.size}`);
+    });
 });
 
 /**
  * update one user by git_username
  */
 router.put("/:git_username/update_location", function(req, res, next) {
-
     console.log("Update location");
-    
-    
+
     const git_username = req.params["git_username"];
     const objectDict = req.body.data;
     const { latitude, longitude } = objectDict;
@@ -231,21 +234,21 @@ router.put("/:git_username/update_location", function(req, res, next) {
                 });
         });
 
+        /* ------- MOVED TO OPEN PSQL CLIENT ------- 
         client.on('notification', function(msg) {
-            // console.log('msg',  msg.payload);
+            console.log('msg',  msg.payload);
             const { newUser, localUsers } = JSON.parse(msg.payload);
             console.log('msg', newUser, localUsers);
             // TODO: only in sockets where id in list of local users
             for (const s of sockets) {
                 const user_id = s.user_id;
-                // if (localUsers.indexOf(user_id) > -1) {
                 console.log(`Emitting value: ${msg}`);
                 s.emit('new_local_user', { data: newUser });
-                // }
             }
         });
 
-        client.query("LISTEN user_update_location");
+        client.query('LISTEN "user_update_location"');
+        ------- MOVED TO OPEN PSQL CLIENT ------- */
     });
 });
 
@@ -392,7 +395,6 @@ router.post("/:git_username/near-me", function(req, res, next) {
     });
 });
 
-
 /**
  * update one user by git_username
  */
@@ -406,7 +408,7 @@ router.put("/:git_username", function(req, res, next) {
             const value = objectDict[key];
             return key + " = " + `'${JSON.stringify(value)}'`;
         });
-        // const sql = "UPDATE users " + query + " WHERE git_username = " + git_username;
+    // const sql = "UPDATE users " + query + " WHERE git_username = " + git_username;
     const sql = `UPDATE users ${query} WHERE git_username = '${git_username}'`;
     return pool.query(sql, (err, result) => {
         if (err) {
@@ -455,32 +457,27 @@ router.post("/:git_username/near-me", function(req, res, next) {
     });
 });
 
-
 //////////////////////
 // TEMPPPPPPPP
 ///////////////////////
-  
 
 // FOR UPDATE USER SET LOGIN
 router.get("/noti", function(req, res, next) {
-    
     pool.connect(function(err, client) {
-        if(err) {
-          console.log(err);
+        if (err) {
+            console.log(err);
         }
-        client.on('notification', function(msg) {
-          console.log('msg', msg);
+        client.on("notification", function(msg) {
+            console.log("msg", msg);
             for (const s of sockets) {
                 console.log(`Emitting value: ${msg}`);
-                s.emit('new_local_user', { data: msg });
+                s.emit("new_local_user", { data: msg });
             }
         });
         client.query("LISTEN user_update_location");
-      });
+    });
     // subject.subscribe(args => res.send(args));
-    res.send('connected')
-
+    res.send("connected");
 });
 
 module.exports = router;
-

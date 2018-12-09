@@ -5,6 +5,8 @@ services:
     build: .
     ports:
       - "3000:3000"
+      - "8080:8080"
+      - "9955:9955"
     networks: 
       - app_server_bridge
   redis_server:
