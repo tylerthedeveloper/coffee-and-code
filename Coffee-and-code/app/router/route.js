@@ -108,7 +108,7 @@ const ScreenStackNavigator = createStackNavigator(
   {
     headerMode: "float",
     navigationOptions: ({ navigation }) => ({
-      headerStyle: { backgroundColor: "#4285F4" },
+      headerStyle: { backgroundColor: "black" },
       title: navigation.routeName || "Coffee-and-Code",
       headerTintColor: "white",
       gesturesEnabled: false,
