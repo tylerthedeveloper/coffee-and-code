@@ -6,25 +6,62 @@ const bodyParser = require('body-parser');
 // TODO: Setup morgan logger
 const logger = require('morgan');
 const pool = require('./psql-config').psqlPool;
+const pgClient = require('./psql-config').pgClient;
 const redisClient = require("./redis-client").redisClient;
+const HashMap = require('hashmap');
 
-// const http = require('http');
-// const server = http.createServer(express);
-// // server.listen(3001, "127.0.0.1");
-// const io = require('socket.io')(server);
-// io.listen(server);
-// server.listen(3001, "127.0.0.1");
-
-
-// var socket = require('socket.io');
-// // var express = require('express');
-// var http = require('http');
+var socket = require('socket.io');
+var http = require('http');
 
 var app = express();
-// var server = http.createServer(express);
 
-// var io = socket.listen(server);
-// server.listen(8000);
+var server = http.createServer(app);
+
+var io = socket.listen(server);
+server.listen(8080);
+
+const sockets = new Set();
+app.users = new HashMap(); // Array with connected user
+console.log("Number of users: " + sockets.size);
+// start listen with socket.io
+// setInterval(() => {
+//     io.emit("new_local_user", { data: 'interval' });
+// }, 1000);
+
+io.on('connection', function(socket) {
+
+  console.log('Connected');
+  const user_id = socket.handshake.query["user_id"];
+  socket.user_id = user_id;
+
+  console.log(`Socket ${socket.id} added with user_id: ${socket.user_id}`);
+  // app.users.set(user_id, socket);
+  sockets.add(socket);
+  console.log("Number of users: " + sockets.size);
+
+  socket.on('disconnect', function() {
+      console.log('User ' + app.users.get(socket) + ' DISCONNECTED');
+      sockets.remove(socket);
+      console.log("Number of users: " + sockets.size);
+      // app.io.emit('connection on off', (app.users.count()));
+  });
+});
+
+pgClient.on("notification", function(msg) {
+  console.log("msg", msg);
+  const { newUser, localUsers } = JSON.parse(msg.payload);
+  console.log("Number of users on notification: " + sockets.size);
+  for (const s of sockets) {
+  // Object.keys(app.users).map(key => {
+    console.log(`Emitting value: ${msg}`);
+    // const s = app.users[key];
+    // console.log(s);
+    s.emit("new_local_user", { data: newUser });
+  }
+});
+pgClient.query("LISTEN user_update_location");
+
+
 // TODO: Dele
 redisClient.set('my test key', 'my test value');
 

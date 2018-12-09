@@ -119,8 +119,9 @@ export default class Home extends Component<Props> {
 
     componentDidMount() {
         this._initMap().then(() => {
-            this.socket = openSocket(
-                "https://www.code-and-coffee2.azurewebsites.net:8000",
+            this.socket = SocketIOClient(
+                // "http://192.168.64.17:8080",
+                "https://code-and-coffee2.azurewebsites.net:8080",
                 {
                     query: {
                         user_id: this.state.user_id

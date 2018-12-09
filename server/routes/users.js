@@ -4,19 +4,19 @@ const pool = require("../psql-config").psqlPool;
 const format = require("pg-format");
 const redisClient = require("../redis-client").redisClient;
 
-var socket = require("socket.io");
-var http = require("http");
+// var socket = require("socket.io");
+// var http = require("http");
 
-var server = http.createServer(express);
-var io = socket.listen(server);
-server.listen(8000);
+// var server = http.createServer(express);
+// var io = socket.listen(server);
+// server.listen(8000);
 
-const sockets = new Set();
+// const sockets = new Set();
 
-http.createServer(function(req, res) {
-    res.write("Hello World!");
-    res.end();
-}).listen(9955);
+// http.createServer(function(req, res) {
+//     res.write("Hello World!");
+//     res.end();
+// }).listen(8080);
 
 // TODO: ERRORS???
 // TODO: update returns with success / error
@@ -140,22 +140,22 @@ router.delete("/:userID", function(req, res, next) {
     });
 });
 
-io.on("connection", socket => {
-    const user_id = socket.handshake.query["user_id"];
-    socket.user_id = user_id;
-    console.log(`Socket ${socket.id} added with user_id: ${socket.user_id}`);
-    sockets.add(socket);
+// io.on("connection", socket => {
+//     const user_id = socket.handshake.query["user_id"];
+//     socket.user_id = user_id;
+//     console.log(`Socket ${socket.id} added with user_id: ${socket.user_id}`);
+//     sockets.add(socket);
 
-    socket.on("new_local_user", data => {
-        console.log("sokcet channel data: ", data);
-    });
+//     socket.on("new_local_user", data => {
+//         console.log("sokcet channel data: ", data);
+//     });
 
-    socket.on("disconnect", () => {
-        console.log(`Deleting socket: ${socket.id}`);
-        sockets.delete(socket);
-        console.log(`Remaining sockets: ${sockets.size}`);
-    });
-});
+//     socket.on("disconnect", () => {
+//         console.log(`Deleting socket: ${socket.id}`);
+//         sockets.delete(socket);
+//         console.log(`Remaining sockets: ${sockets.size}`);
+//     });
+// });
 
 /**
  * update one user by git_username
@@ -230,21 +230,21 @@ router.put("/:git_username/update_location", function(req, res, next) {
                 });
         });
 
-        client.on("notification", function(msg) {
-            // console.log('msg',  msg.payload);
-            const { newUser, localUsers } = JSON.parse(msg.payload);
-            console.log("msg", newUser, localUsers);
-            // TODO: only in sockets where id in list of local users
-            for (const s of sockets) {
-                const user_id = s.user_id;
-                // if (localUsers.indexOf(user_id) > -1) {
-                console.log(`Emitting value: ${msg}`);
-                s.emit("new_local_user", { data: newUser });
-                // }
-            }
-        });
+        // client.on("notification", function(msg) {
+        //     // console.log('msg',  msg.payload);
+        //     const { newUser, localUsers } = JSON.parse(msg.payload);
+        //     console.log("msg", newUser, localUsers);
+        //     // TODO: only in sockets where id in list of local users
+        //     for (const s of sockets) {
+        //         const user_id = s.user_id;
+        //         // if (localUsers.indexOf(user_id) > -1) {
+        //         console.log(`Emitting value: ${msg}`);
+                // s.emit("new_local_user", { data: newUser });
+        //         // }
+        //     }
+        // });
 
-        client.query("LISTEN user_update_location");
+        // client.query("LISTEN user_update_location");
     });
 });
 

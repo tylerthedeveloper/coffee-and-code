@@ -14,7 +14,18 @@ const pool = new Pool({
     // connectionTimeoutMillis: 2000,
 });
 
+var pg = require ('pg');
+var pgConnectionString = "postgres://" + 
+                         process.env.PGUSER + ":" +
+                         process.env.PGPASSWORD + "@" +
+                         process.env.PGHOST + "/" +
+                         process.env.PGDATABASE;
+
+
+var pgClient = new pg.Client(pgConnectionString);
+pgClient.connect();
 
 module.exports = {
     psqlPool: pool,
+    pgClient: pgClient
 }
