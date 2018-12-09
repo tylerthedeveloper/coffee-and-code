@@ -124,11 +124,9 @@ export default class Home extends Component<Props> {
     }
 
     let token = await Notifications.getExpoPushTokenAsync();
-    console.log("expo token", token);
+    // console.log("expo token", token);
     // TODO: also store in async storage
-    addNewUserExpoNotiToken(this.state.git_username, token).then(res =>
-      console.log("added token")
-    );
+    addNewUserExpoNotiToken(this.state.git_username, token);
   };
 
   componentWillMount() {
@@ -141,7 +139,6 @@ export default class Home extends Component<Props> {
 
   // TODO: make generic
   filterUsers(queryObj) {
-    console.log("skillsQuery: ", queryObj);
     // const skillsQuery = ["React-Native"];
     const filtered_markers = new Set();
     // this.state.markers.map(marker => {
@@ -156,13 +153,11 @@ export default class Home extends Component<Props> {
     //     });
     // });
     const filterObj = queryObj.finalList;
-    // console.log(queryObj);
-    console.log(filterObj);
     this.state.markers.map(marker => {
       Object.keys(filterObj).map(preferenceKey => {
         const curObj = filterObj[preferenceKey];
         curObj.map(preference => {
-          console.log(preferenceKey, preference);
+          // console.log(preferenceKey, preference);
           const _marker = Object.keys(marker[preferenceKey]).some(
             _preference => preference === _preference
           );
@@ -191,7 +186,7 @@ export default class Home extends Component<Props> {
         location: coords
       }).then(localUsers => this.setMapMarkers(coords, localUsers));
     } else {
-      console.log("storedLocation: ", storedLocation);
+      // console.log("storedLocation: ", storedLocation);
       // const coords = storedLocation.coords;
       const coords = storedLocation;
       getLocalUsers({
@@ -223,7 +218,6 @@ export default class Home extends Component<Props> {
       // looking_for:
     }));
     // TODO: Push logged in user
-    // console.log("Markers are: ", markers);
     // markers.push({
     //     skills: this.state.profile.skills,
     //     coordinate: coords,
@@ -241,7 +235,6 @@ export default class Home extends Component<Props> {
   }
 
   async _initMap() {
-    console.log("inside initMap");
     const { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status !== "granted") {
       // TODO: re-request for location permission
@@ -257,11 +250,11 @@ export default class Home extends Component<Props> {
       //   enableHighAccuracy: true
       // }); // {enableHighAccuracy: true}
       TODO: AsyncStorage.setItem("location", JSON.stringify(location.coords));
-      console.log("setlocation ", location);
+      // console.log("setlocation ", location);
       const { latitude, longitude } = location.coords;
       // await getLoggedinUserName().then(git_username =>
       await getLoggedinUserProfile().then(profile => {
-        console.log("profile: ", profile);
+        // console.log("profile: ", profile);
         this.setState({
           git_username: profile.git_username,
           profile,
@@ -300,7 +293,7 @@ export default class Home extends Component<Props> {
   };
 
   openModal(modalNumber, markerData) {
-    console.log(markerData);
+    // console.log(markerData);
     //  PROFILE and Recommendation
     if (modalNumber === 1 || modalNumber === 3) {
       this.setState({
@@ -325,6 +318,7 @@ export default class Home extends Component<Props> {
 
   onModalPressed(action, callback) {
     const marker = this.state.selectedMarker;
+    console.log("selected marker", marker);
     this.setState({ visibleModal: null });
     switch (action) {
       case "Profile":
@@ -334,6 +328,8 @@ export default class Home extends Component<Props> {
         });
         break;
       case "Directions":
+        console.log("current coords", this.state.current_coords);
+        console.log("marker coords", marker.coordinate);
         handleGetDirections(this.state.current_coords, marker.coordinate);
         break;
       case "Recommendations":
@@ -438,11 +434,10 @@ export default class Home extends Component<Props> {
   }
 
   setFilters = fitlerObj => {
-    console.log(fitlerObj);
+    console.log("hello");
   };
 
   render() {
-    console.log(this.state.region);
     const { navigation } = this.props;
     return (
       <View style={styles.container}>
@@ -463,8 +458,8 @@ export default class Home extends Component<Props> {
           ))}
           {this.state.nearbyLocations.map(rest => (
             <Marker
-              key={rest.coords.longitude}
-              coordinate={rest.coords}
+              key={rest.coordinate.longitude}
+              coordinate={rest.coordinate}
               pinColor="blue"
               image={{ uri: rest.icon }}
               onPress={() => this.openModal(3, rest)}
