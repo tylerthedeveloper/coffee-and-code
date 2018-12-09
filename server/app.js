@@ -18,7 +18,7 @@ var app = express();
 var server = http.createServer(app);
 
 var io = socket.listen(server);
-server.listen(8080);
+server.listen(9023);
 
 const sockets = new Set();
 app.users = new HashMap(); // Array with connected user
