@@ -108,7 +108,7 @@ const ScreenStackNavigator = createStackNavigator(
   {
     headerMode: "float",
     navigationOptions: ({ navigation }) => ({
-      headerStyle: { backgroundColor: "black" },
+      headerStyle: { backgroundColor: "#4285F4" },
       title: navigation.routeName || "Coffee-and-Code",
       headerTintColor: "white",
       gesturesEnabled: false,
@@ -137,11 +137,10 @@ const DrawerStack = createDrawerNavigator(
 );
 
 const drawerButton = navigation => (
-  <View style={{ position: "absolute" }}>
+  <View>
     <Icon
       name="menu"
       color="white"
-      style={{ marginLeft: 10 }}
       onPress={() => {
         navigation.toggleDrawer();
       }}

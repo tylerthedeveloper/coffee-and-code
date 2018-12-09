@@ -38,7 +38,6 @@ import ToggleSwitch from "toggle-switch-react-native";
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
 const { width, height } = Dimensions.get("window");
 import * as firebase from "firebase";
-
 // TODO: Constants
 const ASPECT_RATIO = width / height;
 const LATITUDE = 39.1834026;
@@ -47,9 +46,10 @@ const LATITUDE_DELTA = 0.03; // 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 const GOOGLE_MAPS_APIKEY = "AIzaSyAPaNuHNAHk4NSk4TLnN_ngI8Dgm-_W74Y";
 import Modal from "react-native-modal";
+import ActionButton from "react-native-action-button";
+import Icon from "react-native-vector-icons/Ionicons";
 
 import { addNewUserExpoNotiToken } from "../services/user-service";
-
 const items = [
   {
     name: "Front End",
@@ -254,9 +254,9 @@ export default class Home extends Component<Props> {
         }
       };
       // let location = await Location.getCurrentPositionAsync({
-      TODO: //   enableHighAccuracy: true
+      //   enableHighAccuracy: true
       // }); // {enableHighAccuracy: true}
-      AsyncStorage.setItem("location", JSON.stringify(location.coords));
+      TODO: AsyncStorage.setItem("location", JSON.stringify(location.coords));
       console.log("setlocation ", location);
       const { latitude, longitude } = location.coords;
       // await getLoggedinUserName().then(git_username =>
@@ -298,14 +298,6 @@ export default class Home extends Component<Props> {
       />
     );
   };
-
-  // getRest = destination => {
-  //     let current_location = {
-  //         latitude: this.state.region.latitude,
-  //         longitude: this.state.region.longitude
-  //     };
-  //     this.handleGetDirections(current_location, destination);
-  // };
 
   openModal(modalNumber, markerData) {
     console.log(markerData);
@@ -360,7 +352,6 @@ export default class Home extends Component<Props> {
   }
 
   renderUserProfileModal() {
-    console.log("userProfile marker selected", this.state.selectedMarker);
     return (
       <Modal
         isVisible={this.state.visibleModal === 1}
@@ -410,25 +401,7 @@ export default class Home extends Component<Props> {
     );
   }
 
-  // async getLocationImage = photoReference => {
-  //     const photoPromise = fetch(
-  //         `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference${photoReference}&key=AIzaSyAPaNuHNAHk4NSk4TLnN_ngI8Dgm-_W74Y`,
-  //         {
-  //             method: "GET",
-  //             headers: {
-  //                 "Content-type": "application/json"
-  //                 // TODO: Credentials / accesstoken
-  //             }
-  //         }
-  //     );
-  //     return photoPromise.then(res => {
-  //         return res.url;
-  //     });
-  // };
-
   renderRecommendationModal() {
-    console.log(this.state.selectedMarker);
-    // const photo_reference = await this.getLocationImage(this.state.selectedMarker.photo_reference);
     return (
       <Modal
         isVisible={this.state.visibleModal === 3}
@@ -473,7 +446,7 @@ export default class Home extends Component<Props> {
     const { navigation } = this.props;
     return (
       <View style={styles.container}>
-        <MapView.Animated
+        <MapView
           provider={this.props.provider}
           style={styles.map}
           initialRegion={this.state.region}
@@ -497,8 +470,8 @@ export default class Home extends Component<Props> {
               onPress={() => this.openModal(3, rest)}
             />
           ))}
-        </MapView.Animated>
-        <Callout>
+        </MapView>
+        {/* <Callout>
           <View
             style={{
               flexDirection: "row",
@@ -506,27 +479,46 @@ export default class Home extends Component<Props> {
               marginLeft: width * 0.2
             }}
           >
-            <TouchableOpacity
-              onPress={() =>
-                navigation.push("List", {
-                  passProps: {
-                    callback: data => this.filterUsers(data)
-                  }
-                })
-              }
-              style={styles.bubble}
-            >
-              <Text>Filter</Text>
-            </TouchableOpacity>
-            <Text />
-            <TouchableOpacity
-              onPress={() => this.refreshMap()}
-              style={styles.bubble}
-            >
-              <Text>Refresh Location</Text>
-            </TouchableOpacity>
+            <Button title="Hello Button" />
           </View>
-        </Callout>
+
+          <View
+            style={{
+              flexDirection: "row",
+              marginTop: height - 600,
+              marginLeft: width * 0.2
+            }}
+          >
+            
+          </View> 
+        </Callout> */}
+        <View
+          style={{
+            position: "absolute", //use absolute position to show button on top of the map
+            top: "90%", //for center align
+            flexDirection: "row"
+          }}
+        >
+          <TouchableOpacity
+            onPress={() =>
+              navigation.push("List", {
+                passProps: {
+                  callback: data => this.filterUsers(data)
+                }
+              })
+            }
+            style={styles.MapButton}
+          >
+            <Text>Filter</Text>
+          </TouchableOpacity>
+          <Text />
+          <TouchableOpacity
+            onPress={() => this.refreshMap()}
+            style={styles.MapButton}
+          >
+            <Text>Refresh Location</Text>
+          </TouchableOpacity>
+        </View>
 
         <View>{this.renderUserProfileModal()}</View>
         <View>{this.renderRecommendationModal()}</View>
@@ -591,5 +583,22 @@ const styles = StyleSheet.create({
   },
   button: {
     borderRadius: 30
+  },
+  MapButton: {
+    shadowColor: "rgba(0,0,0, .4)", // IOS
+    shadowOffset: { height: 1, width: 1 }, // IOS
+    shadowOpacity: 1, // IOS
+    shadowRadius: 1, //IOS
+    backgroundColor: "white",
+    elevation: 2, // Android
+    height: 50,
+    width: 180,
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    borderRadius: 30,
+    borderColor: "white",
+    borderWidth: 3,
+    marginLeft: 20
   }
 });
