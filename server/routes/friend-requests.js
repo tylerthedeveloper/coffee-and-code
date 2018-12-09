@@ -3,7 +3,7 @@ const router = express.Router();
 const pool = require("../psql-config").psqlPool;
 const format = require("pg-format");
 const redisClient = require("../redis-client").redisClient;
-const axios = require("axios");
+const axios = require('axios');
 
 /**
  * get friend requests received by username
@@ -54,7 +54,7 @@ router.post("/", function(req, res, next) {
     const toLookup = `${git_username_to}-received`;
     const multiClient = redisClient.multi();
     const notiKey = `expo-token:${git_username_to}`;
-    console.log("notiKey", notiKey);
+    console.log('notiKey', notiKey);
     multiClient.rpush(fromLookup, `${git_username_to}:${picture_url_to}`);
     multiClient.rpush(toLookup, `${git_username_from}:${picture_url_from}`);
     multiClient.get(notiKey);
@@ -65,15 +65,13 @@ router.post("/", function(req, res, next) {
         }
         console.log("set and get result -> " + result[2]);
         const expoToken = result[2];
-        axios
-            .post("https://exp.host/--/api/v2/push/send", {
-                to: expoToken,
-                title: "Coffee and Code",
-                body: `${git_username_from} sent you a friend request!`,
-                sound: "default",
-                badge: 0
-            })
-            .then(() => res.send({ result: expoToken }));
+        axios.post('https://exp.host/--/api/v2/push/send', {
+            "to" : expoToken,
+            "title" : "Coffee and Code",
+            "body" : `${git_username_from} sent you a friend request!`,
+            "sound" : "default",
+            "badge" : 0
+        }).then(() => res.send({ result: expoToken }));
     });
 });
 
@@ -95,7 +93,7 @@ router.delete("/", function(req, res, next) {
             throw error;
         }
         console.log("SET result -> " + result);
-
+        
         res.send({ result: "res" });
     });
 });
