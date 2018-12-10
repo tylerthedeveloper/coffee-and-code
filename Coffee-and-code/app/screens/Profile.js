@@ -40,7 +40,7 @@ const status = "";
 // const { width, height } = Dimensions.get("window");
 
 const CARD_HEIGHT = 120;
-const CARD_WIDTH = CARD_HEIGHT + 50;
+const CARD_WIDTH = CARD_HEIGHT + 100;
 
 export default class Profile extends Component<Props> {
     constructor(props) {
@@ -313,25 +313,19 @@ export default class Profile extends Component<Props> {
                                 horizontal
                                 scrollEventThrottle={1}
                                 showsHorizontalScrollIndicator={false}
-                                // snapToInterval={CARD_WIDTH}
-                                // onScroll={Animated.event(
-                                //     [
-                                //     {
-                                //         nativeEvent: {
-                                //         contentOffset: {
-                                //             x: this.animation,
-                                //         },
-                                //         },
-                                //     },
-                                //     ],
-                                //     { useNativeDriver: true }
-                                // )}
                                 style={styles.scrollView}
                                 // contentContainerStyle={styles.endPadding}
                             >
                                 <Card style={styles.card}>
-                                    <Text style={styles.description}>
+                                    <Text
+                                        style={{
+                                            fontSize: 18,
+                                            fontWeight: "bold"
+                                        }}
+                                    >
                                         Need Help with:
+                                    </Text>
+                                    <Text style={styles.description}>
                                         {need_help &&
                                             Object.keys(need_help)
                                                 .map(
@@ -344,8 +338,15 @@ export default class Profile extends Component<Props> {
                                     </Text>
                                 </Card>
                                 <Card style={styles.card}>
+                                    <Text
+                                        style={{
+                                            fontSize: 18,
+                                            fontWeight: "bold"
+                                        }}
+                                    >
+                                        Will Help with:
+                                    </Text>
                                     <Text style={styles.description}>
-                                        Will Help With:
                                         {will_help &&
                                             Object.keys(will_help)
                                                 .map(
@@ -358,8 +359,15 @@ export default class Profile extends Component<Props> {
                                     </Text>
                                 </Card>
                                 <Card style={styles.card}>
+                                    <Text
+                                        style={{
+                                            fontSize: 18,
+                                            fontWeight: "bold"
+                                        }}
+                                    >
+                                        Will Tutor In:
+                                    </Text>
                                     <Text style={styles.description}>
-                                        Will Tutor in:
                                         {will_tutor &&
                                             Object.keys(will_tutor)
                                                 .map(
@@ -440,7 +448,7 @@ const styles = StyleSheet.create({
         alignSelf: "center"
     },
     description: {
-        fontSize: 18,
+        fontSize: 16,
         color: "#696969",
         marginTop: 10,
         textAlign: "center",
@@ -467,10 +475,10 @@ const styles = StyleSheet.create({
     },
     scrollView: {
         // position: "absolute",
-        marginTop: 100,
+        marginTop: 80,
         bottom: 40,
-        left: 0,
-        right: 0,
+        // left: 0,
+        // right: 0,
         paddingVertical: 0,
         backgroundColor: "black"
     },
