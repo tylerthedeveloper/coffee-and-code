@@ -18,7 +18,7 @@ var app = express();
 var server = http.createServer(app);
 
 var io = socket.listen(server);
-server.listen(9023);
+server.listen(8080);
 
 const sockets = new Set();
 app.users = new HashMap(); // Array with connected user
@@ -41,7 +41,7 @@ io.on('connection', function(socket) {
 
   socket.on('disconnect', function() {
       console.log('User ' + app.users.get(socket) + ' DISCONNECTED');
-      sockets.remove(socket);
+      sockets.delete(socket);
       console.log("Number of users: " + sockets.size);
       // app.io.emit('connection on off', (app.users.count()));
   });

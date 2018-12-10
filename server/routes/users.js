@@ -239,7 +239,7 @@ router.put("/:git_username/update_location", function(req, res, next) {
         //         const user_id = s.user_id;
         //         // if (localUsers.indexOf(user_id) > -1) {
         //         console.log(`Emitting value: ${msg}`);
-                // s.emit("new_local_user", { data: newUser });
+        // s.emit("new_local_user", { data: newUser });
         //         // }
         //     }
         // });
