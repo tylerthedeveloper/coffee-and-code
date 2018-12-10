@@ -1,15 +1,15 @@
 import React, { Component } from "react";
 import {
-  TouchableOpacity,
-  Text,
-  Image,
-  View,
-  StyleSheet,
-  Dimensions,
-  AsyncStorage,
-  TouchableHighlight,
-  Button,
-  ScrollView
+    TouchableOpacity,
+    Text,
+    Image,
+    View,
+    StyleSheet,
+    Dimensions,
+    AsyncStorage,
+    TouchableHighlight,
+    Button,
+    ScrollView
 } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { Card } from "react-native-elements";
@@ -20,19 +20,19 @@ import PersonList from "../component/PersonList";
 import MapViewDirections from "react-native-maps-directions";
 import getDirections from "react-native-google-maps-directions";
 import {
-  getLoggedinUserName,
-  getLoggedinUserProfile,
-  updateLocationAndGetLocalUsers,
-  getLocalUsers
+    getLoggedinUserName,
+    getLoggedinUserProfile,
+    updateLocationAndGetLocalUsers,
+    getLocalUsers
 } from "../services/user-service";
 import Entypo from "react-native-vector-icons/Entypo";
 import geolib from "geolib";
 import {
-  handleGetDirections,
-  onRecommendLocations,
-  getRandomColor,
-  currentLocationColor,
-  shouldUpdateLocation
+    handleGetDirections,
+    onRecommendLocations,
+    getRandomColor,
+    currentLocationColor,
+    shouldUpdateLocation
 } from "../services/map-service";
 import ToggleSwitch from "toggle-switch-react-native";
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
@@ -51,77 +51,81 @@ import Icon from "react-native-vector-icons/Ionicons";
 
 import { addNewUserExpoNotiToken } from "../services/user-service";
 const items = [
-  {
-    name: "Front End",
-    id: 0,
-    children: [
-      {
-        name: "React-Native",
-        id: 10
-      },
-      {
-        name: "HTML",
-        id: 17
-      },
-      {
-        name: "CSS",
-        id: 13
-      }
-    ]
-  },
-  {
-    name: "Back End",
-    id: 1,
-    children: [
-      {
-        name: "Java",
-        id: 20
-      },
-      {
-        name: "PHP",
-        id: 21
-      }
-    ]
-  }
+    {
+        name: "Front End",
+        id: 0,
+        children: [
+            {
+                name: "React-Native",
+                id: 10
+            },
+            {
+                name: "HTML",
+                id: 17
+            },
+            {
+                name: "CSS",
+                id: 13
+            }
+        ]
+    },
+    {
+        name: "Back End",
+        id: 1,
+        children: [
+            {
+                name: "Java",
+                id: 20
+            },
+            {
+                name: "PHP",
+                id: 21
+            }
+        ]
+    }
 ];
 
 export default class Home extends Component<Props> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      nearbyLocations: [],
-      git_username: "",
-      region: {
-        latitude: LATITUDE,
-        longitude: LONGITUDE,
-        latitudeDelta: LATITUDE_DELTA,
-        longitudeDelta: LATITUDE_DELTA
-      },
-      current_coords: {
-        latitude: LATITUDE,
-        longitude: LONGITUDE
-      },
-      markers: [],
-      filtered_markers: [],
-      selectedMarker: {},
-      visibleModal: null,
-      travelPath: false
-    };
-  }
-
-  registerForPushNotifications = async () => {
-    //check for existing permissions
-    const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-    let finalStatus = status;
-
-    if (status !== "granted") {
-      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-      finalStatus = status;
+    constructor(props) {
+        super(props);
+        this.state = {
+            nearbyLocations: [],
+            git_username: "",
+            region: {
+                latitude: LATITUDE,
+                longitude: LONGITUDE,
+                latitudeDelta: LATITUDE_DELTA,
+                longitudeDelta: LATITUDE_DELTA
+            },
+            current_coords: {
+                latitude: LATITUDE,
+                longitude: LONGITUDE
+            },
+            markers: [],
+            filtered_markers: [],
+            selectedMarker: {},
+            visibleModal: null,
+            travelPath: false
+        };
     }
 
-    if (finalStatus !== "granted") {
-      return;
-    }
+    registerForPushNotifications = async () => {
+        //check for existing permissions
+        const { status } = await Permissions.getAsync(
+            Permissions.NOTIFICATIONS
+        );
+        let finalStatus = status;
+
+        if (status !== "granted") {
+            const { status } = await Permissions.askAsync(
+                Permissions.NOTIFICATIONS
+            );
+            finalStatus = status;
+        }
+
+        if (finalStatus !== "granted") {
+            return;
+        }
 
     let token = await Notifications.getExpoPushTokenAsync();
     // console.log("expo token", token);
@@ -129,13 +133,13 @@ export default class Home extends Component<Props> {
     addNewUserExpoNotiToken(this.state.git_username, token);
   };
 
-  componentWillMount() {
-    this._initMap();
-  }
+    componentWillMount() {
+        this._initMap();
+    }
 
-  componentDidMount() {
-    this.registerForPushNotifications();
-  }
+    componentDidMount() {
+        this.registerForPushNotifications();
+    }
 
   // TODO: make generic
   filterUsers(queryObj) {
@@ -167,17 +171,17 @@ export default class Home extends Component<Props> {
             return;
           }
         });
-      });
-    });
-    this.setState({ filtered_markers: [...filtered_markers] });
-  }
+        this.setState({ filtered_markers: [...filtered_markers] });
+    }
 
-  // TODO: Add refresh button
-  async refreshMap() {
-    const storedLocation = JSON.parse(await AsyncStorage.getItem("location"));
-    const location = null;
-    // await Location.getCurrentPositionAsync({enableHighAccuracy: true });
-    // {enableHighAccuracy: true}
+    // TODO: Add refresh button
+    async refreshMap() {
+        const storedLocation = JSON.parse(
+            await AsyncStorage.getItem("location")
+        );
+        const location = null;
+        // await Location.getCurrentPositionAsync({enableHighAccuracy: true });
+        // {enableHighAccuracy: true}
 
     if (shouldUpdateLocation(storedLocation, location)) {
       const coords = location.coords;
@@ -228,11 +232,38 @@ export default class Home extends Component<Props> {
     //     bio: this.state.profile.bio
     // });
 
-    this.setState({
-      markers,
-      filtered_markers: markers
-    });
-  }
+    setMapMarkers(coords, localUsers) {
+        const markers = localUsers.map(localUser => ({
+            coordinate: {
+                latitude: localUser.latitude,
+                longitude: localUser.longitude
+            },
+            key: localUser.git_username,
+            color: getRandomColor(),
+            name: localUser.name,
+            git_username: localUser.git_username,
+            bio: localUser.bio,
+            // TODO:
+            // isCurrentFriend: localUser.isCurrentFriend,
+            // isFriendRequest: localUser.isFriendRequest,
+            skills: localUser.skills,
+            picture_url: localUser.picture_url,
+            will_help: localUser.will_help || {},
+            need_help: localUser.need_help || {},
+            will_tutor: localUser.will_tutor || {}
+            // looking_for:
+        }));
+        // TODO: Push logged in user
+        // console.log("Markers are: ", markers);
+        // markers.push({
+        //     skills: this.state.profile.skills,
+        //     coordinate: coords,
+        //     key: this.state.profile.git_username,
+        //     color: currentLocationColor(),
+        //     name: this.state.profile.name,
+        //     git_username: this.state.profile.git_username,
+        //     bio: this.state.profile.bio
+        // });
 
   async _initMap() {
     const { status } = await Permissions.askAsync(Permissions.LOCATION);
@@ -256,41 +287,56 @@ export default class Home extends Component<Props> {
       await getLoggedinUserProfile().then(profile => {
         // console.log("profile: ", profile);
         this.setState({
-          git_username: profile.git_username,
-          profile,
-          region: {
-            latitude: latitude,
-            longitude: longitude,
-            latitudeDelta: LATITUDE_DELTA,
-            longitudeDelta: LONGITUDE_DELTA
-          },
-          // TODO: MAKE SURE THIS IS PERSISTED
-          current_coords: {
-            latitude: latitude,
-            longitude: longitude
-          }
+            markers,
+            filtered_markers: markers
         });
-      });
-      const coords = location.coords;
-      await updateLocationAndGetLocalUsers({
-        git_username: this.state.git_username,
-        location: coords
-      }).then(localUsers => this.setMapMarkers(coords, localUsers));
     }
-  }
 
-  getPath = destination_coords => {
-    return (
-      <MapViewDirections
-        origin={this.state.current_coords}
-        destination={destination_coords}
-        apikey={GOOGLE_MAPS_APIKEY}
-        strokeWidth={3}
-        strokeColor="steelblue"
-        mode="driving"
-      />
-    );
-  };
+    async _initMap() {
+        console.log("inside initMap");
+        const { status } = await Permissions.askAsync(Permissions.LOCATION);
+        if (status !== "granted") {
+            // TODO: re-request for location permission
+            throw new Error("Location permission not granted");
+        } else {
+            let location = {
+                coords: {
+                    latitude: 39.168718,
+                    longitude: -86.499862
+                }
+            };
+            // let location = await Location.getCurrentPositionAsync({
+            //   enableHighAccuracy: true
+            TODO: // }); // {enableHighAccuracy: true}
+            AsyncStorage.setItem("location", JSON.stringify(location.coords));
+            console.log("setlocation ", location);
+            const { latitude, longitude } = location.coords;
+            // await getLoggedinUserName().then(git_username =>
+            await getLoggedinUserProfile().then(profile => {
+                console.log("profile: ", profile);
+                this.setState({
+                    git_username: profile.git_username,
+                    profile,
+                    region: {
+                        latitude: latitude,
+                        longitude: longitude,
+                        latitudeDelta: LATITUDE_DELTA,
+                        longitudeDelta: LONGITUDE_DELTA
+                    },
+                    // TODO: MAKE SURE THIS IS PERSISTED
+                    current_coords: {
+                        latitude: latitude,
+                        longitude: longitude
+                    }
+                });
+            });
+            const coords = location.coords;
+            await updateLocationAndGetLocalUsers({
+                git_username: this.state.git_username,
+                location: coords
+            }).then(localUsers => this.setMapMarkers(coords, localUsers));
+        }
+    }
 
   openModal(modalNumber, markerData) {
     // console.log(markerData);
@@ -306,15 +352,16 @@ export default class Home extends Component<Props> {
         visibleModal: modalNumber
       });
     }
-  }
 
-  renderButton = (text, onPress) => (
-    <TouchableOpacity onPress={onPress} style={styles.TouchableButton}>
-      <View>
-        <Text style={{ color: "white", fontWeight: "bold" }}>{text}</Text>
-      </View>
-    </TouchableOpacity>
-  );
+    renderButton = (text, onPress) => (
+        <TouchableOpacity onPress={onPress} style={styles.TouchableButton}>
+            <View>
+                <Text style={{ color: "white", fontWeight: "bold" }}>
+                    {text}
+                </Text>
+            </View>
+        </TouchableOpacity>
+    );
 
   onModalPressed(action, callback) {
     const marker = this.state.selectedMarker;
@@ -340,12 +387,12 @@ export default class Home extends Component<Props> {
         this.setState({ travelPath: true });
         break;
 
-      // case "Close":
-      //     this.filterUsers();
-      default:
-        return;
+            // case "Close":
+            //     this.filterUsers();
+            default:
+                return;
+        }
     }
-  }
 
   renderUserProfileModal() {
     return (
@@ -376,26 +423,30 @@ export default class Home extends Component<Props> {
           </Text>
           <Text />
 
-          {this.renderButton("Profile", () => this.onModalPressed("Profile"))}
-          <Text />
-          {this.renderButton("Get Directions", () =>
-            this.onModalPressed("Directions")
-          )}
-          <Text />
-          {this.renderButton("Get Recommendations", () =>
-            this.onModalPressed("Recommendations", allRestaurants =>
-              this.setState({
-                visibleModal: null,
-                nearbyLocations: allRestaurants
-              })
-            )
-          )}
-          <Text />
-          {this.renderButton("Close", () => this.onModalPressed("Close"))}
-        </View>
-      </Modal>
-    );
-  }
+                    {this.renderButton("Profile", () =>
+                        this.onModalPressed("Profile")
+                    )}
+                    <Text />
+                    {this.renderButton("Get Directions", () =>
+                        this.onModalPressed("Directions")
+                    )}
+                    <Text />
+                    {this.renderButton("Get Recommendations", () =>
+                        this.onModalPressed("Recommendations", allRestaurants =>
+                            this.setState({
+                                visibleModal: null,
+                                nearbyLocations: allRestaurants
+                            })
+                        )
+                    )}
+                    <Text />
+                    {this.renderButton("Close", () =>
+                        this.onModalPressed("Close")
+                    )}
+                </View>
+            </Modal>
+        );
+    }
 
   renderRecommendationModal() {
     return (
@@ -515,15 +566,15 @@ export default class Home extends Component<Props> {
           </TouchableOpacity>
         </View>
 
-        <View>{this.renderUserProfileModal()}</View>
-        <View>{this.renderRecommendationModal()}</View>
-      </View>
-    );
-  }
+                <View>{this.renderUserProfileModal()}</View>
+                <View>{this.renderRecommendationModal()}</View>
+            </View>
+        );
+    }
 }
 
 Home.propTypes = {
-  provider: ProviderPropType
+    provider: ProviderPropType
 };
 
 const styles = StyleSheet.create({
