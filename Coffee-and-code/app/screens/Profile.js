@@ -433,12 +433,10 @@ const styles = StyleSheet.create({
         alignSelf: "center"
     },
     info_city: {
-        fontSize: 16,
-        color: "white",
-        marginTop: 240,
+        fontSize: 18,
+        color: "black",
         textAlign: "center",
-        elevation: 4,
-        position: "absolute",
+        position: "relative",
         alignSelf: "center"
     },
     description: {
