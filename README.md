@@ -1,3 +1,8 @@
+One of my final projects for my Masters Program was to build a scalable application including chat, geo-location caching, real-time notifications via a pub-sub system, served through an E2E DevOps pipeline on Azure.
+
+
+
+
 Components
 ----------
 
